@@ -1,6 +1,6 @@
 e2eTest: &e2eTest
     machine: true
-    working_directory: /home/circleci/.go_workspace/src/github.com/giantswarm/apprclient
+    working_directory: /home/circleci/.go_workspace/src/github.com/giantswarm/helmclient
     steps:
     - checkout
 
