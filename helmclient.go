@@ -3,6 +3,7 @@ package helmclient
 import (
 	"fmt"
 
+	"github.com/giantswarm/k8sportforward"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -155,8 +156,20 @@ func setupConnection(client kubernetes.Interface, config *rest.Config) (string, 
 		return "", microerror.Mask(err)
 	}
 
-	t := newTunnel(client.CoreV1().RESTClient(), config, tillerDefaultNamespace, podName, tillerPort)
-	err = t.forwardPort()
+	c := &k8sportforward.Config{
+		K8sClient:  client.CoreV1().RESTClient(),
+		RestConfig: config,
+
+		Namespace: tillerDefaultNamespace,
+		PodName:   podName,
+		Remote:    tillerPort,
+	}
+	t, err := k8sportforward.NewTunnel(c)
+	if err != nil {
+		return "", microerror.Mask(err)
+	}
+
+	err = t.ForwardPort()
 	if err != nil {
 		return "", microerror.Mask(err)
 	}

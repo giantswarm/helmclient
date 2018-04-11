@@ -1,4 +1,4 @@
-package helmclient
+package k8sportforward
 
 import (
 	"fmt"
@@ -14,8 +14,19 @@ import (
 	"k8s.io/client-go/transport/spdy"
 )
 
-// tunnel describes a ssh-like tunnel to a kubernetes pod.
-type tunnel struct {
+type Config struct {
+	K8sClient  rest.Interface
+	RestConfig *rest.Config
+
+	Namespace string
+	// Remote port to connect to.
+	Remote int
+	// PodName is the name of the pod to forward to.
+	PodName string
+}
+
+// Tunnel describes a ssh-like tunnel to a kubernetes pod.
+type Tunnel struct {
 	Local     int
 	Remote    int
 	Namespace string
@@ -23,31 +34,41 @@ type tunnel struct {
 	Out       io.Writer
 	stopChan  chan struct{}
 	readyChan chan struct{}
-	config    *rest.Config
+	restCfg   *rest.Config
 	client    rest.Interface
 }
 
-// newTunnel creates a new tunnel.
-func newTunnel(client rest.Interface, config *rest.Config, namespace, podName string, remote int) *tunnel {
-	return &tunnel{
-		config:    config,
-		client:    client,
-		Namespace: namespace,
-		PodName:   podName,
-		Remote:    remote,
+// NewTunnel creates a new tunnel.
+func NewTunnel(config *Config) (*Tunnel, error) {
+	if config.K8sClient == nil {
+		return nil, microerror.Maskf(invalidConfigError, "config.K8sClient must not be empty")
+	}
+	if config.RestConfig == nil {
+		return nil, microerror.Maskf(invalidConfigError, "config.RestConfig must not be empty")
+	}
+	if config.PodName == "" {
+		return nil, microerror.Maskf(invalidConfigError, "config.PodName must not be empty")
+	}
+
+	return &Tunnel{
+		restCfg:   config.RestConfig,
+		client:    config.K8sClient,
+		Namespace: config.Namespace,
+		PodName:   config.PodName,
+		Remote:    config.Remote,
 		stopChan:  make(chan struct{}, 1),
 		readyChan: make(chan struct{}, 1),
 		Out:       ioutil.Discard,
-	}
+	}, nil
 }
 
-// close disconnects a tunnel connection.
-func (t *tunnel) close() {
+// Close disconnects a tunnel connection.
+func (t *Tunnel) Close() {
 	close(t.stopChan)
 }
 
-// forwardPort opens a tunnel to a kubernetes pod.
-func (t *tunnel) forwardPort() error {
+// ForwardPort opens a tunnel to a kubernetes pod.
+func (t *Tunnel) ForwardPort() error {
 	// Build a url to the portforward endpoint.
 	// Example: http://localhost:8080/api/v1/namespaces/helm/pods/tiller-deploy-9itlq/portforward
 	u := t.client.Post().
@@ -56,7 +77,7 @@ func (t *tunnel) forwardPort() error {
 		Name(t.PodName).
 		SubResource("portforward").URL()
 
-	transport, upgrader, err := spdy.RoundTripperFor(t.config)
+	transport, upgrader, err := spdy.RoundTripperFor(t.restCfg)
 	if err != nil {
 		return microerror.Mask(err)
 	}
