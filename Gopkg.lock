@@ -62,10 +62,10 @@
   version = "8735501"
 
 [[projects]]
-  branch = "only-pods-available"
+  branch = "master"
   name = "github.com/giantswarm/k8sportforward"
   packages = ["."]
-  revision = "e054888949493f33a890396bcd0d7795bd5f8a1b"
+  revision = "9a9a5240534072b3b84cd7c2f910d4e2074d7b16"
 
 [[projects]]
   branch = "master"
@@ -543,6 +543,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "2ff077261efc09ec8899004c0a1a15f6019a0608bb4fdf0baed050b0d850b041"
+  inputs-digest = "6c2f804ac02d3aeaa887f7421748274b96648e81f21531e1c3616c07f35ebe58"
   solver-name = "gps-cdcl"
   solver-version = 1
