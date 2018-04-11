@@ -152,7 +152,7 @@ func (c *Client) UpdateReleaseFromTarball(releaseName, path string, options ...h
 func setupConnection(client kubernetes.Interface, config *rest.Config) (string, error) {
 	podName, err := getPodName(client, tillerLabelSelector, tillerDefaultNamespace)
 	if err != nil {
-		return "", err
+		return "", microerror.Mask(err)
 	}
 
 	t := newTunnel(client.CoreV1().RESTClient(), config, tillerDefaultNamespace, podName, tillerPort)
@@ -167,14 +167,14 @@ func setupConnection(client kubernetes.Interface, config *rest.Config) (string, 
 }
 
 func getPodName(client kubernetes.Interface, labelSelector, namespace string) (string, error) {
-	pods, err := client.CoreV1().
-		Pods(namespace).
-		List(metav1.ListOptions{
-			LabelSelector: labelSelector,
-		})
+	o := metav1.ListOptions{
+		LabelSelector: labelSelector,
+	}
+	pods, err := client.CoreV1().Pods(namespace).List(o)
 	if err != nil {
 		return "", microerror.Mask(err)
 	}
+
 	if len(pods.Items) > 1 {
 		return "", microerror.Mask(tooManyResultsError)
 	}
@@ -182,5 +182,6 @@ func getPodName(client kubernetes.Interface, labelSelector, namespace string) (s
 		return "", microerror.Mask(notFoundError)
 	}
 	pod := pods.Items[0]
+
 	return pod.Name, nil
 }

@@ -64,7 +64,7 @@ func (t *tunnel) forwardPort() error {
 
 	local, err := getAvailablePort()
 	if err != nil {
-		return fmt.Errorf("could not find an available port: %s", err)
+		return microerror.Mask(err)
 	}
 	t.Local = local
 
@@ -82,7 +82,7 @@ func (t *tunnel) forwardPort() error {
 
 	select {
 	case err = <-errChan:
-		return microerror.Mask(fmt.Errorf("forwarding ports: %v", err))
+		return microerror.Mask(err)
 	case <-pf.Ready:
 		return nil
 	}
