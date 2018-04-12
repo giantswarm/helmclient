@@ -18,14 +18,15 @@ import (
 	helmclient "k8s.io/helm/pkg/helm"
 )
 
-const (
-	connectionTimeoutSecs = 5
-)
-
 // Config represents the configuration used to create a helm client.
 type Config struct {
-	K8sClient kubernetes.Interface
-	Logger    micrologger.Logger
+	// HelmClient sets a helm client used for all operations of the initiated
+	// client. If this is nil, a new helm client will be created for each
+	// operation via proper port forwarding. Setting the helm client here manually
+	// might only be sufficient for testing or whenever you know what you do.
+	HelmClient helmclient.Interface
+	K8sClient  kubernetes.Interface
+	Logger     micrologger.Logger
 
 	RestConfig *rest.Config
 }
@@ -35,6 +36,8 @@ type Client struct {
 	helmClient helmclient.Interface
 	k8sClient  kubernetes.Interface
 	logger     micrologger.Logger
+
+	restConfig *rest.Config
 }
 
 // New creates a new configured Helm client.
@@ -50,17 +53,12 @@ func New(config Config) (*Client, error) {
 		return nil, microerror.Maskf(invalidConfigError, "%T.RestConfig must not be empty", config)
 	}
 
-	host, err := setupConnection(config.K8sClient, config.RestConfig)
-	if err != nil {
-		return nil, microerror.Mask(err)
-	}
-
-	helmClient := helmclient.NewClient(helmclient.Host(host), helmclient.ConnectTimeout(connectionTimeoutSecs))
-
 	c := &Client{
-		helmClient: helmClient,
+		helmClient: config.HelmClient,
 		k8sClient:  config.K8sClient,
 		logger:     config.Logger,
+
+		restConfig: config.RestConfig,
 	}
 
 	return c, nil
@@ -68,7 +66,13 @@ func New(config Config) (*Client, error) {
 
 // DeleteRelease uninstalls a chart given its release name.
 func (c *Client) DeleteRelease(releaseName string, options ...helmclient.DeleteOption) error {
-	_, err := c.helmClient.DeleteRelease(releaseName, options...)
+	t, err := c.newTunnel()
+	if err != nil {
+		return microerror.Mask(err)
+	}
+	defer c.closeTunnel(t)
+
+	_, err = c.newHelmClientFromTunnel(t).DeleteRelease(releaseName, options...)
 	if err != nil {
 		return microerror.Mask(err)
 	}
@@ -80,7 +84,13 @@ func (c *Client) DeleteRelease(releaseName string, options ...helmclient.DeleteO
 // values provided when the chart was installed. The releaseName is the name
 // of the Helm Release that is set when the Helm Chart is installed.
 func (c *Client) GetReleaseContent(releaseName string) (*ReleaseContent, error) {
-	resp, err := c.helmClient.ReleaseContent(releaseName)
+	t, err := c.newTunnel()
+	if err != nil {
+		return nil, microerror.Mask(err)
+	}
+	defer c.closeTunnel(t)
+
+	resp, err := c.newHelmClientFromTunnel(t).ReleaseContent(releaseName)
 	if IsReleaseNotFound(err) {
 		return nil, microerror.Maskf(releaseNotFoundError, releaseName)
 	} else if err != nil {
@@ -111,9 +121,13 @@ func (c *Client) GetReleaseContent(releaseName string) (*ReleaseContent, error) 
 // The releaseName is the name of the Helm Release that is set when the Helm
 // Chart is installed.
 func (c *Client) GetReleaseHistory(releaseName string) (*ReleaseHistory, error) {
-	var version string
+	t, err := c.newTunnel()
+	if err != nil {
+		return nil, microerror.Mask(err)
+	}
+	defer c.closeTunnel(t)
 
-	resp, err := c.helmClient.ReleaseHistory(releaseName, helmclient.WithMaxHistory(1))
+	resp, err := c.newHelmClientFromTunnel(t).ReleaseHistory(releaseName, helmclient.WithMaxHistory(1))
 	if IsReleaseNotFound(err) {
 		return nil, microerror.Maskf(releaseNotFoundError, releaseName)
 	} else if err != nil {
@@ -123,14 +137,19 @@ func (c *Client) GetReleaseHistory(releaseName string) (*ReleaseHistory, error) 
 		return nil, microerror.Maskf(tooManyResultsError, "%d releases found, expected 1", len(resp.Releases))
 	}
 
-	release := resp.Releases[0]
-	if release.Chart != nil && release.Chart.Metadata != nil {
-		version = release.Chart.Metadata.Version
-	}
+	var history *ReleaseHistory
+	{
+		release := resp.Releases[0]
 
-	history := &ReleaseHistory{
-		Name:    release.Name,
-		Version: version,
+		var version string
+		if release.Chart != nil && release.Chart.Metadata != nil {
+			version = release.Chart.Metadata.Version
+		}
+
+		history = &ReleaseHistory{
+			Name:    release.Name,
+			Version: version,
+		}
 	}
 
 	return history, nil
@@ -138,7 +157,13 @@ func (c *Client) GetReleaseHistory(releaseName string) (*ReleaseHistory, error) 
 
 // InstallFromTarball installs a chart packaged in the given tarball.
 func (c *Client) InstallFromTarball(path, ns string, options ...helmclient.InstallOption) error {
-	_, err := c.helmClient.InstallRelease(path, ns, options...)
+	t, err := c.newTunnel()
+	if err != nil {
+		return microerror.Mask(err)
+	}
+	defer c.closeTunnel(t)
+
+	_, err = c.newHelmClientFromTunnel(t).InstallRelease(path, ns, options...)
 	if err != nil {
 		return microerror.Mask(err)
 	}
@@ -218,7 +243,13 @@ func (c *Client) InstallTiller() error {
 		c.logger.Log("level", "debug", "message", "attempt pinging tiller")
 
 		o := func() error {
-			err := c.helmClient.PingTiller()
+			t, err := c.newTunnel()
+			if err != nil {
+				return microerror.Mask(err)
+			}
+			defer c.closeTunnel(t)
+
+			err = c.newHelmClientFromTunnel(t).PingTiller()
 			if err != nil {
 				return microerror.Mask(err)
 			}
@@ -244,7 +275,13 @@ func (c *Client) InstallTiller() error {
 // UpdateReleaseFromTarball updates the given release using the chart packaged
 // in the tarball.
 func (c *Client) UpdateReleaseFromTarball(releaseName, path string, options ...helmclient.UpdateOption) error {
-	_, err := c.helmClient.UpdateRelease(releaseName, path, options...)
+	t, err := c.newTunnel()
+	if err != nil {
+		return microerror.Mask(err)
+	}
+	defer c.closeTunnel(t)
+
+	_, err = c.newHelmClientFromTunnel(t).UpdateRelease(releaseName, path, options...)
 	if err != nil {
 		return microerror.Mask(err)
 	}
@@ -252,34 +289,69 @@ func (c *Client) UpdateReleaseFromTarball(releaseName, path string, options ...h
 	return nil
 }
 
-func setupConnection(client kubernetes.Interface, config *rest.Config) (string, error) {
-	podName, err := getPodName(client, tillerLabelSelector, tillerDefaultNamespace)
+func (c *Client) closeTunnel(t *k8sportforward.Tunnel) {
+	// In case a helm client is configured there is no tunnel and thus we do
+	// nothing here.
+	if t == nil {
+		return
+	}
+
+	err := t.Close()
 	if err != nil {
-		return "", microerror.Mask(err)
+		c.logger.Log("level", "error", "message", "failed closing tunnel", "stack", fmt.Sprintf("%#v", err))
+	}
+}
+
+func (c *Client) newHelmClientFromTunnel(t *k8sportforward.Tunnel) helmclient.Interface {
+	// In case a helm client is configured we just go with it.
+	if c.helmClient != nil {
+		return c.helmClient
 	}
 
-	c := k8sportforward.Config{
-		RestConfig: config,
+	return helmclient.NewClient(
+		helmclient.Host(newTunnelAddress(t)),
+		helmclient.ConnectTimeout(5),
+	)
+}
+
+func (c *Client) newTunnel() (*k8sportforward.Tunnel, error) {
+	// In case a helm client is configured we do not need to create any port
+	// forwarding.
+	if c.helmClient != nil {
+		return nil, nil
 	}
-	f, err := k8sportforward.New(c)
+
+	podName, err := getPodName(c.k8sClient, tillerLabelSelector, tillerDefaultNamespace)
 	if err != nil {
-		return "", microerror.Mask(err)
+		return nil, microerror.Mask(err)
 	}
 
-	tc := k8sportforward.TunnelConfig{
-		Remote:    tillerPort,
-		Namespace: tillerDefaultNamespace,
-		PodName:   podName,
+	var forwarder *k8sportforward.Forwarder
+	{
+		c := k8sportforward.Config{
+			RestConfig: c.restConfig,
+		}
+		forwarder, err = k8sportforward.New(c)
+		if err != nil {
+			return nil, microerror.Mask(err)
+		}
 	}
 
-	t, err := f.ForwardPort(tc)
-	if err != nil {
-		return "", microerror.Mask(err)
+	var tunnel *k8sportforward.Tunnel
+	{
+		c := k8sportforward.TunnelConfig{
+			Remote:    tillerPort,
+			Namespace: tillerDefaultNamespace,
+			PodName:   podName,
+		}
+
+		tunnel, err = forwarder.ForwardPort(c)
+		if err != nil {
+			return nil, microerror.Mask(err)
+		}
 	}
 
-	host := fmt.Sprintf("127.0.0.1:%d", t.Local)
-
-	return host, nil
+	return tunnel, nil
 }
 
 func getPodName(client kubernetes.Interface, labelSelector, namespace string) (string, error) {
@@ -300,4 +372,9 @@ func getPodName(client kubernetes.Interface, labelSelector, namespace string) (s
 	pod := pods.Items[0]
 
 	return pod.Name, nil
+}
+
+// TODO remove when k8sportforward.Tunnel.Address() got implemented.
+func newTunnelAddress(t *k8sportforward.Tunnel) string {
+	return fmt.Sprintf("127.0.0.1:%d", t.Local)
 }
