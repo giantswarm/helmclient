@@ -266,10 +266,10 @@ func (c *Client) InstallTiller() error {
 				return microerror.Mask(err)
 			}
 
+			i++
 			if i < 3 {
 				return microerror.Maskf(executionFailedError, "failed pinging tiller")
 			}
-			i++
 
 			return nil
 		}
