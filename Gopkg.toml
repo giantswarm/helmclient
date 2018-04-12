@@ -27,7 +27,7 @@
 
 
 [[constraint]]
-  branch = "master"
+  branch = "reduce-mutability"
   name = "github.com/giantswarm/k8sportforward"
 
 [[constraint]]

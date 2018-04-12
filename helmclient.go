@@ -156,20 +156,21 @@ func setupConnection(client kubernetes.Interface, config *rest.Config) (string, 
 		return "", microerror.Mask(err)
 	}
 
-	c := &k8sportforward.Config{
-		K8sClient:  client.CoreV1().RESTClient(),
+	c := k8sportforward.Config{
 		RestConfig: config,
-
-		Namespace: tillerDefaultNamespace,
-		PodName:   podName,
-		Remote:    tillerPort,
 	}
-	t, err := k8sportforward.NewTunnel(c)
+	f, err := k8sportforward.New(c)
 	if err != nil {
 		return "", microerror.Mask(err)
 	}
 
-	err = t.ForwardPort()
+	tc := k8sportforward.TunnelConfig{
+		Remote:    tillerPort,
+		Namespace: tillerDefaultNamespace,
+		PodName:   podName,
+	}
+
+	t, err := f.ForwardPort(tc)
 	if err != nil {
 		return "", microerror.Mask(err)
 	}

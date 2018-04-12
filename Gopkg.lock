@@ -62,10 +62,10 @@
   version = "8735501"
 
 [[projects]]
-  branch = "master"
+  branch = "reduce-mutability"
   name = "github.com/giantswarm/k8sportforward"
   packages = ["."]
-  revision = "9a9a5240534072b3b84cd7c2f910d4e2074d7b16"
+  revision = "49714d44f630c1a65e5e9b164f4dea24f8507082"
 
 [[projects]]
   branch = "master"
@@ -543,6 +543,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "6c2f804ac02d3aeaa887f7421748274b96648e81f21531e1c3616c07f35ebe58"
+  inputs-digest = "a423b2356ca7a80559cfe15e7ffc602d94b7ad082da5f79b70a539fc501aa98c"
   solver-name = "gps-cdcl"
   solver-version = 1

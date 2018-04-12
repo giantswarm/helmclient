@@ -2,7 +2,6 @@ package k8sportforward
 
 import (
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -15,85 +14,65 @@ import (
 )
 
 type Config struct {
-	K8sClient  rest.Interface
 	RestConfig *rest.Config
-
-	Namespace string
-	// Remote port to connect to.
-	Remote int
-	// PodName is the name of the pod to forward to.
-	PodName string
 }
 
-// Tunnel describes a ssh-like tunnel to a kubernetes pod.
-type Tunnel struct {
-	Local     int
-	Remote    int
-	Namespace string
-	PodName   string
-	Out       io.Writer
-	stopChan  chan struct{}
-	readyChan chan struct{}
-	restCfg   *rest.Config
-	client    rest.Interface
+type Forwarder struct {
+	k8sClient  rest.Interface
+	restConfig *rest.Config
 }
 
-// NewTunnel creates a new tunnel.
-func NewTunnel(config *Config) (*Tunnel, error) {
-	if config.K8sClient == nil {
-		return nil, microerror.Maskf(invalidConfigError, "config.K8sClient must not be empty")
-	}
+func New(config Config) (*Forwarder, error) {
 	if config.RestConfig == nil {
 		return nil, microerror.Maskf(invalidConfigError, "config.RestConfig must not be empty")
 	}
-	if config.PodName == "" {
-		return nil, microerror.Maskf(invalidConfigError, "config.PodName must not be empty")
+
+	k8sClient, err := rest.RESTClientFor(config.RestConfig)
+	if err != nil {
+		return nil, microerror.Mask(err)
 	}
 
-	return &Tunnel{
-		restCfg:   config.RestConfig,
-		client:    config.K8sClient,
-		Namespace: config.Namespace,
-		PodName:   config.PodName,
-		Remote:    config.Remote,
-		stopChan:  make(chan struct{}, 1),
-		readyChan: make(chan struct{}, 1),
-		Out:       ioutil.Discard,
+	return &Forwarder{
+		k8sClient:  k8sClient,
+		restConfig: config.RestConfig,
 	}, nil
 }
 
-// Close disconnects a tunnel connection.
-func (t *Tunnel) Close() {
-	close(t.stopChan)
-}
-
 // ForwardPort opens a tunnel to a kubernetes pod.
-func (t *Tunnel) ForwardPort() error {
+func (f *Forwarder) ForwardPort(config TunnelConfig) (*Tunnel, error) {
 	// Build a url to the portforward endpoint.
 	// Example: http://localhost:8080/api/v1/namespaces/helm/pods/tiller-deploy-9itlq/portforward
-	u := t.client.Post().
+	u := f.k8sClient.Post().
 		Resource("pods").
-		Namespace(t.Namespace).
-		Name(t.PodName).
+		Namespace(config.Namespace).
+		Name(config.PodName).
 		SubResource("portforward").URL()
 
-	transport, upgrader, err := spdy.RoundTripperFor(t.restCfg)
+	transport, upgrader, err := spdy.RoundTripperFor(f.restConfig)
 	if err != nil {
-		return microerror.Mask(err)
+		return nil, microerror.Mask(err)
 	}
 	dialer := spdy.NewDialer(upgrader, &http.Client{Transport: transport}, "POST", u)
 
 	local, err := getAvailablePort()
 	if err != nil {
-		return microerror.Mask(err)
+		return nil, microerror.Mask(err)
 	}
-	t.Local = local
 
-	ports := []string{fmt.Sprintf("%d:%d", t.Local, t.Remote)}
+	tunnel := &Tunnel{
+		TunnelConfig: config,
+		Local:        local,
 
-	pf, err := portforward.New(dialer, ports, t.stopChan, t.readyChan, t.Out, t.Out)
+		stopChan: make(chan struct{}, 1),
+	}
+
+	out := ioutil.Discard
+	ports := []string{fmt.Sprintf("%d:%d", tunnel.Local, tunnel.Remote)}
+	readyChan := make(chan struct{}, 1)
+
+	pf, err := portforward.New(dialer, ports, tunnel.stopChan, readyChan, out, out)
 	if err != nil {
-		return microerror.Mask(err)
+		return nil, microerror.Mask(err)
 	}
 
 	errChan := make(chan error)
@@ -103,10 +82,30 @@ func (t *Tunnel) ForwardPort() error {
 
 	select {
 	case err = <-errChan:
-		return microerror.Mask(err)
+		return nil, microerror.Mask(err)
 	case <-pf.Ready:
-		return nil
+		return tunnel, nil
 	}
+}
+
+type TunnelConfig struct {
+	Remote    int
+	Namespace string
+	PodName   string
+}
+
+type Tunnel struct {
+	TunnelConfig
+	Local int
+
+	stopChan chan struct{}
+}
+
+// Close disconnects a tunnel connection. It always returns nil error to fulfil
+// io.Closer interface.
+func (t *Tunnel) Close() error {
+	close(t.stopChan)
+	return nil
 }
 
 func getAvailablePort() (int, error) {
