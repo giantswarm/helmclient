@@ -262,7 +262,7 @@ func Test_GetReleaseHistory(t *testing.T) {
 	}
 }
 
-func Test_InstallRelease(t *testing.T) {
+func Test_Client_InstallFromTarball(t *testing.T) {
 	testCases := []struct {
 		description   string
 		namespace     string
