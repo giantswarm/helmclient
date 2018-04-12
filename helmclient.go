@@ -2,13 +2,18 @@ package helmclient
 
 import (
 	"fmt"
+	"time"
 
+	"github.com/cenkalti/backoff"
 	"github.com/giantswarm/k8sportforward"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
+	corev1 "k8s.io/api/core/v1"
+	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
+	"k8s.io/helm/cmd/helm/installer"
 	"k8s.io/helm/pkg/chartutil"
 	helmclient "k8s.io/helm/pkg/helm"
 )
@@ -28,6 +33,7 @@ type Config struct {
 // Client knows how to talk with a Helm Tiller server.
 type Client struct {
 	helmClient helmclient.Interface
+	k8sClient  kubernetes.Interface
 	logger     micrologger.Logger
 }
 
@@ -53,6 +59,7 @@ func New(config Config) (*Client, error) {
 
 	c := &Client{
 		helmClient: helmClient,
+		k8sClient:  config.K8sClient,
 		logger:     config.Logger,
 	}
 
@@ -134,6 +141,101 @@ func (c *Client) InstallFromTarball(path, ns string, options ...helmclient.Insta
 	_, err := c.helmClient.InstallRelease(path, ns, options...)
 	if err != nil {
 		return microerror.Mask(err)
+	}
+
+	return nil
+}
+
+func (c *Client) InstallTiller() error {
+	var name = "tiller"
+	var namespace = "kube-system"
+
+	// Create the service account for tiller so it can pull images and do its do.
+	{
+		n := namespace
+		i := &corev1.ServiceAccount{
+			TypeMeta: metav1.TypeMeta{
+				APIVersion: "v1",
+				Kind:       "ServiceAccount",
+			},
+			ObjectMeta: metav1.ObjectMeta{
+				Name: name,
+			},
+		}
+
+		_, err := c.k8sClient.CoreV1().ServiceAccounts(n).Create(i)
+		if err != nil {
+			return microerror.Mask(err)
+		}
+	}
+
+	// Create the cluster role binding for tiller so it is allowed to do its job.
+	{
+		i := &rbacv1.ClusterRoleBinding{
+			TypeMeta: metav1.TypeMeta{
+				APIVersion: "rbac.authorization.k8s.io/v1",
+				Kind:       "ClusterRoleBinding",
+			},
+			ObjectMeta: metav1.ObjectMeta{
+				Name: name,
+			},
+			Subjects: []rbacv1.Subject{
+				{
+					APIGroup:  "rbac.authorization.k8s.io",
+					Kind:      "ServiceAccount",
+					Name:      name,
+					Namespace: namespace,
+				},
+			},
+			RoleRef: rbacv1.RoleRef{
+				APIGroup: "rbac.authorization.k8s.io",
+				Kind:     "ClusterRole",
+				Name:     "cluster-admin",
+			},
+		}
+
+		_, err := c.k8sClient.RbacV1().ClusterRoleBindings().Create(i)
+		if err != nil {
+			return microerror.Mask(err)
+		}
+	}
+
+	// Install the tiller deployment in the guest cluster.
+	{
+		o := &installer.Options{
+			Namespace:      namespace,
+			ServiceAccount: name,
+		}
+
+		err := installer.Install(c.k8sClient, o)
+		if err != nil {
+			return microerror.Mask(err)
+		}
+	}
+
+	// Wait for tiller to be up and running.
+	{
+		c.logger.Log("level", "debug", "message", "attempt pinging tiller")
+
+		o := func() error {
+			err := c.helmClient.PingTiller()
+			if err != nil {
+				return microerror.Mask(err)
+			}
+
+			return nil
+		}
+		b := newExponentialBackoff(60 * time.Second)
+		n := func(err error, delay time.Duration) {
+			c.logger.Log("level", "debug", "message", "failed pinging tiller")
+		}
+
+		err := backoff.RetryNotify(o, b, n)
+		if err != nil {
+			return microerror.Mask(err)
+		}
+
+		c.logger.Log("level", "debug", "message", "succeeded pinging tiller")
 	}
 
 	return nil
