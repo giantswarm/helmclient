@@ -8,6 +8,9 @@ import (
 	"strconv"
 
 	"github.com/giantswarm/microerror"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/apimachinery/pkg/runtime/serializer"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/portforward"
 	"k8s.io/client-go/transport/spdy"
@@ -26,6 +29,8 @@ func New(config Config) (*Forwarder, error) {
 	if config.RestConfig == nil {
 		return nil, microerror.Maskf(invalidConfigError, "config.RestConfig must not be empty")
 	}
+
+	setConfigDefaults(config.RestConfig)
 
 	k8sClient, err := rest.RESTClientFor(config.RestConfig)
 	if err != nil {
@@ -124,4 +129,24 @@ func getAvailablePort() (int, error) {
 		return 0, microerror.Mask(err)
 	}
 	return port, microerror.Mask(err)
+}
+
+// setConfigDefaults is copied and adjusted from client-go core/v1.
+func setConfigDefaults(config *rest.Config) error {
+	if config.GroupVersion == nil {
+		config.GroupVersion = &schema.GroupVersion{Group: "", Version: "v1"}
+	}
+	if config.APIPath == "" {
+		config.APIPath = "/api"
+	}
+	if config.NegotiatedSerializer == nil {
+		s := runtime.NewScheme()
+		c := serializer.NewCodecFactory(s)
+		config.NegotiatedSerializer = serializer.DirectCodecFactory{CodecFactory: c}
+	}
+	if config.UserAgent == "" {
+		config.UserAgent = rest.DefaultKubernetesUserAgent()
+	}
+
+	return nil
 }

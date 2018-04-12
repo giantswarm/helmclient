@@ -65,7 +65,7 @@
   branch = "reduce-mutability"
   name = "github.com/giantswarm/k8sportforward"
   packages = ["."]
-  revision = "49714d44f630c1a65e5e9b164f4dea24f8507082"
+  revision = "4e7d1a237a1f33a81b714bf58dd7b3bb01353711"
 
 [[projects]]
   branch = "master"
