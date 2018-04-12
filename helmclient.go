@@ -245,9 +245,13 @@ func (c *Client) InstallTiller() error {
 		}
 	}
 
-	// Wait for tiller to be up and running.
+	// Wait for tiller to be up and running. When verifying to be able to ping
+	// tiller we make sure 3 consecutive pings succeed before assuming everything
+	// is fine.
 	{
 		c.logger.Log("level", "debug", "message", "attempt pinging tiller")
+
+		var c int
 
 		o := func() error {
 			t, err := c.newTunnel()
@@ -258,12 +262,18 @@ func (c *Client) InstallTiller() error {
 
 			err = c.newHelmClientFromTunnel(t).PingTiller()
 			if err != nil {
+				c = 0
 				return microerror.Mask(err)
 			}
 
+			if c < 3 {
+				return microerror.Maskf(executionFailedError, "failed pinging tiller")
+			}
+			c++
+
 			return nil
 		}
-		b := newExponentialBackoff(60 * time.Second)
+		b := newExponentialBackoff(2 * time.Minute)
 		n := func(err error, delay time.Duration) {
 			c.logger.Log("level", "debug", "message", "failed pinging tiller")
 		}
