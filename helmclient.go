@@ -173,19 +173,16 @@ func (c *Client) InstallFromTarball(path, ns string, options ...helmclient.Insta
 }
 
 func (c *Client) InstallTiller() error {
-	var name = "tiller"
-	var namespace = "kube-system"
-
 	// Create the service account for tiller so it can pull images and do its do.
 	{
-		n := namespace
+		n := tillerNamespace
 		i := &corev1.ServiceAccount{
 			TypeMeta: metav1.TypeMeta{
 				APIVersion: "v1",
 				Kind:       "ServiceAccount",
 			},
 			ObjectMeta: metav1.ObjectMeta{
-				Name: name,
+				Name: tillerPodName,
 			},
 		}
 
@@ -205,13 +202,13 @@ func (c *Client) InstallTiller() error {
 				Kind:       "ClusterRoleBinding",
 			},
 			ObjectMeta: metav1.ObjectMeta{
-				Name: name,
+				Name: tillerPodName,
 			},
 			Subjects: []rbacv1.Subject{
 				{
 					Kind:      "ServiceAccount",
-					Name:      name,
-					Namespace: namespace,
+					Name:      tillerPodName,
+					Namespace: tillerNamespace,
 				},
 			},
 			RoleRef: rbacv1.RoleRef{
@@ -232,9 +229,9 @@ func (c *Client) InstallTiller() error {
 	// Install the tiller deployment in the guest cluster.
 	{
 		o := &installer.Options{
-			ImageSpec:      "gcr.io/kubernetes-helm/tiller:v2.8.2",
-			Namespace:      namespace,
-			ServiceAccount: name,
+			ImageSpec:      tillerImageSpec,
+			Namespace:      tillerNamespace,
+			ServiceAccount: tillerPodName,
 		}
 
 		err := installer.Install(c.k8sClient, o)
@@ -338,7 +335,7 @@ func (c *Client) newTunnel() (*k8sportforward.Tunnel, error) {
 		return nil, nil
 	}
 
-	podName, err := getPodName(c.k8sClient, tillerLabelSelector, tillerDefaultNamespace)
+	podName, err := getPodName(c.k8sClient, tillerLabelSelector, tillerNamespace)
 	if err != nil {
 		return nil, microerror.Mask(err)
 	}
@@ -358,7 +355,7 @@ func (c *Client) newTunnel() (*k8sportforward.Tunnel, error) {
 	{
 		c := k8sportforward.TunnelConfig{
 			Remote:    tillerPort,
-			Namespace: tillerDefaultNamespace,
+			Namespace: tillerNamespace,
 			PodName:   podName,
 		}
 
