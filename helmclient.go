@@ -10,6 +10,7 @@ import (
 	"github.com/giantswarm/micrologger"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
+	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -189,7 +190,9 @@ func (c *Client) InstallTiller() error {
 		}
 
 		_, err := c.k8sClient.CoreV1().ServiceAccounts(n).Create(i)
-		if err != nil {
+		if errors.IsAlreadyExists(err) {
+			// fall through
+		} else if err != nil {
 			return microerror.Mask(err)
 		}
 	}
@@ -206,7 +209,6 @@ func (c *Client) InstallTiller() error {
 			},
 			Subjects: []rbacv1.Subject{
 				{
-					APIGroup:  "rbac.authorization.k8s.io",
 					Kind:      "ServiceAccount",
 					Name:      name,
 					Namespace: namespace,
@@ -220,7 +222,9 @@ func (c *Client) InstallTiller() error {
 		}
 
 		_, err := c.k8sClient.RbacV1().ClusterRoleBindings().Create(i)
-		if err != nil {
+		if errors.IsAlreadyExists(err) {
+			// fall through
+		} else if err != nil {
 			return microerror.Mask(err)
 		}
 	}
@@ -228,12 +232,15 @@ func (c *Client) InstallTiller() error {
 	// Install the tiller deployment in the guest cluster.
 	{
 		o := &installer.Options{
+			ImageSpec:      "gcr.io/kubernetes-helm/tiller:v2.8.2",
 			Namespace:      namespace,
 			ServiceAccount: name,
 		}
 
 		err := installer.Install(c.k8sClient, o)
-		if err != nil {
+		if errors.IsAlreadyExists(err) {
+			// fall through
+		} else if err != nil {
 			return microerror.Mask(err)
 		}
 	}
