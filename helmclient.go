@@ -251,7 +251,7 @@ func (c *Client) InstallTiller() error {
 	{
 		c.logger.Log("level", "debug", "message", "attempt pinging tiller")
 
-		var c int
+		var i int
 
 		o := func() error {
 			t, err := c.newTunnel()
@@ -262,14 +262,14 @@ func (c *Client) InstallTiller() error {
 
 			err = c.newHelmClientFromTunnel(t).PingTiller()
 			if err != nil {
-				c = 0
+				i = 0
 				return microerror.Mask(err)
 			}
 
-			if c < 3 {
+			if i < 3 {
 				return microerror.Maskf(executionFailedError, "failed pinging tiller")
 			}
-			c++
+			i++
 
 			return nil
 		}
@@ -381,10 +381,10 @@ func getPodName(client kubernetes.Interface, labelSelector, namespace string) (s
 	}
 
 	if len(pods.Items) > 1 {
-		return "", microerror.Mask(tooManyResultsError)
+		return "", microerror.Maskf(tooManyResultsError, "%d", len(pods.Items))
 	}
 	if len(pods.Items) == 0 {
-		return "", microerror.Mask(notFoundError)
+		return "", microerror.Maskf(podNotFoundError, "%s", labelSelector)
 	}
 	pod := pods.Items[0]
 
