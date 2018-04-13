@@ -77,7 +77,7 @@ func (c *Client) DeleteRelease(releaseName string, options ...helmclient.DeleteO
 
 		_, err = c.newHelmClientFromTunnel(t).DeleteRelease(releaseName, options...)
 		if IsReleaseNotFound(err) {
-			return backoff.Permanent(releaseNotFoundError)
+			return backoff.Permanent(microerror.Maskf(releaseNotFoundError, releaseName))
 		} else if err != nil {
 			return microerror.Mask(err)
 		}
@@ -114,7 +114,7 @@ func (c *Client) GetReleaseContent(releaseName string) (*ReleaseContent, error) 
 
 			resp, err = c.newHelmClientFromTunnel(t).ReleaseContent(releaseName)
 			if IsReleaseNotFound(err) {
-				return backoff.Permanent(releaseNotFoundError)
+				return backoff.Permanent(microerror.Maskf(releaseNotFoundError, releaseName))
 			} else if err != nil {
 				return microerror.Mask(err)
 			}
@@ -167,7 +167,7 @@ func (c *Client) GetReleaseHistory(releaseName string) (*ReleaseHistory, error) 
 
 			resp, err = c.newHelmClientFromTunnel(t).ReleaseHistory(releaseName, helmclient.WithMaxHistory(1))
 			if IsReleaseNotFound(err) {
-				return backoff.Permanent(releaseNotFoundError)
+				return backoff.Permanent(microerror.Maskf(releaseNotFoundError, releaseName))
 			} else if err != nil {
 				return microerror.Mask(err)
 			}
@@ -366,7 +366,7 @@ func (c *Client) UpdateReleaseFromTarball(releaseName, path string, options ...h
 
 		_, err = c.newHelmClientFromTunnel(t).UpdateRelease(releaseName, path, options...)
 		if IsReleaseNotFound(err) {
-			return backoff.Permanent(releaseNotFoundError)
+			return backoff.Permanent(microerror.Maskf(releaseNotFoundError, releaseName))
 		} else if err != nil {
 			return microerror.Mask(err)
 		}
