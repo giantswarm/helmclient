@@ -240,6 +240,8 @@ func (c *Client) InstallFromTarball(path, ns string, options ...helmclient.Insta
 	return nil
 }
 
+// InstallTiller installs Tiller by creating its deployment and waiting for it
+// to start. A service account and cluster role binding are also created.
 func (c *Client) InstallTiller() error {
 	// Create the service account for tiller so it can pull images and do its do.
 	{
