@@ -356,6 +356,22 @@ func (c *Client) InstallTiller() error {
 	return nil
 }
 
+// PingTiller checks if Tiller is installed and alive.
+func (c *Client) PingTiller() error {
+	t, err := c.newTunnel()
+	if err != nil {
+		return microerror.Mask(err)
+	}
+	defer c.closeTunnel(t)
+
+	err = c.newHelmClientFromTunnel(t).PingTiller()
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	return nil
+}
+
 // UpdateReleaseFromTarball updates the given release using the chart packaged
 // in the tarball.
 func (c *Client) UpdateReleaseFromTarball(releaseName, path string, options ...helmclient.UpdateOption) error {
