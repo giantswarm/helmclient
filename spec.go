@@ -27,6 +27,8 @@ type Interface interface {
 	// InstallTiller installs Tiller by creating its deployment and waiting for
 	// it to start. A service account and cluster role binding are also created.
 	InstallTiller() error
+	// PingTiller checks if Tiller is installed and alive.
+	PingTiller() error
 	// UpdateReleaseFromTarball updates the given release using the chart packaged
 	// in the tarball.
 	UpdateReleaseFromTarball(releaseName, path string, options ...helm.UpdateOption) error
