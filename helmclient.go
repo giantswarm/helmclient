@@ -86,7 +86,7 @@ func (c *Client) DeleteRelease(releaseName string, options ...helmclient.DeleteO
 	}
 	b := newExponentialBackoff(2*time.Minute, backoff.DefaultMaxInterval)
 	n := func(err error, delay time.Duration) {
-		c.logger.Log("level", "debug", "message", "failed deleting release")
+		c.logger.Log("level", "debug", "message", "failed deleting release", "stack", fmt.Sprintf("%#v", err))
 	}
 
 	err := backoff.RetryNotify(o, b, n)
@@ -215,7 +215,7 @@ func (c *Client) EnsureTillerInstalled() error {
 		}
 		b := newExponentialBackoff(2*time.Minute, 5*time.Second)
 		n := func(err error, delay time.Duration) {
-			c.logger.Log("level", "debug", "message", "failed pinging tiller")
+			c.logger.Log("level", "debug", "message", "failed pinging tiller", "stack", fmt.Sprintf("%#v", err))
 		}
 
 		err := backoff.RetryNotify(o, b, n)
@@ -308,7 +308,7 @@ func (c *Client) GetReleaseHistory(releaseName string) (*ReleaseHistory, error) 
 		}
 		b := newExponentialBackoff(2*time.Minute, backoff.DefaultMaxInterval)
 		n := func(err error, delay time.Duration) {
-			c.logger.Log("level", "debug", "message", "failed fetching release content")
+			c.logger.Log("level", "debug", "message", "failed fetching release content", "stack", fmt.Sprintf("%#v", err))
 		}
 
 		err := backoff.RetryNotify(o, b, n)
@@ -361,7 +361,7 @@ func (c *Client) InstallFromTarball(path, ns string, options ...helmclient.Insta
 	}
 	b := newExponentialBackoff(2*time.Minute, backoff.DefaultMaxInterval)
 	n := func(err error, delay time.Duration) {
-		c.logger.Log("level", "debug", "message", "failed installing from tarball")
+		c.logger.Log("level", "debug", "message", "failed installing from tarball", "stack", fmt.Sprintf("%#v", err))
 	}
 
 	err := backoff.RetryNotify(o, b, n)
@@ -393,7 +393,7 @@ func (c *Client) UpdateReleaseFromTarball(releaseName, path string, options ...h
 	}
 	b := newExponentialBackoff(2*time.Minute, backoff.DefaultMaxInterval)
 	n := func(err error, delay time.Duration) {
-		c.logger.Log("level", "debug", "message", "failed updating release from tarball")
+		c.logger.Log("level", "debug", "message", "failed updating release from tarball", "stack", fmt.Sprintf("%#v", err))
 	}
 
 	err := backoff.RetryNotify(o, b, n)
