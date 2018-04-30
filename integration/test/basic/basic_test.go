@@ -30,14 +30,20 @@ func TestInstallChart(t *testing.T) {
 	}
 
 	c := helmclient.Config{
-		Logger:     l,
-		K8sClient:  cs,
-		RestConfig: config,
+		Logger:          l,
+		K8sClient:       cs,
+		RestConfig:      config,
+		TillerNamespace: "giantswarm",
 	}
 
 	helmClient, err := helmclient.New(c)
 	if err != nil {
 		t.Fatalf("could not create helm client %v", err)
+	}
+
+	err = helmClient.EnsureTillerInstalled()
+	if err != nil {
+		t.Fatalf("could not install Tiller %v", err)
 	}
 
 	// --test-dir dir is mounted in /e2e in the test container.
