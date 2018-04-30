@@ -14,7 +14,7 @@ func WrapTestMain(h *framework.Host, m *testing.M) {
 	var v int
 	var err error
 
-	if err := h.CreateNamespace("giantswarm"); err != nil {
+	if err = h.CreateNamespace("giantswarm"); err != nil {
 		log.Printf("%#v\n", err)
 		v = 1
 	}
