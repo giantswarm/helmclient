@@ -40,6 +40,11 @@ func TestInstallChart(t *testing.T) {
 		t.Fatalf("could not create helm client %v", err)
 	}
 
+	err = helmClient.EnsureTillerInstalled()
+	if err != nil {
+		t.Fatalf("could not install Tiller %v", err)
+	}
+
 	// --test-dir dir is mounted in /e2e in the test container.
 	tarballPath := filepath.Join("/e2e/fixtures/", "tb-chart.tar.gz")
 
