@@ -30,9 +30,10 @@ func TestInstallChart(t *testing.T) {
 	}
 
 	c := helmclient.Config{
-		Logger:     l,
-		K8sClient:  cs,
-		RestConfig: config,
+		Logger:          l,
+		K8sClient:       cs,
+		RestConfig:      config,
+		TillerNamespace: "giantswarm",
 	}
 
 	helmClient, err := helmclient.New(c)
