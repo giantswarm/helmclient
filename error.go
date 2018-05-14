@@ -1,6 +1,7 @@
 package helmclient
 
 import (
+	"regexp"
 	"strings"
 
 	"github.com/giantswarm/microerror"
@@ -38,7 +39,9 @@ func IsExecutionFailed(err error) bool {
 }
 
 var guestNamespaceCreationErrorSuffix = "namespaces/kube-system/serviceaccounts: EOF"
-var guestDNSNotReadySuffix = "53: no such host"
+
+// match example https://play.golang.org/p/ipBkwqlc4Td
+var guestDNSNotReadyPattern = "dial tcp: lookup .* on .*:53: no such host"
 
 // IsGuestAPINotAvailable asserts guestAPINotAvailableError.
 func IsGuestAPINotAvailable(err error) bool {
@@ -46,10 +49,16 @@ func IsGuestAPINotAvailable(err error) bool {
 		return false
 	}
 
-	if strings.HasSuffix(err.Error(), guestNamespaceCreationErrorSuffix) {
+	c := microerror.Cause(err)
+
+	if strings.HasSuffix(c.Error(), guestNamespaceCreationErrorSuffix) {
 		return true
 	}
-	if strings.HasSuffix(err.Error(), guestDNSNotReadySuffix) {
+	matched, matchErr := regexp.MatchString(guestDNSNotReadyPattern, c.Error())
+	if matchErr != nil {
+		return false
+	}
+	if matched {
 		return true
 	}
 
