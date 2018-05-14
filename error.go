@@ -37,6 +37,25 @@ func IsExecutionFailed(err error) bool {
 	return microerror.Cause(err) == executionFailedError
 }
 
+var guestNamespaceCreationErrorSuffix = "namespaces/kube-system/serviceaccounts: EOF"
+var guestDNSNotReadySuffix = "53: no such host"
+
+// IsGuestAPINotAvailable asserts guestAPINotAvailableError.
+func IsGuestAPINotAvailable(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	if strings.HasSuffix(err.Error(), guestNamespaceCreationErrorSuffix) {
+		return true
+	}
+	if strings.HasSuffix(err.Error(), guestDNSNotReadySuffix) {
+		return true
+	}
+
+	return false
+}
+
 var invalidConfigError = microerror.New("invalid config")
 
 // IsInvalidConfig asserts invalidConfigError.
