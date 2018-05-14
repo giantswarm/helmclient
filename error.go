@@ -38,6 +38,7 @@ func IsExecutionFailed(err error) bool {
 	return microerror.Cause(err) == executionFailedError
 }
 
+var guestAPINotAvailableError = microerror.New("Guest API not available")
 var guestNamespaceCreationErrorSuffix = "namespaces/kube-system/serviceaccounts: EOF"
 
 // match example https://play.golang.org/p/ipBkwqlc4Td
@@ -59,6 +60,10 @@ func IsGuestAPINotAvailable(err error) bool {
 		return false
 	}
 	if matched {
+		return true
+	}
+
+	if c == guestAPINotAvailableError {
 		return true
 	}
 
