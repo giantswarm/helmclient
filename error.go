@@ -44,6 +44,9 @@ var guestNamespaceCreationErrorSuffix = "namespaces/kube-system/serviceaccounts:
 // match example https://play.golang.org/p/ipBkwqlc4Td
 var guestDNSNotReadyPattern = "dial tcp: lookup .* on .*:53: no such host"
 
+// match example https://play.golang.org/p/iiYvBhPOg4f
+var guestTransientInvalidCertificatePattern = `[Get|Post] https://api\..*: x509: certificate is valid for ingress.local, not api\..*`
+
 // IsGuestAPINotAvailable asserts guestAPINotAvailableError.
 func IsGuestAPINotAvailable(err error) bool {
 	if err == nil {
@@ -55,12 +58,19 @@ func IsGuestAPINotAvailable(err error) bool {
 	if strings.HasSuffix(c.Error(), guestNamespaceCreationErrorSuffix) {
 		return true
 	}
-	matched, matchErr := regexp.MatchString(guestDNSNotReadyPattern, c.Error())
-	if matchErr != nil {
-		return false
+
+	patterns := []string{
+		guestDNSNotReadyPattern,
+		guestTransientInvalidCertificatePattern,
 	}
-	if matched {
-		return true
+	for _, pattern := range patterns {
+		matched, matchErr := regexp.MatchString(pattern, c.Error())
+		if matchErr != nil {
+			return false
+		}
+		if matched {
+			return true
+		}
 	}
 
 	if c == guestAPINotAvailableError {
