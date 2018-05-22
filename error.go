@@ -41,9 +41,14 @@ func IsExecutionFailed(err error) bool {
 var guestAPINotAvailableError = microerror.New("Guest API not available")
 var guestNamespaceCreationErrorSuffix = "namespaces/kube-system/serviceaccounts: EOF"
 
+// guestDNSNotReadyPattern is a regular expression representing DNS errors for
+// the guest API domain.
 // match example https://play.golang.org/p/ipBkwqlc4Td
 var guestDNSNotReadyPattern = "dial tcp: lookup .* on .*:53: no such host"
 
+// guestTransientInvalidCertificatePattern regular expression defines the kind
+// of transient errors related to certificates returned while the guest API is
+// not fully up.
 // match example https://play.golang.org/p/iiYvBhPOg4f
 var guestTransientInvalidCertificatePattern = `[Get|Post] https://api\..*: x509: certificate is valid for ingress.local, not api\..*`
 
