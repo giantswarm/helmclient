@@ -9,7 +9,27 @@ import (
 
 const (
 	cannotReuseReleaseErrorPrefix = "cannot re-use"
+	// guestDNSNotReadyPattern is a regular expression representing DNS errors for
+	// the guest API domain.
+	// match example https://play.golang.org/p/ipBkwqlc4Td
+	guestDNSNotReadyPattern = "dial tcp: lookup .* on .*:53: no such host"
+
+	// guestTransientInvalidCertificatePattern regular expression defines the kind
+	// of transient errors related to certificates returned while the guest API is
+	// not fully up.
+	// match example https://play.golang.org/p/iiYvBhPOg4f
+	guestTransientInvalidCertificatePattern = `[Get|Post] https://api\..*: x509: certificate is valid for ingress.local, not api\..*`
 )
+
+var (
+	guestDNSNotReadyRegexp                 *regexp.Regexp
+	guestTransientInvalidCertificateRegexp *regexp.Regexp
+)
+
+func init() {
+	guestDNSNotReadyRegexp = regexp.MustCompile(guestDNSNotReadyPattern)
+	guestTransientInvalidCertificateRegexp = regexp.MustCompile(guestTransientInvalidCertificatePattern)
+}
 
 var cannotReuseReleaseError = microerror.New("cannot reuse release")
 
@@ -41,17 +61,6 @@ func IsExecutionFailed(err error) bool {
 var guestAPINotAvailableError = microerror.New("Guest API not available")
 var guestNamespaceCreationErrorSuffix = "namespaces/kube-system/serviceaccounts: EOF"
 
-// guestDNSNotReadyPattern is a regular expression representing DNS errors for
-// the guest API domain.
-// match example https://play.golang.org/p/ipBkwqlc4Td
-var guestDNSNotReadyPattern = "dial tcp: lookup .* on .*:53: no such host"
-
-// guestTransientInvalidCertificatePattern regular expression defines the kind
-// of transient errors related to certificates returned while the guest API is
-// not fully up.
-// match example https://play.golang.org/p/iiYvBhPOg4f
-var guestTransientInvalidCertificatePattern = `[Get|Post] https://api\..*: x509: certificate is valid for ingress.local, not api\..*`
-
 // IsGuestAPINotAvailable asserts guestAPINotAvailableError.
 func IsGuestAPINotAvailable(err error) bool {
 	if err == nil {
@@ -64,15 +73,13 @@ func IsGuestAPINotAvailable(err error) bool {
 		return true
 	}
 
-	patterns := []string{
-		guestDNSNotReadyPattern,
-		guestTransientInvalidCertificatePattern,
+	regexps := []*regexp.Regexp{
+		guestDNSNotReadyRegexp,
+		guestTransientInvalidCertificateRegexp,
 	}
-	for _, pattern := range patterns {
-		matched, matchErr := regexp.MatchString(pattern, c.Error())
-		if matchErr != nil {
-			return false
-		}
+	for _, re := range regexps {
+		matched := re.MatchString(c.Error())
+
 		if matched {
 			return true
 		}
