@@ -28,8 +28,8 @@
 
 required = [
   "github.com/Azure/go-autorest/autorest",
-	"github.com/docker/distribution/reference",
-  "k8s.io/apiserver/pkg/endpoints/request",
+  "github.com/docker/distribution/reference",
+  "k8s.io/apiserver/pkg/endpoints/request"
 ]
 
 
