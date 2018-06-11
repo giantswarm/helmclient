@@ -47,7 +47,7 @@ required = [
   name = "github.com/giantswarm/e2e-harness"
 
 [[constraint]]
-  branch = "export-error"
+  branch = "master"
   name = "github.com/giantswarm/errors"
 
 [[constraint]]

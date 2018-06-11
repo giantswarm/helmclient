@@ -143,10 +143,10 @@
   revision = "c5b82c0351c122d5c4f96de2381c58fd97f1e354"
 
 [[projects]]
-  branch = "export-error"
+  branch = "master"
   name = "github.com/giantswarm/errors"
   packages = ["api"]
-  revision = "c91da20aefbee90745421b3d1ed24bc2cfe60890"
+  revision = "b106b0f6cb8112b3e343310d2e9d448033d8d383"
 
 [[projects]]
   branch = "master"
@@ -1019,6 +1019,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "f3e72682781f7ba50e8d806c7e0a6d2b34d80ec3c7ec60bebcfe48b91bb3035e"
+  inputs-digest = "4176cd91c209efa7bd91a37262c11f8e906771813da2d79636837d4ba1ddce14"
   solver-name = "gps-cdcl"
   solver-version = 1
