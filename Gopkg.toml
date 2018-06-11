@@ -43,11 +43,11 @@ required = [
   name = "github.com/docker/distribution"
 
 [[constraint]]
-  branch = "k8s-1.10.4"
+  branch = "master"
   name = "github.com/giantswarm/e2e-harness"
 
 [[constraint]]
-  branch = "k8s-1.10.4"
+  branch = "master"
   name = "github.com/giantswarm/k8sportforward"
 
 [[constraint]]
