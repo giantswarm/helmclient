@@ -144,6 +144,12 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/giantswarm/errors"
+  packages = ["api"]
+  revision = "b106b0f6cb8112b3e343310d2e9d448033d8d383"
+
+[[projects]]
+  branch = "master"
   name = "github.com/giantswarm/k8sportforward"
   packages = ["."]
   revision = "00489ad5cc81835cf9bf13e9dfa538fa6f3f729e"
@@ -1013,6 +1019,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "26aee9f000c51ca1701e8a5ad5f93c2be0c8863399cadf862e7d3d2dae1c46e9"
+  inputs-digest = "4176cd91c209efa7bd91a37262c11f8e906771813da2d79636837d4ba1ddce14"
   solver-name = "gps-cdcl"
   solver-version = 1
