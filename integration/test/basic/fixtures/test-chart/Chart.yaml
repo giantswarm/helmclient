@@ -9,3 +9,9 @@ pod:
   name: nginx
   image:
     repository: nginx
+
+test:
+  image:
+    registry: quay.io
+    repository: giantswarm/alpine-testing
+    tag: 0.1.0
