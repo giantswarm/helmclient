@@ -414,7 +414,7 @@ func (c *Client) RunReleaseTest(releaseName string, options ...helmclient.Releas
 
 	select {
 	case resp := <-response:
-		c.logger.Log("level", "debug", "message", fmt.Sprintf("%s: %s", resp.Status, resp.Msg))
+		c.logger.Log("level", "debug", "message", resp.Msg)
 	case err := <-errors:
 		if err != nil {
 			return microerror.Mask(err)
