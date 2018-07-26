@@ -1,12 +1,13 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: nginx
+  name: {{ .Values.pod.name }}
+  namespace: {{ .Values.namespace }}
   labels:
-    name: nginx
+    name: {{ .Values.pod.name }}
 spec:
   containers:
-  - name: nginx
-    image: nginx
+  - name: {{ .Values.pod.name }}
+    image: {{ .Values.pod.image.repository }}
     ports:
     - containerPort: 80
