@@ -396,7 +396,7 @@ func (c *Client) InstallFromTarball(path, ns string, options ...helmclient.Insta
 
 // RunReleaseTest runs the tests for a Helm Release. The releaseName is the name of the
 // Helm Release that is set when the Helm Chart is installed.
-func (c *Client) RunReleaseTest(releaseName string) error {
+func (c *Client) RunReleaseTest(releaseName string, options ...helmclient.ReleaseTestOption) error {
 	c.logger.Log("level", "debug", "message", fmt.Sprintf("running tests for release '%s'", releaseName))
 
 	t, err := c.newTunnel()
