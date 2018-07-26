@@ -73,6 +73,17 @@ func TestInstallChart(t *testing.T) {
 		t.Fatalf("bad release status, want %q, got %q", expectedStatus, actualStatus)
 	}
 
+	err = helmClient.RunReleaseTest(releaseName)
+	if err != nil {
+		t.Fatalf("error running tests, want nil got %v", err)
+	}
+
+	// Test should fail on the 2nd attempt because the test pod already exists.
+	err = helmClient.RunReleaseTest(releaseName)
+	if err == nil {
+		t.Fatalf("error running tests, want error got nil")
+	}
+
 	err = helmClient.DeleteRelease(releaseName)
 	if err != nil {
 		t.Fatalf("could not delete release %v", err)
@@ -86,16 +97,5 @@ func TestInstallChart(t *testing.T) {
 	actualStatus = releaseContent.Status
 	if expectedStatus != actualStatus {
 		t.Fatalf("bad release status, want %q, got %q", expectedStatus, actualStatus)
-	}
-
-	err = helmClient.RunReleaseTest(releaseName)
-	if err != nil {
-		t.Fatalf("error running tests, want nil got %v", err)
-	}
-
-	// Test should fail on the 2nd attempt because the test pod exists.
-	err = helmClient.RunReleaseTest(releaseName)
-	if err == nil {
-		t.Fatalf("error running tests, want error got nil")
 	}
 }
