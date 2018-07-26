@@ -87,4 +87,15 @@ func TestInstallChart(t *testing.T) {
 	if expectedStatus != actualStatus {
 		t.Fatalf("bad release status, want %q, got %q", expectedStatus, actualStatus)
 	}
+
+	err = helmClient.RunReleaseTest(releaseName)
+	if err != nil {
+		t.Fatalf("error running tests, want nil got %v", err)
+	}
+
+	// Test should fail on the 2nd attempt because the test pod exists.
+	err = helmClient.RunReleaseTest(releaseName)
+	if err == nil {
+		t.Fatalf("error running tests, want error got nil")
+	}
 }
