@@ -5,6 +5,6 @@ metadata:
 data:
   run.sh: |-
     @test "Testing nginx is reachable" {
-      response=$(curl -I {{ .Values.pod.name }}.{{ .Values.pod.namespace }} 2> /dev/null | head -n 1 | cut -d$' ' -f2)
+      response=$(curl -I {{ .Values.pod.name }}.{{ .Values.namespace }} 2> /dev/null | head -n 1 | cut -d$' ' -f2)
       [ "$response" -eq 200 ]
     }
