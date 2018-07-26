@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: {{ .Values.name }}-test
+  name: {{ .Values.pod.name }}-test
   namespace: {{ .Values.namespace }}
   annotations:
     "helm.sh/hook": test-success
@@ -22,7 +22,7 @@ spec:
     - mountPath: /tools
       name: tools
   containers:
-  - name: {{ .Values.name }}-test
+  - name: {{ .Values.pod.name }}-test
     image: "{{ .Values.test.image.registry }}/{{ .Values.test.image.repository }}:{{ .Values.test.image.tag }}"
     imagePullPolicy: IfNotPresent
     command: ["/tools/bats/bats", "-t", "/tests/run.sh"]
@@ -35,7 +35,7 @@ spec:
   volumes:
   - name: tests
     configMap:
-      name: {{ .Values.name }}-tests
+      name: {{ .Values.pod.name }}-tests
   - name: tools
     emptyDir: {}
   restartPolicy: Never
