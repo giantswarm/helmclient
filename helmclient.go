@@ -394,6 +394,38 @@ func (c *Client) InstallFromTarball(path, ns string, options ...helmclient.Insta
 	return nil
 }
 
+// RunReleaseTest runs the tests for a Helm Release. The releaseName is the name of the
+// Helm Release that is set when the Helm Chart is installed.
+func (c *Client) RunReleaseTest(releaseName string) error {
+	c.logger.Log("level", "debug", "message", fmt.Sprintf("running tests for release '%s'", releaseName))
+
+	t, err := c.newTunnel()
+	if err != nil {
+		return microerror.Mask(err)
+	}
+	defer c.closeTunnel(t)
+
+	response, errors := c.newHelmClientFromTunnel(t).RunReleaseTest(releaseName)
+	if IsReleaseNotFound(err) {
+		return backoff.Permanent(microerror.Maskf(releaseNotFoundError, releaseName))
+	} else if err != nil {
+		return microerror.Mask(err)
+	}
+
+	select {
+	case resp := <-response:
+		c.logger.Log("level", "debug", "message", fmt.Sprintf("%s: %s", resp.Status, resp.Msg))
+	case err := <-errors:
+		if err != nil {
+			return microerror.Mask(err)
+		}
+	}
+
+	c.logger.Log("level", "debug", "message", fmt.Sprintf("ran tests for release '%s'", releaseName))
+
+	return nil
+}
+
 // UpdateReleaseFromTarball updates the given release using the chart packaged
 // in the tarball.
 func (c *Client) UpdateReleaseFromTarball(releaseName, path string, options ...helmclient.UpdateOption) error {
