@@ -51,7 +51,16 @@ func TestInstallChart(t *testing.T) {
 
 	const releaseName = "tb-chart-release"
 
-	err = helmClient.InstallFromTarball(tarballPath, "default", helm.ReleaseName(releaseName))
+	// We need to pass the ValueOverrides option to make the install process
+	// use the default values and prevent errors on nested values.
+	//
+	//     {
+	//      rpc error: code = Unknown desc = render error in "cnr-server-chart/templates/deployment.yaml":
+	//      template: cnr-server-chart/templates/deployment.yaml:20:26:
+	//      executing "cnr-server-chart/templates/deployment.yaml" at <.Values.image.reposi...>: can't evaluate field repository in type interface {}
+	//     }
+	//
+	err = helmClient.InstallFromTarball(tarballPath, "default", helm.ReleaseName(releaseName), helm.ValueOverrides([]byte("{}")))
 	if err != nil {
 		t.Fatalf("could not install chart %v", err)
 	}
@@ -71,6 +80,17 @@ func TestInstallChart(t *testing.T) {
 	actualStatus := releaseContent.Status
 	if expectedStatus != actualStatus {
 		t.Fatalf("bad release status, want %q, got %q", expectedStatus, actualStatus)
+	}
+
+	err = helmClient.RunReleaseTest(releaseName)
+	if err != nil {
+		t.Fatalf("error running tests, want nil got %v", err)
+	}
+
+	// Test should fail on the 2nd attempt because the test pod already exists.
+	err = helmClient.RunReleaseTest(releaseName)
+	if err == nil {
+		t.Fatalf("error running tests, want error got nil")
 	}
 
 	err = helmClient.DeleteRelease(releaseName)
