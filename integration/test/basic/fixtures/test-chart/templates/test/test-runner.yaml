@@ -1,8 +1,8 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: {{ .Values.pod.name }}-test
-  namespace: {{ .Values.namespace }}
+  name: nginx-test
+  namespace: default
   annotations:
     "helm.sh/hook": test-success
 spec:
@@ -22,8 +22,8 @@ spec:
     - mountPath: /tools
       name: tools
   containers:
-  - name: {{ .Values.pod.name }}-test
-    image: "{{ .Values.test.image.registry }}/{{ .Values.test.image.repository }}:{{ .Values.test.image.tag }}"
+  - name: nginx-test
+    image: quay.io/giantswarm/alpine-testing:0.1.0"
     imagePullPolicy: IfNotPresent
     command: ["/tools/bats/bats", "-t", "/tests/run.sh"]
     volumeMounts:
@@ -35,7 +35,7 @@ spec:
   volumes:
   - name: tests
     configMap:
-      name: {{ .Values.pod.name }}-tests
+      name: nginx-tests
   - name: tools
     emptyDir: {}
   restartPolicy: Never
