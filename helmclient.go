@@ -421,25 +421,21 @@ func (c *Client) RunReleaseTest(releaseName string, options ...helmclient.Releas
 			if err != nil {
 				return microerror.Mask(err)
 			}
-		case res, ok := <-resChan:
-			if !ok {
-				break
-			}
-
+		case res := <-resChan:
 			c.logger.Log("level", "debug", "message", res.Msg)
 
 			switch res.Status {
 			case hapirelease.TestRun_SUCCESS:
+				c.logger.Log("level", "debug", "message", fmt.Sprintf("successfully ran tests for release '%s'", releaseName))
+
 				return nil
 			case hapirelease.TestRun_FAILURE:
 				return microerror.Maskf(testReleaseFailureError, "'%s' has failed tests", releaseName)
 			}
+		case <-time.After(300 * time.Second):
+			return microerror.Mask(testReleaseTimeoutError)
 		}
 	}
-
-	c.logger.Log("level", "debug", "message", fmt.Sprintf("ran tests for release '%s'", releaseName))
-
-	return nil
 }
 
 // UpdateReleaseFromTarball updates the given release using the chart packaged
