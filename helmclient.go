@@ -428,7 +428,10 @@ func (c *Client) RunReleaseTest(releaseName string, options ...helmclient.Releas
 
 			c.logger.Log("level", "debug", "message", res.Msg)
 
-			if res.Status == hapirelease.TestRun_FAILURE {
+			switch res.Status {
+			case hapirelease.TestRun_SUCCESS:
+				return nil
+			case hapirelease.TestRun_FAILURE:
 				return microerror.Maskf(testReleaseFailureError, "'%s' has failed tests", releaseName)
 			}
 		}
