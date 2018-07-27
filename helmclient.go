@@ -19,6 +19,7 @@ import (
 	"k8s.io/helm/cmd/helm/installer"
 	"k8s.io/helm/pkg/chartutil"
 	helmclient "k8s.io/helm/pkg/helm"
+	hapirelease "k8s.io/helm/pkg/proto/hapi/release"
 	hapiservices "k8s.io/helm/pkg/proto/hapi/services"
 )
 
@@ -405,19 +406,31 @@ func (c *Client) RunReleaseTest(releaseName string, options ...helmclient.Releas
 	}
 	defer c.closeTunnel(t)
 
-	response, errors := c.newHelmClientFromTunnel(t).RunReleaseTest(releaseName)
+	resChan, errChan := c.newHelmClientFromTunnel(t).RunReleaseTest(releaseName,
+		helmclient.ReleaseTestTimeout(300),
+	)
 	if IsReleaseNotFound(err) {
 		return backoff.Permanent(microerror.Maskf(releaseNotFoundError, releaseName))
 	} else if err != nil {
 		return microerror.Mask(err)
 	}
 
-	select {
-	case resp := <-response:
-		c.logger.Log("level", "debug", "message", resp.Msg)
-	case err := <-errors:
-		if err != nil {
-			return microerror.Mask(err)
+	for {
+		select {
+		case err := <-errChan:
+			if err != nil {
+				return microerror.Mask(err)
+			}
+		case res, ok := <-resChan:
+			if !ok {
+				break
+			}
+
+			c.logger.Log("level", "debug", "message", res.Msg)
+
+			if res.Status == hapirelease.TestRun_FAILURE {
+				return microerror.Maskf(testReleaseFailureError, "'%s' has failed tests", releaseName)
+			}
 		}
 	}
 
