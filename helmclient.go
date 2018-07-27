@@ -406,9 +406,7 @@ func (c *Client) RunReleaseTest(releaseName string, options ...helmclient.Releas
 	}
 	defer c.closeTunnel(t)
 
-	resChan, errChan := c.newHelmClientFromTunnel(t).RunReleaseTest(releaseName,
-		helmclient.ReleaseTestTimeout(300),
-	)
+	resChan, errChan := c.newHelmClientFromTunnel(t).RunReleaseTest(releaseName, helmclient.ReleaseTestTimeout(300))
 	if IsReleaseNotFound(err) {
 		return backoff.Permanent(microerror.Maskf(releaseNotFoundError, releaseName))
 	} else if err != nil {
@@ -427,7 +425,6 @@ func (c *Client) RunReleaseTest(releaseName string, options ...helmclient.Releas
 			switch res.Status {
 			case hapirelease.TestRun_SUCCESS:
 				c.logger.Log("level", "debug", "message", fmt.Sprintf("successfully ran tests for release '%s'", releaseName))
-
 				return nil
 			case hapirelease.TestRun_FAILURE:
 				return microerror.Maskf(testReleaseFailureError, "'%s' has failed tests", releaseName)
