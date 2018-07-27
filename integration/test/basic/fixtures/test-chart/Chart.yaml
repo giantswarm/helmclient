@@ -2,16 +2,3 @@ apiVersion: v1
 description: A Helm chart for Kubernetes
 name: test-chart
 version: 3.2.1
-  
-namespace: default
-
-pod:
-  name: nginx
-  image:
-    repository: nginx
-
-test:
-  image:
-    registry: quay.io
-    repository: giantswarm/alpine-testing
-    tag: 0.1.0
