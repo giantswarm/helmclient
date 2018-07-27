@@ -23,6 +23,11 @@ import (
 	hapiservices "k8s.io/helm/pkg/proto/hapi/services"
 )
 
+const (
+	// runReleaseTestTimeout is the timeout in seconds when running tests.
+	runReleaseTestTimout = 300
+)
+
 // Config represents the configuration used to create a helm client.
 type Config struct {
 	// HelmClient sets a helm client used for all operations of the initiated
@@ -399,7 +404,7 @@ func (c *Client) InstallFromTarball(path, ns string, options ...helmclient.Insta
 // name of the Helm Release that is set when the Helm Chart is installed. This
 // is the same action as running the helm test command.
 func (c *Client) RunReleaseTest(releaseName string, options ...helmclient.ReleaseTestOption) error {
-	c.logger.Log("level", "debug", "message", fmt.Sprintf("running tests for release '%s'", releaseName))
+	c.logger.Log("level", "debug", "message", fmt.Sprintf("running release tests for '%s'", releaseName))
 
 	t, err := c.newTunnel()
 	if err != nil {
@@ -407,7 +412,7 @@ func (c *Client) RunReleaseTest(releaseName string, options ...helmclient.Releas
 	}
 	defer c.closeTunnel(t)
 
-	resChan, errChan := c.newHelmClientFromTunnel(t).RunReleaseTest(releaseName, helmclient.ReleaseTestTimeout(300))
+	resChan, errChan := c.newHelmClientFromTunnel(t).RunReleaseTest(releaseName, helmclient.ReleaseTestTimeout(int64(runReleaseTestTimout)))
 	if IsReleaseNotFound(err) {
 		return backoff.Permanent(microerror.Maskf(releaseNotFoundError, releaseName))
 	} else if err != nil {
@@ -430,7 +435,7 @@ func (c *Client) RunReleaseTest(releaseName string, options ...helmclient.Releas
 			case hapirelease.TestRun_FAILURE:
 				return microerror.Maskf(testReleaseFailureError, "'%s' has failed tests", releaseName)
 			}
-		case <-time.After(300 * time.Second):
+		case <-time.After(runReleaseTestTimout * time.Second):
 			return microerror.Mask(testReleaseTimeoutError)
 		}
 	}
