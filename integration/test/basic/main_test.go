@@ -31,9 +31,8 @@ func init() {
 		c := framework.HostConfig{
 			Logger: logger,
 
-			ClusterID:       "someval",
-			TargetNamespace: "default",
-			VaultToken:      "someval",
+			ClusterID:  "someval",
+			VaultToken: "someval",
 		}
 
 		h, err = framework.NewHost(c)
