@@ -195,12 +195,12 @@
   revision = "51a7ca6b403dc133497da26a0a30684a5df56752"
 
 [[projects]]
-  branch = "refactor"
+  branch = "master"
   digest = "1:aff4157beb61837e21efdd4a73927fa85ceab4b21a80d1f00a092d535844c5ae"
   name = "github.com/giantswarm/k8sportforward"
   packages = ["."]
   pruneopts = "UT"
-  revision = "a17442445dff9a26e6072a35197fae316e28c789"
+  revision = "cee042b3bd70531ea52f41df02c04430879806e2"
 
 [[projects]]
   branch = "master"
@@ -247,12 +247,12 @@
   version = "v0.3.0"
 
 [[projects]]
-  digest = "1:4a4785749b54b948fd45be3824c6bb1d606578a440657f7cabc79dbbbdc7c476"
+  digest = "1:b7fc4c3fd91df516486f53cc86f4b55a0c815782dbe852c5a19cce8e6c577aac"
   name = "github.com/go-resty/resty"
   packages = ["."]
   pruneopts = "UT"
-  revision = "383acc8a8b687098ee02168c0335a43dfee701f0"
-  version = "v1.9.0"
+  revision = "d4920dcf5b7689548a6db640278a9b35a5b48ec6"
+  version = "v1.9.1"
 
 [[projects]]
   digest = "1:586ea76dbd0374d6fb649a91d70d652b7fe0ccffb8910a77468e7702e7901f3d"
@@ -322,11 +322,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:3d7f7c2ff628a07c089a3333e2f2a38204429b813a4dc4174b0afc236e4f09ba"
+  digest = "1:6c50492d5d411683c7b84bf9ce6d6bf90a740fe20edaef05499ce406f4bc0e45"
   name = "github.com/google/go-github"
   packages = ["github"]
   pruneopts = "UT"
-  revision = "0780c362705b9dadba66f73253998fe81dec6c37"
+  revision = "3dd825b438d329c9c1c74ce4271a95f2cb7ad78d"
 
 [[projects]]
   branch = "master"
@@ -357,15 +357,15 @@
   version = "v0.2.0"
 
 [[projects]]
-  branch = "master"
-  digest = "1:cf296baa185baae04a9a7004efee8511d08e2f5f51d4cbe5375da89722d681db"
+  digest = "1:8ec8d88c248041a6df5f6574b87bc00e7e0b493881dad2e7ef47b11dc69093b5"
   name = "github.com/hashicorp/golang-lru"
   packages = [
     ".",
     "simplelru",
   ]
   pruneopts = "UT"
-  revision = "0fb14efe8c47ae851c0034ed7a448854d3d34cf3"
+  revision = "20f1fb78b0740ba8c3cb143a61e86ba5c8669768"
+  version = "v0.5.0"
 
 [[projects]]
   branch = "master"
