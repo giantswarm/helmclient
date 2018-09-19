@@ -93,7 +93,7 @@ func (c *Client) DeleteRelease(releaseName string, options ...helmclient.DeleteO
 
 		_, err = c.newHelmClientFromTunnel(t).DeleteRelease(releaseName, options...)
 		if IsReleaseNotFound(err) {
-			return backoff.Permanent(microerror.Maskf(releaseNotFoundError, releaseName))
+			return backoff.Permanent(microerror.Mask(err))
 		} else if IsTillerNotFound(err) {
 			return backoff.Permanent(microerror.Mask(err))
 		} else if err != nil {
@@ -281,7 +281,7 @@ func (c *Client) GetReleaseContent(releaseName string) (*ReleaseContent, error) 
 
 			resp, err = c.newHelmClientFromTunnel(t).ReleaseContent(releaseName)
 			if IsReleaseNotFound(err) {
-				return backoff.Permanent(microerror.Maskf(releaseNotFoundError, releaseName))
+				return backoff.Permanent(microerror.Mask(err))
 			} else if IsTillerNotFound(err) {
 				return backoff.Permanent(microerror.Mask(err))
 			} else if err != nil {
@@ -336,7 +336,7 @@ func (c *Client) GetReleaseHistory(releaseName string) (*ReleaseHistory, error) 
 
 			resp, err = c.newHelmClientFromTunnel(t).ReleaseHistory(releaseName, helmclient.WithMaxHistory(1))
 			if IsReleaseNotFound(err) {
-				return backoff.Permanent(microerror.Maskf(releaseNotFoundError, releaseName))
+				return backoff.Permanent(microerror.Mask(err))
 			} else if IsTillerNotFound(err) {
 				return backoff.Permanent(microerror.Mask(err))
 			} else if err != nil {
@@ -389,9 +389,9 @@ func (c *Client) InstallFromTarball(path, ns string, options ...helmclient.Insta
 
 		release, err := c.newHelmClientFromTunnel(t).InstallRelease(path, ns, options...)
 		if IsCannotReuseRelease(err) {
-			return backoff.Permanent(cannotReuseReleaseError)
+			return backoff.Permanent(microerror.Mask(err))
 		} else if IsReleaseNotFound(err) {
-			return backoff.Permanent(releaseNotFoundError)
+			return backoff.Permanent(microerror.Mask(err))
 		} else if IsTillerNotFound(err) {
 			return backoff.Permanent(microerror.Mask(err))
 		} else if err != nil {
@@ -451,7 +451,7 @@ func (c *Client) RunReleaseTest(releaseName string, options ...helmclient.Releas
 
 	resChan, errChan := c.newHelmClientFromTunnel(t).RunReleaseTest(releaseName, helmclient.ReleaseTestTimeout(int64(runReleaseTestTimout)))
 	if IsReleaseNotFound(err) {
-		return backoff.Permanent(microerror.Maskf(releaseNotFoundError, releaseName))
+		return backoff.Permanent(microerror.Mask(err))
 	} else if IsTillerNotFound(err) {
 		return backoff.Permanent(microerror.Mask(err))
 	} else if err != nil {
@@ -492,7 +492,7 @@ func (c *Client) UpdateReleaseFromTarball(releaseName, path string, options ...h
 
 		release, err := c.newHelmClientFromTunnel(t).UpdateRelease(releaseName, path, options...)
 		if IsReleaseNotFound(err) {
-			return backoff.Permanent(microerror.Maskf(releaseNotFoundError, releaseName))
+			return backoff.Permanent(microerror.Mask(err))
 		} else if err != nil {
 			if IsInvalidGZipHeader(err) {
 				content, readErr := ioutil.ReadFile(path)
