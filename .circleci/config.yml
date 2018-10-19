@@ -15,7 +15,7 @@ e2eTest: &e2eTest
 
     - run: ./e2e-harness setup --remote=false
 
-    - run: ./e2e-harness test --test-dir=integration/test/basic
+    - run: ./e2e-harness test --test-dir=${TEST_DIR}
 
     - run:
         name: Finish with cleanup, no matter if the test succeeded or not
@@ -47,7 +47,11 @@ jobs:
             ./architect deploy
           fi
 
-  e2eTestExecution:
+
+
+  e2eTestBasic:
+    environment:
+      TEST_DIR: "integration/test/basic"
     <<: *e2eTest
 
 
@@ -57,6 +61,6 @@ workflows:
   build_e2e:
     jobs:
       - build
-      - e2eTestExecution:
+      - e2eTestBasic:
           requires:
           - build
