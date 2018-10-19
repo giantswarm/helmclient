@@ -42,7 +42,6 @@ func NewConfig() (Config, error) {
 		if err != nil {
 			return Config{}, microerror.Mask(err)
 		}
-
 	}
 
 	var k8sClient *kubernetes.Clientset
