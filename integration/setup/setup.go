@@ -29,7 +29,7 @@ func setup(ctx context.Context, m *testing.M, config Config) (int, error) {
 	teardown := !env.CircleCI() && !env.KeepResources()
 
 	{
-		err = config.K8sSetup.EnsureNamespace(ctx, tillerNamespace)
+		err = config.K8sSetup.EnsureNamespaceCreated(ctx, tillerNamespace)
 		if err != nil {
 			return 1, microerror.Mask(err)
 		}
