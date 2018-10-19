@@ -29,13 +29,17 @@ func setup(ctx context.Context, m *testing.M, config Config) (int, error) {
 	teardown := !env.CircleCI() && !env.KeepResources()
 
 	{
-		// TODO this should be named EnsureNamespaceCreated
 		err = config.K8sSetup.EnsureNamespace(ctx, tillerNamespace)
 		if err != nil {
 			return 1, microerror.Mask(err)
 		}
 		if teardown {
-			// TODO defer config.K8sSetup.EnsureNamespaceDeleted(ctx, tillerNamespace)
+			defer func() {
+				err := config.K8sSetup.EnsureNamespaceDeleted(ctx, tillerNamespace)
+				if err != nil {
+					config.Logger.LogCtx(ctx, "level", "error", "message", fmt.Sprintf("failed to delete namespace %#q", tillerNamespace), "stack", fmt.Sprintf("%#v", err))
+				}
+			}()
 		}
 	}
 
