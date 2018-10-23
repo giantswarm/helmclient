@@ -68,8 +68,7 @@ func TestInstallRelease_IsTarballNotFound(t *testing.T) {
 	err = config.HelmClient.InstallFromTarball(tarballPath, "default", helm.ReleaseName(releaseName), helm.ValueOverrides([]byte("{}")))
 	if helmclient.IsTarballNotFound(err) {
 		// This is error we want.
-	}
-	if err != nil {
+	} else if err != nil {
 		t.Fatalf("failed to install release %#v", err)
 	}
 }
