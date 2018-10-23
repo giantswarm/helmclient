@@ -398,13 +398,6 @@ func (c *Client) InstallFromTarball(path, ns string, options ...helmclient.Insta
 			return backoff.Permanent(microerror.Mask(err))
 		} else if IsTarballNotFound(err) {
 			return backoff.Permanent(microerror.Mask(err))
-		} else if IsReleaseNotFound(err) {
-			// This is out of alphabetical order. But
-			// IsReleaseNotFound is rather bold And I want to catch
-			// other errors first. I don't know why do we even
-			// match by it here. Also it would be good to have
-			// tests of all the matchers.
-			return backoff.Permanent(microerror.Mask(err))
 		} else if err != nil {
 			if IsInvalidGZipHeader(err) {
 				content, readErr := ioutil.ReadFile(path)
