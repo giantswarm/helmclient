@@ -49,6 +49,16 @@ func Create(chartDirName string) (string, error) {
 	}
 
 	{
+		dir := filepath.Dir(tarballPath)
+		if dir != "." && dir != "/" {
+			err := os.MkdirAll(dir, 0755)
+			if err != nil {
+				return "", microerror.Mask(err)
+			}
+		}
+	}
+
+	{
 		err := archiver.TarGz.Make(tarballPath, []string{chartDirPath})
 		if err != nil {
 			if err != nil {
