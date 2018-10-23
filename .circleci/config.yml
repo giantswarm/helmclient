@@ -54,6 +54,11 @@ jobs:
       TEST_DIR: "integration/test/basic"
     <<: *e2eTest
 
+  e2eTestInstallRelease:
+    environment:
+      TEST_DIR: "integration/test/installrelease"
+    <<: *e2eTest
+
 
 
 workflows:
@@ -62,5 +67,9 @@ workflows:
     jobs:
       - build
       - e2eTestBasic:
+          requires:
+          - build
+      - build
+      - e2eTestInstallRelease:
           requires:
           - build
