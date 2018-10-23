@@ -10,7 +10,7 @@ import (
 	"k8s.io/helm/pkg/helm"
 )
 
-func TestInstallChart(t *testing.T) {
+func TestBasic(t *testing.T) {
 	var err error
 
 	const releaseName = "test"
