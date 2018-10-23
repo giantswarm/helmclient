@@ -44,9 +44,10 @@ func TestInstallRelease_IsReleaseAlreadyExists(t *testing.T) {
 	err = config.HelmClient.InstallFromTarball(tarballPath, "default", helm.ReleaseName(releaseName), helm.ValueOverrides([]byte("{}")))
 	if helmclient.IsReleaseAlreadyExists(err) {
 		// This is error we want.
-	}
-	if err != nil {
+	} else if err != nil {
 		t.Fatalf("failed to install release %#v", err)
+	} else {
+		t.Fatalf("expected error for already installed release, got %#v", err)
 	}
 }
 
@@ -70,5 +71,7 @@ func TestInstallRelease_IsTarballNotFound(t *testing.T) {
 		// This is error we want.
 	} else if err != nil {
 		t.Fatalf("failed to install release %#v", err)
+	} else {
+		t.Fatalf("expected error on missing tarball, got %#v", err)
 	}
 }
