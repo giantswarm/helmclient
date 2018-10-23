@@ -3,25 +3,28 @@
 package basic
 
 import (
-	"path/filepath"
+	"os"
 	"testing"
 
+	"github.com/giantswarm/helmclient/integration/charttarball"
 	"k8s.io/helm/pkg/helm"
 )
 
 func TestInstallChart(t *testing.T) {
 	var err error
 
+	const releaseName = "test"
+
+	tarballPath, err := charttarball.Create("test-chart")
+	if err != nil {
+		t.Fatalf("could not create chart archive %#v", err)
+	}
+	defer os.Remove(tarballPath)
+
 	err = config.HelmClient.EnsureTillerInstalled()
 	if err != nil {
 		t.Fatalf("could not install Tiller %#v", err)
 	}
-
-	// TODO extract tarball creation in setup package.
-	// --test-dir dir is mounted in /e2e in the test container.
-	tarballPath := filepath.Join("/e2e/fixtures/", "tb-chart.tar.gz")
-
-	const releaseName = "tb-chart-release"
 
 	// We need to pass the ValueOverrides option to make the install process
 	// use the default values and prevent errors on nested values.
