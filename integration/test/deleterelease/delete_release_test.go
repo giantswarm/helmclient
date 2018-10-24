@@ -21,7 +21,7 @@ func TestDeleteRelease_IsReleaseNotFound(t *testing.T) {
 	}
 	defer os.Remove(tarballPath)
 
-	err = config.HelmClient.EnsureTillerDeleteed()
+	err = config.HelmClient.EnsureTillerInstalled()
 	if err != nil {
 		t.Fatalf("could not install Tiller %#v", err)
 	}
