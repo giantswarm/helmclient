@@ -399,7 +399,7 @@ func (c *Client) GetReleaseHistory(ctx context.Context, releaseName string) (*Re
 	return history, nil
 }
 
-// InstallFromTarball installs a chart packaged in the given tarball.
+// InstallReleaseFromTarball installs a chart packaged in the given tarball.
 func (c *Client) InstallReleaseFromTarball(ctx context.Context, path, ns string, options ...helmclient.InstallOption) error {
 	o := func() error {
 		t, err := c.newTunnel()
