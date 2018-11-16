@@ -1,6 +1,7 @@
 package helmclient
 
 import (
+	"context"
 	"reflect"
 	"testing"
 
@@ -48,6 +49,8 @@ func Test_DeleteRelease(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
+		ctx := context.Background()
+
 		t.Run(tc.description, func(t *testing.T) {
 			helm := Client{
 				helmClient: &helmclient.FakeClient{
@@ -55,7 +58,7 @@ func Test_DeleteRelease(t *testing.T) {
 				},
 				logger: microloggertest.New(),
 			}
-			err := helm.DeleteRelease(tc.releaseName)
+			err := helm.DeleteRelease(ctx, tc.releaseName)
 
 			switch {
 			case err == nil && tc.errorMatcher == nil:
@@ -132,13 +135,15 @@ func Test_GetReleaseContent(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.description, func(t *testing.T) {
+			ctx := context.Background()
+
 			helm := Client{
 				helmClient: &helmclient.FakeClient{
 					Rels: tc.releases,
 				},
 				logger: microloggertest.New(),
 			}
-			result, err := helm.GetReleaseContent(tc.releaseName)
+			result, err := helm.GetReleaseContent(ctx, tc.releaseName)
 
 			switch {
 			case err == nil && tc.errorMatcher == nil:
@@ -236,13 +241,15 @@ func Test_GetReleaseHistory(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.description, func(t *testing.T) {
+			ctx := context.Background()
+
 			helm := Client{
 				helmClient: &helmclient.FakeClient{
 					Rels: tc.releases,
 				},
 				logger: microloggertest.New(),
 			}
-			result, err := helm.GetReleaseHistory(tc.releaseName)
+			result, err := helm.GetReleaseHistory(ctx, tc.releaseName)
 
 			switch {
 			case err == nil && tc.errorMatcher == nil:
@@ -299,6 +306,8 @@ func Test_Client_InstallFromTarball(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.description, func(t *testing.T) {
+			ctx := context.Background()
+
 			helm := Client{
 				helmClient: &helmclient.FakeClient{
 					Rels: tc.releases,
@@ -306,7 +315,7 @@ func Test_Client_InstallFromTarball(t *testing.T) {
 				logger: microloggertest.New(),
 			}
 			// helm fake client does not actually use the tarball.
-			err := helm.InstallFromTarball("/path", tc.namespace, helmclient.ReleaseName("test-chart"))
+			err := helm.InstallReleaseFromTarball(ctx, "/path", tc.namespace, helmclient.ReleaseName("test-chart"))
 
 			switch {
 			case err == nil && !tc.expectedError:
@@ -360,6 +369,8 @@ func Test_UpdateReleaseFromTarball(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.description, func(t *testing.T) {
+			ctx := context.Background()
+
 			helm := Client{
 				helmClient: &helmclient.FakeClient{
 					Rels: tc.releases,
@@ -367,7 +378,7 @@ func Test_UpdateReleaseFromTarball(t *testing.T) {
 				logger: microloggertest.New(),
 			}
 			// helm fake client does not actually use the tarball.
-			err := helm.UpdateReleaseFromTarball(tc.releaseName, "/path")
+			err := helm.UpdateReleaseFromTarball(ctx, tc.releaseName, "/path")
 
 			switch {
 			case err == nil && tc.errorMatcher == nil:
