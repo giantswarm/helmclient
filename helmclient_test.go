@@ -1,6 +1,7 @@
 package helmclient
 
 import (
+	"context"
 	"reflect"
 	"testing"
 
@@ -317,6 +318,157 @@ func Test_Client_InstallFromTarball(t *testing.T) {
 				t.Fatalf("error == nil, want non-nil")
 			case !tc.expectedError:
 				t.Fatalf("error == %#v, want matching", err)
+			}
+		})
+	}
+}
+
+func Test_Client_ListReleaseContents(t *testing.T) {
+	testCases := []struct {
+		description      string
+		releases         []*helmrelease.Release
+		expectedContents []*ReleaseContent
+		errorMatcher     func(error) bool
+	}{
+		{
+			description:      "case 0: no releases",
+			releases:         []*helmrelease.Release{},
+			expectedContents: []*ReleaseContent{},
+			errorMatcher:     nil,
+		},
+		{
+			description: "case 1: one release",
+			releases: []*helmrelease.Release{
+				helmclient.ReleaseMock(&helmclient.MockReleaseOptions{
+					Name:      "foobar",
+					Namespace: "default",
+				}),
+			},
+			expectedContents: []*ReleaseContent{
+				{
+					Name:   "foobar",
+					Status: "DEPLOYED",
+					Values: map[string]interface{}{
+						"name": "value",
+					},
+				},
+			},
+			errorMatcher: nil,
+		},
+		{
+			description: "case 2: two releases, in two namespaces",
+			releases: []*helmrelease.Release{
+				helmclient.ReleaseMock(&helmclient.MockReleaseOptions{
+					Name:      "foobar",
+					Namespace: "default",
+				}),
+				helmclient.ReleaseMock(&helmclient.MockReleaseOptions{
+					Name:      "jabberwocky",
+					Namespace: "not-default",
+				}),
+			},
+			expectedContents: []*ReleaseContent{
+				{
+					Name:   "foobar",
+					Status: "DEPLOYED",
+					Values: map[string]interface{}{
+						"name": "value",
+					},
+				},
+				{
+					Name:   "jabberwocky",
+					Status: "DEPLOYED",
+					Values: map[string]interface{}{
+						"name": "value",
+					},
+				},
+			},
+			errorMatcher: nil,
+		},
+		{
+			description: "case 3: two releases, one successful, one failed",
+			releases: []*helmrelease.Release{
+				helmclient.ReleaseMock(&helmclient.MockReleaseOptions{
+					Name:       "foobar",
+					Namespace:  "default",
+					StatusCode: helmrelease.Status_DEPLOYED,
+				}),
+				helmclient.ReleaseMock(&helmclient.MockReleaseOptions{
+					Name:       "jabberwocky",
+					Namespace:  "default",
+					StatusCode: helmrelease.Status_FAILED,
+				}),
+			},
+			expectedContents: []*ReleaseContent{
+				{
+					Name:   "foobar",
+					Status: "DEPLOYED",
+					Values: map[string]interface{}{
+						"name": "value",
+					},
+				},
+				{
+					Name:   "jabberwocky",
+					Status: "FAILED",
+					Values: map[string]interface{}{
+						"name": "value",
+					},
+				},
+			},
+			errorMatcher: nil,
+		},
+		{
+			description: "case 4: two releases of the same chart with different versions",
+			releases: []*helmrelease.Release{
+				helmclient.ReleaseMock(&helmclient.MockReleaseOptions{
+					Name:       "foobar",
+					Namespace:  "default",
+					StatusCode: helmrelease.Status_FAILED,
+					Version:    1,
+				}),
+				helmclient.ReleaseMock(&helmclient.MockReleaseOptions{
+					Name:       "foobar",
+					Namespace:  "default",
+					StatusCode: helmrelease.Status_DEPLOYED,
+					Version:    2,
+				}),
+			},
+			expectedContents: []*ReleaseContent{
+				{
+					Name:   "foobar",
+					Status: "DEPLOYED",
+					Values: map[string]interface{}{
+						"name": "value",
+					},
+				},
+			},
+			errorMatcher: nil,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.description, func(t *testing.T) {
+			helm := Client{
+				helmClient: &helmclient.FakeClient{
+					Rels: tc.releases,
+				},
+				logger: microloggertest.New(),
+			}
+			result, err := helm.ListReleaseContents(context.Background())
+
+			switch {
+			case err == nil && tc.errorMatcher == nil:
+				// correct; carry on
+			case err != nil && tc.errorMatcher == nil:
+				t.Fatalf("error == %#v, want nil", err)
+			case err == nil && tc.errorMatcher != nil:
+				t.Fatalf("error == nil, want non-nil")
+			case !tc.errorMatcher(err):
+				t.Fatalf("error == %#v, want matching", err)
+			}
+
+			if !reflect.DeepEqual(result, tc.expectedContents) {
+				t.Fatalf("Releases == %q, want %q", result, tc.expectedContents)
 			}
 		})
 	}
