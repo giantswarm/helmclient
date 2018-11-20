@@ -3,6 +3,7 @@
 package basic
 
 import (
+	"context"
 	"os"
 	"testing"
 
@@ -12,6 +13,7 @@ import (
 )
 
 func TestInstallRelease_IsReleaseAlreadyExists(t *testing.T) {
+	ctx := context.Background()
 	var err error
 
 	const releaseName = "test"
@@ -22,7 +24,7 @@ func TestInstallRelease_IsReleaseAlreadyExists(t *testing.T) {
 	}
 	defer os.Remove(tarballPath)
 
-	err = config.HelmClient.EnsureTillerInstalled()
+	err = config.HelmClient.EnsureTillerInstalled(ctx)
 	if err != nil {
 		t.Fatalf("could not install Tiller %#v", err)
 	}
@@ -36,12 +38,12 @@ func TestInstallRelease_IsReleaseAlreadyExists(t *testing.T) {
 	//		executing "cnr-server-chart/templates/deployment.yaml" at <.Values.image.reposi...>: can't evaluate field repository in type interface {}
 	//	}
 	//
-	err = config.HelmClient.InstallFromTarball(tarballPath, "default", helm.ReleaseName(releaseName), helm.ValueOverrides([]byte("{}")))
+	err = config.HelmClient.InstallReleaseFromTarball(ctx, tarballPath, "default", helm.ReleaseName(releaseName), helm.ValueOverrides([]byte("{}")))
 	if err != nil {
 		t.Fatalf("failed to install release %#v", err)
 	}
 
-	err = config.HelmClient.InstallFromTarball(tarballPath, "default", helm.ReleaseName(releaseName), helm.ValueOverrides([]byte("{}")))
+	err = config.HelmClient.InstallReleaseFromTarball(ctx, tarballPath, "default", helm.ReleaseName(releaseName), helm.ValueOverrides([]byte("{}")))
 	if helmclient.IsReleaseAlreadyExists(err) {
 		// This is error we want.
 	} else if err != nil {
@@ -52,6 +54,7 @@ func TestInstallRelease_IsReleaseAlreadyExists(t *testing.T) {
 }
 
 func TestInstallRelease_IsTarballNotFound(t *testing.T) {
+	ctx := context.Background()
 	var err error
 
 	const releaseName = "test"
@@ -66,7 +69,7 @@ func TestInstallRelease_IsTarballNotFound(t *testing.T) {
 	//		executing "cnr-server-chart/templates/deployment.yaml" at <.Values.image.reposi...>: can't evaluate field repository in type interface {}
 	//	}
 	//
-	err = config.HelmClient.InstallFromTarball(tarballPath, "default", helm.ReleaseName(releaseName), helm.ValueOverrides([]byte("{}")))
+	err = config.HelmClient.InstallReleaseFromTarball(ctx, tarballPath, "default", helm.ReleaseName(releaseName), helm.ValueOverrides([]byte("{}")))
 	if helmclient.IsTarballNotFound(err) {
 		// This is error we want.
 	} else if err != nil {
