@@ -3,6 +3,7 @@
 package basic
 
 import (
+	"context"
 	"os"
 	"testing"
 
@@ -11,6 +12,7 @@ import (
 )
 
 func TestDeleteRelease_IsReleaseNotFound(t *testing.T) {
+	ctx := context.Background()
 	var err error
 
 	const releaseName = "test"
@@ -21,12 +23,12 @@ func TestDeleteRelease_IsReleaseNotFound(t *testing.T) {
 	}
 	defer os.Remove(tarballPath)
 
-	err = config.HelmClient.EnsureTillerInstalled()
+	err = config.HelmClient.EnsureTillerInstalled(ctx)
 	if err != nil {
 		t.Fatalf("could not install Tiller %#v", err)
 	}
 
-	err = config.HelmClient.DeleteRelease(releaseName)
+	err = config.HelmClient.DeleteRelease(ctx, releaseName)
 	if helmclient.IsReleaseNotFound(err) {
 		// This is error we want.
 	} else if err != nil {
