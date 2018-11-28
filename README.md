@@ -12,5 +12,6 @@ Package helmclient implements Helm related primitives to work against Tiller.
 
 ### Services & operators
 
+- https://github.com/giantswarm/aws-operator
 - https://github.com/giantswarm/chart-operator
 - https://github.com/giantswarm/cluster-operator
