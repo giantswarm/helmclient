@@ -207,7 +207,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:4ddd1df6c63413a6686c91013ff2d7646fd0a51f507c820c87dd1be419abaadc"
+  digest = "1:b6442389f59fc5a099b8bcd1400a466be357381ea50d42da02c7ff5d97f10c17"
   name = "github.com/giantswarm/micrologger"
   packages = [
     ".",
@@ -215,7 +215,7 @@
     "microloggertest",
   ]
   pruneopts = "UT"
-  revision = "22dc3b5565d150e1f94fbed50df3baf6cd40fac9"
+  revision = "d2e3330111940efc1f304fb5c4d1bd909acf3cf6"
 
 [[projects]]
   digest = "1:0cfcded8689c2c964c223650009c5dd9e283c22d57f18f2335aafa16cc22acf1"
