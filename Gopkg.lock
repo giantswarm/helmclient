@@ -167,14 +167,6 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:d2eb2f623d37e244a0ce7334183312db99e5a3045f94c5233596c39b53b36f75"
-  name = "github.com/giantswarm/e2e-harness"
-  packages = ["pkg/harness"]
-  pruneopts = "UT"
-  revision = "2dc91edde14efe66f5de10fd86c63e1ed8a6f3be"
-
-[[projects]]
-  branch = "master"
   digest = "1:b50befcc0b01f8000103d2c07a8b47be2547d272a01b8689cc044281d48fe069"
   name = "github.com/giantswarm/e2esetup"
   packages = ["k8s"]
@@ -506,17 +498,6 @@
   revision = "619930b0b4713cc1280189bf0a4c54b3fb506f60"
 
 [[projects]]
-  digest = "1:6a4a11ba764a56d2758899ec6f3848d24698d48442ebce85ee7a3f63284526cd"
-  name = "github.com/spf13/afero"
-  packages = [
-    ".",
-    "mem",
-  ]
-  pruneopts = "UT"
-  revision = "d40851caa0d747393da1ffb28f7f9d8b4eeffebd"
-  version = "v1.1.2"
-
-[[projects]]
   digest = "1:645cabccbb4fa8aab25a956cbcbdf6a6845ca736b2c64e197ca7cbb9d210b939"
   name = "github.com/spf13/cobra"
   packages = ["."]
@@ -688,12 +669,12 @@
   version = "v2.1.9"
 
 [[projects]]
-  branch = "v2"
-  digest = "1:4d2e5a73dc1500038e504a8d78b986630e3626dc027bc030ba5c75da257cdb96"
+  digest = "1:342378ac4dcb378a5448dd723f0784ae519383532f5e70ade24132c4c8693202"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
   pruneopts = "UT"
-  revision = "51d6538a90f86fe93ac480b35f37b2be17fef232"
+  revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
+  version = "v2.2.1"
 
 [[projects]]
   digest = "1:1537dffcab6c5ed740c06e16df243a39a54bc69e0d221271e6da4b235160ceab"
@@ -1171,7 +1152,6 @@
     "github.com/Azure/go-autorest/autorest",
     "github.com/docker/distribution/reference",
     "github.com/giantswarm/backoff",
-    "github.com/giantswarm/e2e-harness/pkg/harness",
     "github.com/giantswarm/e2esetup/k8s",
     "github.com/giantswarm/errors/guest",
     "github.com/giantswarm/k8sportforward",
