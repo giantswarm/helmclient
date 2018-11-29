@@ -14,9 +14,10 @@ import (
 )
 
 /*
-
 	NOTE: This code is copied from e2esetup/k8s package to avoid circular
 	dependencies. All changes made there should be reflected in e2esetup.
+
+		See https://github.com/giantswarm/e2esetup/pull/13
 
 */
 
