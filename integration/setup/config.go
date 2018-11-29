@@ -3,7 +3,6 @@
 package setup
 
 import (
-	"github.com/giantswarm/e2e-harness/pkg/harness"
 	"github.com/giantswarm/e2esetup/k8s"
 	"github.com/giantswarm/helmclient"
 	"github.com/giantswarm/microerror"
@@ -38,7 +37,7 @@ func NewConfig() (Config, error) {
 
 	var restConfig *rest.Config
 	{
-		restConfig, err = clientcmd.BuildConfigFromFlags("", harness.DefaultKubeConfig)
+		restConfig, err = clientcmd.BuildConfigFromFlags("", e2eHarnessDefaultKubeconfig)
 		if err != nil {
 			return Config{}, microerror.Mask(err)
 		}
