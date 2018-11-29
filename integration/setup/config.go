@@ -3,13 +3,14 @@
 package setup
 
 import (
-	"github.com/giantswarm/e2esetup/k8s"
-	"github.com/giantswarm/helmclient"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
+
+	"github.com/giantswarm/helmclient"
+	"github.com/giantswarm/helmclient/integration/setup/k8s"
 )
 
 const (

@@ -167,14 +167,6 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:b50befcc0b01f8000103d2c07a8b47be2547d272a01b8689cc044281d48fe069"
-  name = "github.com/giantswarm/e2esetup"
-  packages = ["k8s"]
-  pruneopts = "UT"
-  revision = "4e790eb032b59136b2a946e1ead01592df4c870a"
-
-[[projects]]
-  branch = "master"
   digest = "1:a880954e10c62b72dd4c6085d3a64d659b51c10116d2ceb17edbc483a5e4b101"
   name = "github.com/giantswarm/errors"
   packages = ["guest"]
@@ -199,7 +191,7 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:b6442389f59fc5a099b8bcd1400a466be357381ea50d42da02c7ff5d97f10c17"
+  digest = "1:694999f80715134bfa36a3783e55140386f75039f5dae165fd8b2d024ac4b933"
   name = "github.com/giantswarm/micrologger"
   packages = [
     ".",
@@ -207,7 +199,7 @@
     "microloggertest",
   ]
   pruneopts = "UT"
-  revision = "d2e3330111940efc1f304fb5c4d1bd909acf3cf6"
+  revision = "39ed6a99d31b8962e38dfaff287125fb756e8b2a"
 
 [[projects]]
   digest = "1:0cfcded8689c2c964c223650009c5dd9e283c22d57f18f2335aafa16cc22acf1"
@@ -553,7 +545,7 @@
     "trace",
   ]
   pruneopts = "UT"
-  revision = "adae6a3d119ae4890b46832a2e88a95adc62b8e7"
+  revision = "fae4c4e3ad76c295c3d6d259f898136b4bf833a8"
 
 [[projects]]
   branch = "master"
@@ -1152,7 +1144,6 @@
     "github.com/Azure/go-autorest/autorest",
     "github.com/docker/distribution/reference",
     "github.com/giantswarm/backoff",
-    "github.com/giantswarm/e2esetup/k8s",
     "github.com/giantswarm/errors/guest",
     "github.com/giantswarm/k8sportforward",
     "github.com/giantswarm/microerror",

@@ -13,6 +13,13 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
+/*
+
+	NOTE: This code is copied from e2esetup/k8s package to avoid circular
+	dependencies. All changes made there should be reflected in e2esetup.
+
+*/
+
 type SetupConfig struct {
 	K8sClient kubernetes.Interface
 	Logger    micrologger.Logger
