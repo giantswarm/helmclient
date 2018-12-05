@@ -664,6 +664,31 @@ func (c *Client) newTunnel() (*k8sportforward.Tunnel, error) {
 	return tunnel, nil
 }
 
+// filterList returns a list scrubbed of old releases.
+// See https://github.com/helm/helm/blob/3a8a797eab0e1d02456c7944bf41631546ee2e47/cmd/helm/list.go#L197.
+func filterList(rels []*hapirelease.Release) []*hapirelease.Release {
+	idx := map[string]int32{}
+
+	for _, r := range rels {
+		name, version := r.GetName(), r.GetVersion()
+		if max, ok := idx[name]; ok {
+			// check if we have a greater version already
+			if max > version {
+				continue
+			}
+		}
+		idx[name] = version
+	}
+
+	uniq := make([]*hapirelease.Release, 0, len(idx))
+	for _, r := range rels {
+		if idx[r.GetName()] == r.GetVersion() {
+			uniq = append(uniq, r)
+		}
+	}
+	return uniq
+}
+
 func getPod(client kubernetes.Interface, labelSelector, namespace string) (*corev1.Pod, error) {
 	o := metav1.ListOptions{
 		LabelSelector: labelSelector,
@@ -721,29 +746,4 @@ func releaseToReleaseContent(release *hapirelease.Release) (*ReleaseContent, err
 	}
 
 	return content, nil
-}
-
-// filterList returns a list scrubbed of old releases.
-// See https://github.com/helm/helm/blob/3a8a797eab0e1d02456c7944bf41631546ee2e47/cmd/helm/list.go#L197.
-func filterList(rels []*hapirelease.Release) []*hapirelease.Release {
-	idx := map[string]int32{}
-
-	for _, r := range rels {
-		name, version := r.GetName(), r.GetVersion()
-		if max, ok := idx[name]; ok {
-			// check if we have a greater version already
-			if max > version {
-				continue
-			}
-		}
-		idx[name] = version
-	}
-
-	uniq := make([]*hapirelease.Release, 0, len(idx))
-	for _, r := range rels {
-		if idx[r.GetName()] == r.GetVersion() {
-			uniq = append(uniq, r)
-		}
-	}
-	return uniq
 }
