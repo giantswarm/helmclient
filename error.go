@@ -186,6 +186,15 @@ func IsTestReleaseTimeout(err error) bool {
 	return microerror.Cause(err) == testReleaseTimeoutError
 }
 
+var tillerImageNotFoundError = &microerror.Error{
+	Kind: "tillerImageNotFoundError",
+}
+
+// IsTillerImageNotFound asserts tillerImageNotFoundError.
+func IsTillerImageNotFound(err error) bool {
+	return microerror.Cause(err) == tillerImageNotFoundError
+}
+
 var tillerInstallationFailedError = &microerror.Error{
 	Kind: "tillerInstallationFailedError",
 }

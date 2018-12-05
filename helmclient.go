@@ -634,7 +634,7 @@ func (c *Client) newTunnel() (*k8sportforward.Tunnel, error) {
 		return nil, nil
 	}
 
-	podName, err := getPodName(c.k8sClient, tillerLabelSelector, c.tillerNamespace)
+	pod, err := getPod(c.k8sClient, tillerLabelSelector, c.tillerNamespace)
 	if IsNotFound(err) {
 		return nil, microerror.Maskf(tillerNotFoundError, "label selector: %#q namespace: %#q", tillerLabelSelector, c.tillerNamespace)
 	} else if err != nil {
@@ -655,7 +655,7 @@ func (c *Client) newTunnel() (*k8sportforward.Tunnel, error) {
 
 	var tunnel *k8sportforward.Tunnel
 	{
-		tunnel, err = forwarder.ForwardPort(c.tillerNamespace, podName, tillerPort)
+		tunnel, err = forwarder.ForwardPort(c.tillerNamespace, pod.Name, tillerPort)
 		if err != nil {
 			return nil, microerror.Mask(err)
 		}
@@ -664,24 +664,39 @@ func (c *Client) newTunnel() (*k8sportforward.Tunnel, error) {
 	return tunnel, nil
 }
 
-func getPodName(client kubernetes.Interface, labelSelector, namespace string) (string, error) {
+func getPod(client kubernetes.Interface, labelSelector, namespace string) (*corev1.Pod, error) {
 	o := metav1.ListOptions{
 		LabelSelector: labelSelector,
 	}
 	pods, err := client.CoreV1().Pods(namespace).List(o)
 	if err != nil {
-		return "", microerror.Mask(err)
+		return nil, microerror.Mask(err)
 	}
 
 	if len(pods.Items) > 1 {
-		return "", microerror.Maskf(tooManyResultsError, "%d", len(pods.Items))
+		return nil, microerror.Maskf(tooManyResultsError, "%d", len(pods.Items))
 	}
 	if len(pods.Items) == 0 {
-		return "", microerror.Maskf(notFoundError, "%s", labelSelector)
+		return nil, microerror.Maskf(notFoundError, "%s", labelSelector)
 	}
-	pod := pods.Items[0]
 
-	return pod.Name, nil
+	return &pods.Items[0], nil
+}
+
+func getTillerImage(pod *corev1.Pod) (string, error) {
+	if len(pod.Spec.Containers) > 1 {
+		return "", microerror.Maskf(tooManyResultsError, "%d", len(pod.Spec.Containers))
+	}
+	if len(pod.Spec.Containers) == 0 {
+		return "", microerror.Mask(notFoundError)
+	}
+
+	tillerImage := pod.Spec.Containers[0].Image
+	if tillerImage == "" {
+		return "", microerror.Mask(tillerImageNotFoundError)
+	}
+
+	return tillerImage, nil
 }
 
 func releaseToReleaseContent(release *hapirelease.Release) (*ReleaseContent, error) {
