@@ -665,23 +665,53 @@ func (c *Client) newTunnel() (*k8sportforward.Tunnel, error) {
 }
 
 func getPodName(client kubernetes.Interface, labelSelector, namespace string) (string, error) {
+func getPod(client kubernetes.Interface, labelSelector, namespace string) (*corev1.Pod, error) {
 	o := metav1.ListOptions{
 		LabelSelector: labelSelector,
 	}
 	pods, err := client.CoreV1().Pods(namespace).List(o)
 	if err != nil {
-		return "", microerror.Mask(err)
+		return nil, microerror.Mask(err)
 	}
 
 	if len(pods.Items) > 1 {
-		return "", microerror.Maskf(tooManyResultsError, "%d", len(pods.Items))
+		return nil, microerror.Maskf(tooManyResultsError, "%d", len(pods.Items))
 	}
 	if len(pods.Items) == 0 {
-		return "", microerror.Maskf(notFoundError, "%s", labelSelector)
+		return nil, microerror.Maskf(notFoundError, "%s", labelSelector)
 	}
-	pod := pods.Items[0]
+
+	return &pods.Items[0], nil
+}
+
+func getPodName(client kubernetes.Interface, labelSelector, namespace string) (string, error) {
+	pod, err := getPod(client, labelSelector, namespace)
+	if err != nil {
+		return "", microerror.Mask(err)
+	}
 
 	return pod.Name, nil
+}
+
+func getTillerImage(client kubernetes.Interface, labelSelector, namespace string) (string, error) {
+	pod, err := getPod(client, labelSelector, namespace)
+	if err != nil {
+		return "", microerror.Mask(err)
+	}
+
+	if len(pod.Spec.Containers) > 1 {
+		return "", microerror.Maskf(tooManyResultsError, "%d", len(pod.Spec.Containers))
+	}
+	if len(pod.Spec.Containers) == 0 {
+		return "", microerror.Maskf(notFoundError, "%d", len(pod.Spec.Containers))
+	}
+
+	tillerImage := pod.Spec.Containers[0].Image
+	if tillerImage == "" {
+		return "", microerror.Mask(tillerImageNotFoundError)
+	}
+
+	return tillerImage, nil
 }
 
 func releaseToReleaseContent(release *hapirelease.Release) (*ReleaseContent, error) {
