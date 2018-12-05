@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/giantswarm/backoff"
@@ -641,6 +643,11 @@ func (c *Client) newTunnel() (*k8sportforward.Tunnel, error) {
 		return nil, microerror.Mask(err)
 	}
 
+	err = isTillerOutdated(pod)
+	if err != nil {
+		return nil, microerror.Mask(err)
+	}
+
 	var forwarder *k8sportforward.Forwarder
 	{
 		c := k8sportforward.ForwarderConfig{
@@ -718,10 +725,61 @@ func getTillerImage(pod *corev1.Pod) (string, error) {
 
 	tillerImage := pod.Spec.Containers[0].Image
 	if tillerImage == "" {
-		return "", microerror.Mask(tillerImageNotFoundError)
+		return "", microerror.Mask(tillerImageInvalidError)
 	}
 
 	return tillerImage, nil
+}
+
+func isTillerOutdated(pod *corev1.Pod) error {
+	currentTillerImage, err := getTillerImage(pod)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	currentTillerVersion, err := parseTillerVersion(currentTillerImage)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	desiredTillerVersion, err := parseTillerVersion(tillerImageSpec)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	for i, currentVersion := range currentTillerVersion {
+		desiredVersion := desiredTillerVersion[i]
+		if currentVersion < desiredVersion {
+			return microerror.Maskf(tillerOutdatedError, "%#q older than %#q", currentTillerVersion, desiredTillerVersion)
+		}
+	}
+
+	return nil
+}
+
+func parseTillerVersion(tillerImage string) ([]int, error) {
+	version := make([]int, 3)
+
+	imageParts := strings.Split(tillerImage, ":v")
+	if len(imageParts) != 2 {
+		return version, microerror.Maskf(tillerImageInvalidError, "%s", tillerImage)
+	}
+
+	versionParts := strings.Split(imageParts[1], ".")
+	if len(versionParts) != 3 {
+		return version, microerror.Maskf(tillerImageInvalidError, "%s", tillerImage)
+	}
+
+	for i, s := range versionParts {
+		v, err := strconv.Atoi(s)
+		if err != nil {
+			return version, microerror.Mask(err)
+		}
+
+		version[i] = v
+	}
+
+	return version, nil
 }
 
 func releaseToReleaseContent(release *hapirelease.Release) (*ReleaseContent, error) {

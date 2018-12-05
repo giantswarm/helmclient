@@ -186,13 +186,13 @@ func IsTestReleaseTimeout(err error) bool {
 	return microerror.Cause(err) == testReleaseTimeoutError
 }
 
-var tillerImageNotFoundError = &microerror.Error{
-	Kind: "tillerImageNotFoundError",
+var tillerImageInvalidError = &microerror.Error{
+	Kind: "tillerImageInvalidError",
 }
 
-// IsTillerImageNotFound asserts tillerImageNotFoundError.
-func IsTillerImageNotFound(err error) bool {
-	return microerror.Cause(err) == tillerImageNotFoundError
+// IsTillerImageInvalid asserts tillerImageInvalidError.
+func IsTillerImageInvalid(err error) bool {
+	return microerror.Cause(err) == tillerImageInvalidError
 }
 
 var tillerInstallationFailedError = &microerror.Error{
@@ -211,6 +211,15 @@ var tillerNotFoundError = &microerror.Error{
 // IsTillerNotFound asserts tillerNotFoundError.
 func IsTillerNotFound(err error) bool {
 	return microerror.Cause(err) == tillerNotFoundError
+}
+
+var tillerOutdatedError = &microerror.Error{
+	Kind: "tillerOutdatedError",
+}
+
+// IsTillerOutdated asserts tillerOutdatedError.
+func IsTillerOutdated(err error) bool {
+	return microerror.Cause(err) == tillerOutdatedError
 }
 
 var tooManyResultsError = &microerror.Error{
