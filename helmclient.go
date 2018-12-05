@@ -664,7 +664,6 @@ func (c *Client) newTunnel() (*k8sportforward.Tunnel, error) {
 	return tunnel, nil
 }
 
-func getPodName(client kubernetes.Interface, labelSelector, namespace string) (string, error) {
 func getPod(client kubernetes.Interface, labelSelector, namespace string) (*corev1.Pod, error) {
 	o := metav1.ListOptions{
 		LabelSelector: labelSelector,
