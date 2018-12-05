@@ -688,7 +688,7 @@ func getTillerImage(pod *corev1.Pod) (string, error) {
 		return "", microerror.Maskf(tooManyResultsError, "%d", len(pod.Spec.Containers))
 	}
 	if len(pod.Spec.Containers) == 0 {
-		return "", microerror.Maskf(notFoundError, "%d", len(pod.Spec.Containers))
+		return "", microerror.Mask(notFoundError)
 	}
 
 	tillerImage := pod.Spec.Containers[0].Image
