@@ -634,7 +634,7 @@ func (c *Client) newTunnel() (*k8sportforward.Tunnel, error) {
 		return nil, nil
 	}
 
-	podName, err := getPodName(c.k8sClient, tillerLabelSelector, c.tillerNamespace)
+	pod, err := getPod(c.k8sClient, tillerLabelSelector, c.tillerNamespace)
 	if IsNotFound(err) {
 		return nil, microerror.Maskf(tillerNotFoundError, "label selector: %#q namespace: %#q", tillerLabelSelector, c.tillerNamespace)
 	} else if err != nil {
@@ -655,7 +655,7 @@ func (c *Client) newTunnel() (*k8sportforward.Tunnel, error) {
 
 	var tunnel *k8sportforward.Tunnel
 	{
-		tunnel, err = forwarder.ForwardPort(c.tillerNamespace, podName, tillerPort)
+		tunnel, err = forwarder.ForwardPort(c.tillerNamespace, pod.Name, tillerPort)
 		if err != nil {
 			return nil, microerror.Mask(err)
 		}
@@ -683,21 +683,7 @@ func getPod(client kubernetes.Interface, labelSelector, namespace string) (*core
 	return &pods.Items[0], nil
 }
 
-func getPodName(client kubernetes.Interface, labelSelector, namespace string) (string, error) {
-	pod, err := getPod(client, labelSelector, namespace)
-	if err != nil {
-		return "", microerror.Mask(err)
-	}
-
-	return pod.Name, nil
-}
-
-func getTillerImage(client kubernetes.Interface, labelSelector, namespace string) (string, error) {
-	pod, err := getPod(client, labelSelector, namespace)
-	if err != nil {
-		return "", microerror.Mask(err)
-	}
-
+func getTillerImage(pod *corev1.Pod) (string, error) {
 	if len(pod.Spec.Containers) > 1 {
 		return "", microerror.Maskf(tooManyResultsError, "%d", len(pod.Spec.Containers))
 	}
