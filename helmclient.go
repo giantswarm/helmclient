@@ -767,13 +767,13 @@ func parseTillerVersion(tillerImage string) ([]int, error) {
 
 	versionParts := strings.Split(tagParts[0], ".")
 	if len(versionParts) != 3 {
-		return version, microerror.Maskf(executionFailedError, "tiller image tag %#q is invalid", tag)
+		return version, microerror.Maskf(executionFailedError, "version has %d parts expected 3", len(tagParts))
 	}
 
 	for i, s := range versionParts {
 		v, err := strconv.Atoi(s)
 		if err != nil {
-			return version, microerror.Mask(err)
+			return version, microerror.Maskf(executionFailedError, "cannot convert part %d of version %#q", i, tag)
 		}
 
 		version[i] = v
