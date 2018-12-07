@@ -643,11 +643,6 @@ func (c *Client) newTunnel() (*k8sportforward.Tunnel, error) {
 		return nil, microerror.Mask(err)
 	}
 
-	err = isTillerOutdated(pod)
-	if err != nil {
-		return nil, microerror.Mask(err)
-	}
-
 	var forwarder *k8sportforward.Forwarder
 	{
 		c := k8sportforward.ForwarderConfig{
