@@ -755,12 +755,17 @@ func isTillerOutdated(pod *corev1.Pod) error {
 func parseTillerVersion(tillerImage string) ([]int, error) {
 	version := make([]int, 3)
 
+	// Tiller image tag has the version.
 	imageParts := strings.Split(tillerImage, ":v")
 	if len(imageParts) != 2 {
 		return version, microerror.Maskf(tillerImageInvalidError, "%s", tillerImage)
 	}
 
-	versionParts := strings.Split(imageParts[1], ".")
+	// Version may be a release candidate. If so remove the -rc suffix.
+	tag := imageParts[1]
+	tagParts := strings.Split(tag, "-")
+
+	versionParts := strings.Split(tagParts[0], ".")
 	if len(versionParts) != 3 {
 		return version, microerror.Maskf(tillerImageInvalidError, "%s", tillerImage)
 	}

@@ -592,12 +592,38 @@ func Test_isTillerOutdated(t *testing.T) {
 			errorMatcher: IsTillerOutdated,
 		},
 		{
-			name: "case 3: tiller image is invalid",
+			name: "case 3: tiller image is an outdated release candidate",
+			tillerPod: &corev1.Pod{
+				Spec: corev1.PodSpec{
+					Containers: []corev1.Container{
+						{
+							Image: "quay.io/giantswarm/tiller:v2.8.0-rc.1",
+						},
+					},
+				},
+			},
+			errorMatcher: IsTillerOutdated,
+		},
+		{
+			name: "case 4: tiller image has no version tag",
 			tillerPod: &corev1.Pod{
 				Spec: corev1.PodSpec{
 					Containers: []corev1.Container{
 						{
 							Image: "quay.io/giantswarm/tiller",
+						},
+					},
+				},
+			},
+			errorMatcher: IsTillerImageInvalid,
+		},
+		{
+			name: "case 5: tiller image tag format is invalid",
+			tillerPod: &corev1.Pod{
+				Spec: corev1.PodSpec{
+					Containers: []corev1.Container{
+						{
+							Image: "quay.io/giantswarm/tiller:2.x.1",
 						},
 					},
 				},
