@@ -18,6 +18,7 @@ const (
 
 type Config struct {
 	HelmClient *helmclient.Client
+	K8sClient  kubernetes.Interface
 	K8sSetup   *k8s.Setup
 	Logger     micrologger.Logger
 }
@@ -82,6 +83,7 @@ func NewConfig() (Config, error) {
 
 	c := Config{
 		HelmClient: helmClient,
+		K8sClient:  k8sClient,
 		K8sSetup:   k8sSetup,
 		Logger:     logger,
 	}
