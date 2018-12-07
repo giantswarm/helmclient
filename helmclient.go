@@ -143,7 +143,9 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 		t, err := c.newTunnel()
 		defer c.closeTunnel(ctx, t)
 		if IsTillerOutdated(err) {
-			// Tiller is outdated so we need to upgrade it instead of installing.
+			// fall through, we need to upgrade Tiller.
+			c.logger.LogCtx(ctx, "level", "debug", "message", "tiller is outdated it will be upgraded")
+
 			upgradeTiller = true
 		} else if err != nil {
 			// fall through, we may need to create Tiller.
@@ -306,6 +308,8 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 			t, err := c.newTunnel()
 			if IsTillerNotFound(err) {
 				return backoff.Permanent(microerror.Mask(err))
+			} else if upgradeTiller && IsTooManyResults(err) {
+				return microerror.Maskf(err, "too many tiller pods due to upgrade")
 			} else if err != nil {
 				return microerror.Mask(err)
 			}
