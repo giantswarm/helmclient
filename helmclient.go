@@ -720,7 +720,7 @@ func getTillerImage(pod *corev1.Pod) (string, error) {
 
 	tillerImage := pod.Spec.Containers[0].Image
 	if tillerImage == "" {
-		return "", microerror.Mask(tillerImageInvalidError)
+		return "", microerror.Maskf(executionFailedError, "tiller image is empty")
 	}
 
 	return tillerImage, nil
@@ -758,7 +758,7 @@ func parseTillerVersion(tillerImage string) ([]int, error) {
 	// Tiller image tag has the version.
 	imageParts := strings.Split(tillerImage, ":v")
 	if len(imageParts) != 2 {
-		return version, microerror.Maskf(tillerImageInvalidError, "%s", tillerImage)
+		return version, microerror.Maskf(executionFailedError, "tiller image %#q is invalid", tillerImage)
 	}
 
 	// Version may be a release candidate. If so remove the -rc suffix.
@@ -767,7 +767,7 @@ func parseTillerVersion(tillerImage string) ([]int, error) {
 
 	versionParts := strings.Split(tagParts[0], ".")
 	if len(versionParts) != 3 {
-		return version, microerror.Maskf(tillerImageInvalidError, "%s", tillerImage)
+		return version, microerror.Maskf(executionFailedError, "tiller image tag %#q is invalid", tag)
 	}
 
 	for i, s := range versionParts {
