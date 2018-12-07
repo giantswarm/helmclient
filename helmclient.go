@@ -745,7 +745,7 @@ func isTillerOutdated(pod *corev1.Pod) error {
 	for i, currentVersion := range currentTillerVersion {
 		desiredVersion := desiredTillerVersion[i]
 		if currentVersion < desiredVersion {
-			return microerror.Maskf(tillerOutdatedError, "%#q older than %#q", currentTillerVersion, desiredTillerVersion)
+			return microerror.Maskf(tillerOutdatedError, "%#q older than %#q", currentTillerImage, tillerImageSpec)
 		}
 	}
 
