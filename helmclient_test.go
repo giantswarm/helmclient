@@ -630,6 +630,19 @@ func Test_isTillerOutdated(t *testing.T) {
 			},
 			errorMatcher: IsTillerImageInvalid,
 		},
+		{
+			name: "case 6: tiller image tag format is invalid",
+			tillerPod: &corev1.Pod{
+				Spec: corev1.PodSpec{
+					Containers: []corev1.Container{
+						{
+							Image: "quay.io/giantswarm/tiller:4.3.2.1",
+						},
+					},
+				},
+			},
+			errorMatcher: IsTillerImageInvalid,
+		},
 	}
 
 	for _, tc := range testCases {
