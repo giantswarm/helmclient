@@ -36,11 +36,6 @@ func TestUpdateTiller(t *testing.T) {
 		t.Fatalf("could not set tiller image %#v", err)
 	}
 
-	err = config.HelmClient.PingTiller(ctx)
-	if err != nil {
-		t.Fatalf("could not ping tiller after downgrade %#v", err)
-	}
-
 	downgradedTillerImage, err := getTillerImage(namespace, labelSelector)
 	if err != nil {
 		t.Fatalf("could not get tiller image %#v", err)
