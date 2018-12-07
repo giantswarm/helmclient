@@ -134,13 +134,18 @@ func (c *Client) DeleteRelease(ctx context.Context, releaseName string, options 
 // As a first step, it checks if Tiller is already ready, in which case it
 // returns early.
 func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
+	var upgradeTiller bool
+
 	// Check if Tiller is already present and return early if so.
 	{
 		c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("finding if tiller is installed in namespace %#q", c.tillerNamespace))
 
 		t, err := c.newTunnel()
 		defer c.closeTunnel(ctx, t)
-		if err != nil {
+		if IsTillerOutdated(err) {
+			// Tiller is outdated so we need to upgrade it instead of installing.
+			upgradeTiller = true
+		} else if err != nil {
 			// fall through, we may need to create Tiller.
 			c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("found that tiller is not installed in namespace %#q", c.tillerNamespace))
 		} else {
@@ -228,8 +233,36 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 		}
 	}
 
-	// Install the tiller deployment in the tenant cluster.
-	{
+	// Upgrade the tiller deployment in the tenant cluster.
+	if upgradeTiller {
+		c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("upgrading tiller in namespace %#q", c.tillerNamespace))
+
+		o := func() error {
+			i := &installer.Options{
+				ImageSpec:      tillerImageSpec,
+				MaxHistory:     defaultMaxHistory,
+				Namespace:      c.tillerNamespace,
+				ServiceAccount: tillerPodName,
+			}
+
+			err := installer.Upgrade(c.k8sClient, i)
+			if err != nil {
+				return microerror.Mask(err)
+			} else {
+				c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("upgraded tiller in namespace %#q", c.tillerNamespace))
+			}
+
+			return nil
+		}
+		b := backoff.NewExponential(2*time.Minute, 5*time.Second)
+		n := backoff.NewNotifier(c.logger, context.Background())
+
+		err := backoff.RetryNotify(o, b, n)
+		if err != nil {
+			return microerror.Mask(err)
+		}
+	} else {
+		// Install the tiller deployment in the tenant cluster.
 		c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating tiller in namespace %#q", c.tillerNamespace))
 
 		o := func() error {
@@ -640,6 +673,11 @@ func (c *Client) newTunnel() (*k8sportforward.Tunnel, error) {
 	if IsNotFound(err) {
 		return nil, microerror.Maskf(tillerNotFoundError, "label selector: %#q namespace: %#q", tillerLabelSelector, c.tillerNamespace)
 	} else if err != nil {
+		return nil, microerror.Mask(err)
+	}
+
+	err = isTillerOutdated(pod)
+	if err != nil {
 		return nil, microerror.Mask(err)
 	}
 
