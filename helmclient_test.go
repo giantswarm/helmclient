@@ -615,7 +615,7 @@ func Test_isTillerOutdated(t *testing.T) {
 					},
 				},
 			},
-			errorMatcher: IsTillerImageInvalid,
+			errorMatcher: IsExecutionFailed,
 		},
 		{
 			name: "case 5: tiller image tag format is invalid",
@@ -628,7 +628,7 @@ func Test_isTillerOutdated(t *testing.T) {
 					},
 				},
 			},
-			errorMatcher: IsTillerImageInvalid,
+			errorMatcher: IsExecutionFailed,
 		},
 		{
 			name: "case 6: tiller image tag format is invalid",
@@ -641,7 +641,7 @@ func Test_isTillerOutdated(t *testing.T) {
 					},
 				},
 			},
-			errorMatcher: IsTillerImageInvalid,
+			errorMatcher: IsExecutionFailed,
 		},
 	}
 
