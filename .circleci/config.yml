@@ -84,6 +84,6 @@ workflows:
       - e2eTestDeleteRelease:
           requires:
           - build
-      - e2eTestUpgradetiller:
+      - e2eTestUpgradeTiller:
           requires:
           - build
