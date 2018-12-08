@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/giantswarm/backoff"
-	"github.com/giantswarm/helmclient"
 	"github.com/giantswarm/microerror"
 	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -45,12 +44,6 @@ func TestUpgradeTiller(t *testing.T) {
 	}
 	if downgradedTillerImage != outdatedTillerImage {
 		t.Fatalf("tiller has not been downgraded got image %#q expected %#q", downgradedTillerImage, outdatedTillerImage)
-	}
-
-	// Check tiller outdated error is returned.
-	err = config.HelmClient.PingTiller(ctx)
-	if err == nil || !helmclient.IsTillerOutdated(err) {
-		t.Fatalf("expected tiller outdated error but was %#v", err)
 	}
 
 	// Upgrade tiller to the latest image.
