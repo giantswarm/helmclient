@@ -6,6 +6,7 @@ import (
 	"context"
 	"testing"
 
+	"github.com/giantswarm/backoff"
 	"github.com/giantswarm/microerror"
 
 	"k8s.io/api/extensions/v1beta1"
@@ -26,17 +27,17 @@ func TestUpdateTiller(t *testing.T) {
 	labelSelector := "app=helm,name=tiller"
 	outdatedTillerImage := "gcr.io/kubernetes-helm:v2.7.1"
 
-	latestTillerImage, err := getTillerImage(namespace, labelSelector)
+	latestTillerImage, err := getTillerImage(ctx, namespace, labelSelector)
 	if err != nil {
 		t.Fatalf("could not get tiller image %#v", err)
 	}
 
-	err = updateTillerImage(namespace, labelSelector, outdatedTillerImage)
+	err = updateTillerImage(ctx, namespace, labelSelector, outdatedTillerImage)
 	if err != nil {
 		t.Fatalf("could not set tiller image %#v", err)
 	}
 
-	downgradedTillerImage, err := getTillerImage(namespace, labelSelector)
+	downgradedTillerImage, err := getTillerImage(ctx, namespace, labelSelector)
 	if err != nil {
 		t.Fatalf("could not get tiller image %#v", err)
 	}
@@ -49,7 +50,7 @@ func TestUpdateTiller(t *testing.T) {
 		t.Fatalf("could not install tiller %#v", err)
 	}
 
-	upgradedTillerImage, err := getTillerImage(namespace, labelSelector)
+	upgradedTillerImage, err := getTillerImage(ctx, namespace, labelSelector)
 	if err != nil {
 		t.Fatalf("could not get tiller image %#v", err)
 	}
@@ -59,27 +60,47 @@ func TestUpdateTiller(t *testing.T) {
 	}
 }
 
-func getTillerDeployment(namespace string, labelSelector string) (*v1beta1.Deployment, error) {
-	o := metav1.ListOptions{
-		LabelSelector: labelSelector,
-	}
-	d, err := config.K8sClient.Extensions().Deployments(namespace).List(o)
-	if err != nil {
-		return nil, microerror.Mask(err)
+func getTillerDeployment(ctx context.Context, namespace string, labelSelector string) (*v1beta1.Deployment, error) {
+	var d *v1beta1.Deployment
+	{
+		o := func() error {
+			lo := metav1.ListOptions{
+				LabelSelector: labelSelector,
+			}
+			dl, err := config.K8sClient.Extensions().Deployments(namespace).List(lo)
+			if err != nil {
+				return microerror.Mask(err)
+			}
+
+			if len(dl.Items) > 1 {
+				return microerror.Maskf(tooManyResultsError, "%d", len(dl.Items))
+			}
+			if len(dl.Items) == 0 {
+				return microerror.Maskf(notFoundError, "%s", labelSelector)
+			}
+
+			d = &dl.Items[0]
+			if d.Status.ReadyReplicas != 1 {
+				return microerror.Maskf(notFoundError, "want 1 ready replicas found %d", d.Status.ReadyReplicas)
+			}
+
+			return nil
+		}
+
+		b := backoff.NewExponential(backoff.ShortMaxWait, backoff.ShortMaxInterval)
+		n := backoff.NewNotifier(config.Logger, ctx)
+
+		err := backoff.RetryNotify(o, b, n)
+		if err != nil {
+			return nil, microerror.Mask(err)
+		}
 	}
 
-	if len(d.Items) > 1 {
-		return nil, microerror.Maskf(tooManyResultsError, "%d", len(d.Items))
-	}
-	if len(d.Items) == 0 {
-		return nil, microerror.Maskf(notFoundError, "%s", labelSelector)
-	}
-
-	return &d.Items[0], nil
+	return d, nil
 }
 
-func getTillerImage(namespace, labelSelector string) (string, error) {
-	d, err := getTillerDeployment(namespace, labelSelector)
+func getTillerImage(ctx context.Context, namespace, labelSelector string) (string, error) {
+	d, err := getTillerDeployment(ctx, namespace, labelSelector)
 	if err != nil {
 		return "", microerror.Mask(err)
 	}
@@ -99,14 +120,14 @@ func getTillerImage(namespace, labelSelector string) (string, error) {
 	return tillerImage, nil
 }
 
-func updateTillerImage(namespace, labelSelector, tillerImage string) error {
-	deploy, err := getTillerDeployment(namespace, labelSelector)
+func updateTillerImage(ctx context.Context, namespace, labelSelector, tillerImage string) error {
+	d, err := getTillerDeployment(ctx, namespace, labelSelector)
 	if err != nil {
 		return microerror.Mask(err)
 	}
 
-	deploy.Spec.Template.Spec.Containers[0].Image = tillerImage
-	_, err = config.K8sClient.Extensions().Deployments(namespace).Update(deploy)
+	d.Spec.Template.Spec.Containers[0].Image = tillerImage
+	_, err = config.K8sClient.Extensions().Deployments(namespace).Update(d)
 	if err != nil {
 		return microerror.Mask(err)
 	}
