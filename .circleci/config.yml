@@ -64,9 +64,9 @@ jobs:
       TEST_DIR: "integration/test/deleterelease"
     <<: *e2eTest
 
-  e2eTestUpdateTiller:
+  e2eTestUpgradeTiller:
     environment:
-      TEST_DIR: "integration/test/updatetiller"
+      TEST_DIR: "integration/test/upgradetiller"
     <<: *e2eTest
 
 
@@ -84,6 +84,6 @@ workflows:
       - e2eTestDeleteRelease:
           requires:
           - build
-      - e2eTestUpdateTiller:
+      - e2eTestUpgradetiller:
           requires:
           - build

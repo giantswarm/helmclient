@@ -1,6 +1,6 @@
 // +build k8srequired
 
-package updatetiller
+package upgradetiller
 
 import (
 	"context"
@@ -9,12 +9,11 @@ import (
 	"github.com/giantswarm/backoff"
 	"github.com/giantswarm/helmclient"
 	"github.com/giantswarm/microerror"
-
-	"k8s.io/api/extensions/v1beta1"
+	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func TestUpdateTiller(t *testing.T) {
+func TestUpgradeTiller(t *testing.T) {
 	ctx := context.Background()
 
 	var err error
@@ -70,14 +69,14 @@ func TestUpdateTiller(t *testing.T) {
 	}
 }
 
-func getTillerDeployment(ctx context.Context, namespace string, labelSelector string) (*v1beta1.Deployment, error) {
-	var d *v1beta1.Deployment
+func getTillerDeployment(ctx context.Context, namespace string, labelSelector string) (*appsv1.Deployment, error) {
+	var d *appsv1.Deployment
 	{
 		o := func() error {
 			lo := metav1.ListOptions{
 				LabelSelector: labelSelector,
 			}
-			dl, err := config.K8sClient.Extensions().Deployments(namespace).List(lo)
+			dl, err := config.K8sClient.Apps().Deployments(namespace).List(lo)
 			if err != nil {
 				return microerror.Mask(err)
 			}
@@ -137,7 +136,7 @@ func updateTillerImage(ctx context.Context, namespace, labelSelector, tillerImag
 	}
 
 	d.Spec.Template.Spec.Containers[0].Image = tillerImage
-	_, err = config.K8sClient.Extensions().Deployments(namespace).Update(d)
+	_, err = config.K8sClient.Apps().Deployments(namespace).Update(d)
 	if err != nil {
 		return microerror.Mask(err)
 	}

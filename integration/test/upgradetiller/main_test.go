@@ -1,6 +1,6 @@
 // +build k8srequired
 
-package updatetiller
+package upgradetiller
 
 import (
 	"fmt"
