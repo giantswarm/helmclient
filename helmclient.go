@@ -238,7 +238,7 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 			if IsNotFound(err) {
 				// Fall through as we need to install Tiller.
 				installTiller = true
-				return backoff.Permanent(microerror.Mask(err))
+				return nil
 			} else if err != nil {
 				return microerror.Mask(err)
 			}
