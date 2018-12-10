@@ -228,17 +228,21 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 		}
 	}
 
-	var upgradeTiller bool
+	var installTiller bool
 
 	pod, err := getPod(c.k8sClient, tillerLabelSelector, c.tillerNamespace)
 	if IsNotFound(err) {
 		// Fall through as we need to install Tiller.
+		installTiller = true
 	} else if err != nil {
 		return microerror.Mask(err)
 	}
 
+	var upgradeTiller bool
+
 	err = isTillerOutdated(pod)
 	if IsTillerOutdated(err) {
+		// Fall through as we need to upgrade Tiller.
 		upgradeTiller = true
 	} else if err != nil {
 		return microerror.Mask(err)
@@ -251,29 +255,8 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 		ServiceAccount: tillerPodName,
 	}
 
-	// Upgrade the tiller deployment in the tenant cluster.
-	if upgradeTiller {
-		c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("upgrading tiller in namespace %#q", c.tillerNamespace))
-
-		o := func() error {
-			err := installer.Upgrade(c.k8sClient, i)
-			if err != nil {
-				return microerror.Mask(err)
-			} else {
-				c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("upgraded tiller in namespace %#q", c.tillerNamespace))
-			}
-
-			return nil
-		}
-		b := backoff.NewExponential(2*time.Minute, 5*time.Second)
-		n := backoff.NewNotifier(c.logger, context.Background())
-
-		err := backoff.RetryNotify(o, b, n)
-		if err != nil {
-			return microerror.Mask(err)
-		}
-	} else {
-		// Install the tiller deployment in the tenant cluster.
+	// Install the tiller deployment in the tenant cluster.
+	if installTiller {
 		c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating tiller in namespace %#q", c.tillerNamespace))
 
 		o := func() error {
@@ -285,6 +268,29 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 				return microerror.Mask(err)
 			} else {
 				c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("created tiller in namespace %#q", c.tillerNamespace))
+			}
+
+			return nil
+		}
+		b := backoff.NewExponential(2*time.Minute, 5*time.Second)
+		n := backoff.NewNotifier(c.logger, context.Background())
+
+		err := backoff.RetryNotify(o, b, n)
+		if err != nil {
+			return microerror.Mask(err)
+		}
+	}
+
+	// Upgrade the tiller deployment in the tenant cluster.
+	if upgradeTiller && !installTiller {
+		c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("upgrading tiller in namespace %#q", c.tillerNamespace))
+
+		o := func() error {
+			err := installer.Upgrade(c.k8sClient, i)
+			if err != nil {
+				return microerror.Mask(err)
+			} else {
+				c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("upgraded tiller in namespace %#q", c.tillerNamespace))
 			}
 
 			return nil
