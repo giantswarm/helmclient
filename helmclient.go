@@ -240,12 +240,14 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 
 	var upgradeTiller bool
 
-	err = isTillerOutdated(pod)
-	if IsTillerOutdated(err) {
-		// Fall through as we need to upgrade Tiller.
-		upgradeTiller = true
-	} else if err != nil {
-		return microerror.Mask(err)
+	if pod != nil {
+		err = isTillerOutdated(pod)
+		if IsTillerOutdated(err) {
+			// Fall through as we need to upgrade Tiller.
+			upgradeTiller = true
+		} else if err != nil {
+			return microerror.Mask(err)
+		}
 	}
 
 	i := &installer.Options{
