@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
-	"strconv"
 	"strings"
 	"time"
 
+	"github.com/Masterminds/semver"
 	"github.com/giantswarm/backoff"
 	"github.com/giantswarm/errors/guest"
 	"github.com/giantswarm/k8sportforward"
@@ -803,41 +803,26 @@ func isTillerOutdated(pod *corev1.Pod) error {
 		return microerror.Mask(err)
 	}
 
-	for i, currentVersion := range currentTillerVersion {
-		desiredVersion := desiredTillerVersion[i]
-		if currentVersion < desiredVersion {
-			return microerror.Maskf(tillerOutdatedError, "%#q older than %#q", currentTillerImage, tillerImageSpec)
-		}
+	if currentTillerVersion.LessThan(desiredTillerVersion) {
+		return microerror.Maskf(tillerOutdatedError, "%#q older than %#q", currentTillerImage, desiredTillerVersion)
 	}
 
 	return nil
 }
 
-func parseTillerVersion(tillerImage string) ([]int, error) {
-	version := make([]int, 3)
-
+func parseTillerVersion(tillerImage string) (*semver.Version, error) {
 	// Tiller image tag has the version.
-	imageParts := strings.Split(tillerImage, ":v")
+	imageParts := strings.Split(tillerImage, ":")
 	if len(imageParts) != 2 {
-		return version, microerror.Maskf(executionFailedError, "tiller image %#q is invalid", tillerImage)
+		return nil, microerror.Maskf(executionFailedError, "tiller image %#q is invalid", tillerImage)
 	}
 
 	// Version may be a release candidate. If so remove the -rc suffix.
 	tag := imageParts[1]
-	tagParts := strings.Split(tag, "-")
 
-	versionParts := strings.Split(tagParts[0], ".")
-	if len(versionParts) != 3 {
-		return version, microerror.Maskf(executionFailedError, "version has %d parts expected 3", len(tagParts))
-	}
-
-	for i, s := range versionParts {
-		v, err := strconv.Atoi(s)
-		if err != nil {
-			return version, microerror.Maskf(executionFailedError, "cannot convert part %d of version %#q", i, tag)
-		}
-
-		version[i] = v
+	version, err := semver.NewVersion(tag)
+	if err != nil {
+		return nil, microerror.Maskf(executionFailedError, "version %#q cannot be parsed %#v", tag, err)
 	}
 
 	return version, nil
