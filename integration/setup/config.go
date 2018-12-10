@@ -3,7 +3,6 @@
 package setup
 
 import (
-	"github.com/giantswarm/e2esetup/k8s"
 	"github.com/giantswarm/helmclient"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
@@ -19,7 +18,6 @@ const (
 type Config struct {
 	HelmClient *helmclient.Client
 	K8sClient  kubernetes.Interface
-	K8sSetup   *k8s.Setup
 	Logger     micrologger.Logger
 }
 
@@ -52,19 +50,6 @@ func NewConfig() (Config, error) {
 		}
 	}
 
-	var k8sSetup *k8s.Setup
-	{
-		c := k8s.SetupConfig{
-			K8sClient: k8sClient,
-			Logger:    logger,
-		}
-
-		k8sSetup, err = k8s.NewSetup(c)
-		if err != nil {
-			return Config{}, microerror.Mask(err)
-		}
-	}
-
 	var helmClient *helmclient.Client
 	{
 		c := helmclient.Config{
@@ -84,7 +69,6 @@ func NewConfig() (Config, error) {
 	c := Config{
 		HelmClient: helmClient,
 		K8sClient:  k8sClient,
-		K8sSetup:   k8sSetup,
 		Logger:     logger,
 	}
 
