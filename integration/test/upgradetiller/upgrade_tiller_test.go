@@ -45,16 +45,13 @@ func getTillerDeployment(ctx context.Context, namespace string, labelSelector st
 				return microerror.Mask(err)
 			}
 
-			if len(l.Items) > 1 {
-				return microerror.Maskf(tooManyResultsError, "%d", len(l.Items))
-			}
-			if len(l.Items) == 0 {
-				return microerror.Maskf(notFoundError, "%s", labelSelector)
+			if len(l.Items) != 1 {
+				return microerror.Maskf(executionFailedError, "cannot get deployment for %#q %#q found %d, want 1", namespace, labelSelector, len(l.Items))
 			}
 
 			d = &l.Items[0]
 			if d.Status.AvailableReplicas != 1 && d.Status.ReadyReplicas != 1 {
-				return microerror.Maskf(notFoundError, "tiller deployment not ready expected 1 pod found %d available %d ready", d.Status.AvailableReplicas, d.Status.ReadyReplicas)
+				return microerror.Maskf(executionFailedError, "tiller deployment not ready %d available %d ready, want 1", d.Status.AvailableReplicas, d.Status.ReadyReplicas)
 			}
 
 			return nil
@@ -78,32 +75,14 @@ func getTillerImage(ctx context.Context, namespace, labelSelector string) (strin
 		return "", microerror.Mask(err)
 	}
 
-	if len(d.Spec.Template.Spec.Containers) > 1 {
-		return "", microerror.Maskf(tooManyResultsError, "%d", len(d.Spec.Template.Spec.Containers))
-	}
-	if len(d.Spec.Template.Spec.Containers) == 0 {
-		return "", microerror.Mask(notFoundError)
+	if len(d.Spec.Template.Spec.Containers) != 1 {
+		return "", microerror.Maskf(executionFailedError, "Spec.Template.Spec.Containers == %d, want 1", len(d.Spec.Template.Spec.Containers))
 	}
 
 	tillerImage := d.Spec.Template.Spec.Containers[0].Image
 	if tillerImage == "" {
-		return "", microerror.Maskf(notFoundError, "tiller image is empty")
+		return "", microerror.Maskf(executionFailedError, "tiller image is empty")
 	}
 
 	return tillerImage, nil
-}
-
-func updateTillerImage(ctx context.Context, namespace, labelSelector, tillerImage string) error {
-	d, err := getTillerDeployment(ctx, namespace, labelSelector)
-	if err != nil {
-		return microerror.Mask(err)
-	}
-
-	d.Spec.Template.Spec.Containers[0].Image = tillerImage
-	_, err = config.K8sClient.Apps().Deployments(namespace).Update(d)
-	if err != nil {
-		return microerror.Mask(err)
-	}
-
-	return nil
 }
