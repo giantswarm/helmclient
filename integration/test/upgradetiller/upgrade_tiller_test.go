@@ -25,7 +25,7 @@ func TestUpgradeTiller(t *testing.T) {
 
 	namespace := "giantswarm"
 	labelSelector := "app=helm,name=tiller"
-	outdatedTillerImage := "gcr.io/kubernetes-helm:v2.7.1"
+	outdatedTillerImage := "quay.io/giantswarm/helm:v2.8.2"
 
 	latestTillerImage, err := getTillerImage(ctx, namespace, labelSelector)
 	if err != nil {
