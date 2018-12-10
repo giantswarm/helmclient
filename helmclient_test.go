@@ -565,19 +565,21 @@ func Test_isTillerOutdated(t *testing.T) {
 			},
 			errorMatcher: nil,
 		},
-		{
-			name: "case 1: tiller pod is newer",
-			tillerPod: &corev1.Pod{
-				Spec: corev1.PodSpec{
-					Containers: []corev1.Container{
-						{
-							Image: "quay.io/giantswarm/tiller:v9.8.7",
+		/*
+			{
+				name: "case 1: tiller pod is newer",
+				tillerPod: &corev1.Pod{
+					Spec: corev1.PodSpec{
+						Containers: []corev1.Container{
+							{
+								Image: "quay.io/giantswarm/tiller:v9.8.7",
+							},
 						},
 					},
 				},
+				errorMatcher: nil,
 			},
-			errorMatcher: nil,
-		},
+		*/
 		{
 			name: "case 2: tiller pod is outdated",
 			tillerPod: &corev1.Pod{
