@@ -805,7 +805,7 @@ func isTillerOutdated(pod *corev1.Pod) error {
 	}
 
 	if currentTillerVersion.LessThan(desiredTillerVersion) {
-		return microerror.Maskf(tillerOutdatedError, "%#q older than %#q", currentTillerImage, desiredTillerVersion)
+		return microerror.Maskf(tillerOutdatedError, "%#q older than %#q", currentTillerVersion, desiredTillerVersion)
 	}
 
 	return nil
