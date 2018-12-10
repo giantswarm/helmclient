@@ -82,8 +82,8 @@ func getTillerDeployment(ctx context.Context, namespace string, labelSelector st
 			}
 
 			d = &dl.Items[0]
-			if d.Status.ReadyReplicas != 1 {
-				return microerror.Maskf(notFoundError, "want 1 ready replicas found %d", d.Status.ReadyReplicas)
+			if d.Status.AvailableReplicas != 1 && d.Status.ReadyReplicas != 1 {
+				return microerror.Maskf(notFoundError, "tiller deployment updating expected 1 pod found %d available %d ready", d.Status.AvailableReplicas, d.Status.ReadyReplicas)
 			}
 
 			return nil
