@@ -228,14 +228,30 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 		}
 	}
 
+	var err error
 	var installTiller bool
+	var pod *corev1.Pod
 
-	pod, err := getPod(c.k8sClient, tillerLabelSelector, c.tillerNamespace)
-	if IsNotFound(err) {
-		// Fall through as we need to install Tiller.
-		installTiller = true
-	} else if err != nil {
-		return microerror.Mask(err)
+	{
+		o := func() error {
+			pod, err = getPod(c.k8sClient, tillerLabelSelector, c.tillerNamespace)
+			if IsNotFound(err) {
+				// Fall through as we need to install Tiller.
+				installTiller = true
+				return backoff.Permanent(microerror.Mask(err))
+			} else if err != nil {
+				return microerror.Mask(err)
+			}
+
+			return nil
+		}
+		b := backoff.NewExponential(2*time.Minute, 5*time.Second)
+		n := backoff.NewNotifier(c.logger, context.Background())
+
+		err := backoff.RetryNotify(o, b, n)
+		if err != nil {
+			return microerror.Mask(err)
+		}
 	}
 
 	var upgradeTiller bool
