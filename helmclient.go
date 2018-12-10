@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/giantswarm/backoff"
@@ -664,6 +666,31 @@ func (c *Client) newTunnel() (*k8sportforward.Tunnel, error) {
 	return tunnel, nil
 }
 
+// filterList returns a list scrubbed of old releases.
+// See https://github.com/helm/helm/blob/3a8a797eab0e1d02456c7944bf41631546ee2e47/cmd/helm/list.go#L197.
+func filterList(rels []*hapirelease.Release) []*hapirelease.Release {
+	idx := map[string]int32{}
+
+	for _, r := range rels {
+		name, version := r.GetName(), r.GetVersion()
+		if max, ok := idx[name]; ok {
+			// check if we have a greater version already
+			if max > version {
+				continue
+			}
+		}
+		idx[name] = version
+	}
+
+	uniq := make([]*hapirelease.Release, 0, len(idx))
+	for _, r := range rels {
+		if idx[r.GetName()] == r.GetVersion() {
+			uniq = append(uniq, r)
+		}
+	}
+	return uniq
+}
+
 func getPod(client kubernetes.Interface, labelSelector, namespace string) (*corev1.Pod, error) {
 	o := metav1.ListOptions{
 		LabelSelector: labelSelector,
@@ -693,10 +720,66 @@ func getTillerImage(pod *corev1.Pod) (string, error) {
 
 	tillerImage := pod.Spec.Containers[0].Image
 	if tillerImage == "" {
-		return "", microerror.Mask(tillerImageNotFoundError)
+		return "", microerror.Maskf(executionFailedError, "tiller image is empty")
 	}
 
 	return tillerImage, nil
+}
+
+func isTillerOutdated(pod *corev1.Pod) error {
+	currentTillerImage, err := getTillerImage(pod)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	currentTillerVersion, err := parseTillerVersion(currentTillerImage)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	desiredTillerVersion, err := parseTillerVersion(tillerImageSpec)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	for i, currentVersion := range currentTillerVersion {
+		desiredVersion := desiredTillerVersion[i]
+		if currentVersion < desiredVersion {
+			return microerror.Maskf(tillerOutdatedError, "%#q older than %#q", currentTillerImage, tillerImageSpec)
+		}
+	}
+
+	return nil
+}
+
+func parseTillerVersion(tillerImage string) ([]int, error) {
+	version := make([]int, 3)
+
+	// Tiller image tag has the version.
+	imageParts := strings.Split(tillerImage, ":v")
+	if len(imageParts) != 2 {
+		return version, microerror.Maskf(executionFailedError, "tiller image %#q is invalid", tillerImage)
+	}
+
+	// Version may be a release candidate. If so remove the -rc suffix.
+	tag := imageParts[1]
+	tagParts := strings.Split(tag, "-")
+
+	versionParts := strings.Split(tagParts[0], ".")
+	if len(versionParts) != 3 {
+		return version, microerror.Maskf(executionFailedError, "version has %d parts expected 3", len(tagParts))
+	}
+
+	for i, s := range versionParts {
+		v, err := strconv.Atoi(s)
+		if err != nil {
+			return version, microerror.Maskf(executionFailedError, "cannot convert part %d of version %#q", i, tag)
+		}
+
+		version[i] = v
+	}
+
+	return version, nil
 }
 
 func releaseToReleaseContent(release *hapirelease.Release) (*ReleaseContent, error) {
@@ -721,29 +804,4 @@ func releaseToReleaseContent(release *hapirelease.Release) (*ReleaseContent, err
 	}
 
 	return content, nil
-}
-
-// filterList returns a list scrubbed of old releases.
-// See https://github.com/helm/helm/blob/3a8a797eab0e1d02456c7944bf41631546ee2e47/cmd/helm/list.go#L197.
-func filterList(rels []*hapirelease.Release) []*hapirelease.Release {
-	idx := map[string]int32{}
-
-	for _, r := range rels {
-		name, version := r.GetName(), r.GetVersion()
-		if max, ok := idx[name]; ok {
-			// check if we have a greater version already
-			if max > version {
-				continue
-			}
-		}
-		idx[name] = version
-	}
-
-	uniq := make([]*hapirelease.Release, 0, len(idx))
-	for _, r := range rels {
-		if idx[r.GetName()] == r.GetVersion() {
-			uniq = append(uniq, r)
-		}
-	}
-	return uniq
 }

@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/giantswarm/micrologger/microloggertest"
+	corev1 "k8s.io/api/core/v1"
 	helmclient "k8s.io/helm/pkg/helm"
 	helmchart "k8s.io/helm/pkg/proto/hapi/chart"
 	helmrelease "k8s.io/helm/pkg/proto/hapi/release"
@@ -530,6 +531,123 @@ func Test_UpdateReleaseFromTarball(t *testing.T) {
 			}
 			// helm fake client does not actually use the tarball.
 			err := helm.UpdateReleaseFromTarball(ctx, tc.releaseName, "/path")
+
+			switch {
+			case err == nil && tc.errorMatcher == nil:
+				// correct; carry on
+			case err != nil && tc.errorMatcher == nil:
+				t.Fatalf("error == %#v, want nil", err)
+			case err == nil && tc.errorMatcher != nil:
+				t.Fatalf("error == nil, want non-nil")
+			case !tc.errorMatcher(err):
+				t.Fatalf("error == %#v, want matching", err)
+			}
+		})
+	}
+}
+
+func Test_isTillerOutdated(t *testing.T) {
+	testCases := []struct {
+		name         string
+		tillerPod    *corev1.Pod
+		errorMatcher func(error) bool
+	}{
+		{
+			name: "case 0: tiller pod is up to date",
+			tillerPod: &corev1.Pod{
+				Spec: corev1.PodSpec{
+					Containers: []corev1.Container{
+						{
+							Image: tillerImageSpec,
+						},
+					},
+				},
+			},
+			errorMatcher: nil,
+		},
+		{
+			name: "case 1: tiller pod is newer",
+			tillerPod: &corev1.Pod{
+				Spec: corev1.PodSpec{
+					Containers: []corev1.Container{
+						{
+							Image: "quay.io/giantswarm/tiller:v9.8.7",
+						},
+					},
+				},
+			},
+			errorMatcher: nil,
+		},
+		{
+			name: "case 2: tiller pod is outdated",
+			tillerPod: &corev1.Pod{
+				Spec: corev1.PodSpec{
+					Containers: []corev1.Container{
+						{
+							Image: "quay.io/giantswarm/tiller:v2.8.1",
+						},
+					},
+				},
+			},
+			errorMatcher: IsTillerOutdated,
+		},
+		{
+			name: "case 3: tiller image is an outdated release candidate",
+			tillerPod: &corev1.Pod{
+				Spec: corev1.PodSpec{
+					Containers: []corev1.Container{
+						{
+							Image: "quay.io/giantswarm/tiller:v2.8.0-rc.1",
+						},
+					},
+				},
+			},
+			errorMatcher: IsTillerOutdated,
+		},
+		{
+			name: "case 4: tiller image has no version tag",
+			tillerPod: &corev1.Pod{
+				Spec: corev1.PodSpec{
+					Containers: []corev1.Container{
+						{
+							Image: "quay.io/giantswarm/tiller",
+						},
+					},
+				},
+			},
+			errorMatcher: IsExecutionFailed,
+		},
+		{
+			name: "case 5: tiller image tag format is invalid",
+			tillerPod: &corev1.Pod{
+				Spec: corev1.PodSpec{
+					Containers: []corev1.Container{
+						{
+							Image: "quay.io/giantswarm/tiller:2.x.1",
+						},
+					},
+				},
+			},
+			errorMatcher: IsExecutionFailed,
+		},
+		{
+			name: "case 6: tiller image tag format is invalid",
+			tillerPod: &corev1.Pod{
+				Spec: corev1.PodSpec{
+					Containers: []corev1.Container{
+						{
+							Image: "quay.io/giantswarm/tiller:4.3.2.1",
+						},
+					},
+				},
+			},
+			errorMatcher: IsExecutionFailed,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			err := isTillerOutdated(tc.tillerPod)
 
 			switch {
 			case err == nil && tc.errorMatcher == nil:
