@@ -303,9 +303,9 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 			err := installer.Upgrade(c.k8sClient, i)
 			if err != nil {
 				return microerror.Mask(err)
-			} else {
-				c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("upgraded tiller in namespace %#q", c.tillerNamespace))
 			}
+
+			c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("upgraded tiller in namespace %#q", c.tillerNamespace))
 
 			return nil
 		}
@@ -507,6 +507,7 @@ func (c *Client) InstallReleaseFromTarball(ctx context.Context, path, ns string,
 	return nil
 }
 
+// ListReleaseContents gets the current status of all Helm Releases.
 func (c *Client) ListReleaseContents(ctx context.Context) ([]*ReleaseContent, error) {
 	var releases []*hapirelease.Release
 	{
