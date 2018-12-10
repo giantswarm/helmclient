@@ -141,7 +141,7 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 		t, err := c.newTunnel()
 		defer c.closeTunnel(ctx, t)
 		if err != nil {
-			// fall through, we may need to create Tiller.
+			// fall through, we may need to create or upgrade Tiller.
 			c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("found that tiller is not installed in namespace %#q", c.tillerNamespace))
 		} else {
 			err = c.newHelmClientFromTunnel(t).PingTiller()
@@ -228,18 +228,55 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 		}
 	}
 
-	// Install the tiller deployment in the tenant cluster.
+	var err error
+	var installTiller bool
+	var pod *corev1.Pod
+	var upgradeTiller bool
+
 	{
+		o := func() error {
+			pod, err = getPod(c.k8sClient, tillerLabelSelector, c.tillerNamespace)
+			if IsNotFound(err) {
+				// Fall through as we need to install Tiller.
+				installTiller = true
+				return nil
+			} else if err != nil {
+				return microerror.Mask(err)
+			}
+
+			return nil
+		}
+		b := backoff.NewExponential(2*time.Minute, 5*time.Second)
+		n := backoff.NewNotifier(c.logger, context.Background())
+
+		err := backoff.RetryNotify(o, b, n)
+		if err != nil {
+			return microerror.Mask(err)
+		}
+	}
+
+	if pod != nil {
+		err = isTillerOutdated(pod)
+		if IsTillerOutdated(err) {
+			// Fall through as we need to upgrade Tiller.
+			upgradeTiller = true
+		} else if err != nil {
+			return microerror.Mask(err)
+		}
+	}
+
+	i := &installer.Options{
+		ImageSpec:      tillerImageSpec,
+		MaxHistory:     defaultMaxHistory,
+		Namespace:      c.tillerNamespace,
+		ServiceAccount: tillerPodName,
+	}
+
+	// Install the tiller deployment in the tenant cluster.
+	if installTiller && !upgradeTiller {
 		c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating tiller in namespace %#q", c.tillerNamespace))
 
 		o := func() error {
-			i := &installer.Options{
-				ImageSpec:      tillerImageSpec,
-				MaxHistory:     defaultMaxHistory,
-				Namespace:      c.tillerNamespace,
-				ServiceAccount: tillerPodName,
-			}
-
 			err := installer.Install(c.k8sClient, i)
 			if errors.IsAlreadyExists(err) {
 				c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("tiller in namespace %#q already exists", c.tillerNamespace))
@@ -259,6 +296,28 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 		if err != nil {
 			return microerror.Mask(err)
 		}
+	} else if !installTiller && upgradeTiller {
+		c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("upgrading tiller in namespace %#q", c.tillerNamespace))
+
+		o := func() error {
+			err := installer.Upgrade(c.k8sClient, i)
+			if err != nil {
+				return microerror.Mask(err)
+			} else {
+				c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("upgraded tiller in namespace %#q", c.tillerNamespace))
+			}
+
+			return nil
+		}
+		b := backoff.NewExponential(2*time.Minute, 5*time.Second)
+		n := backoff.NewNotifier(c.logger, context.Background())
+
+		err := backoff.RetryNotify(o, b, n)
+		if err != nil {
+			return microerror.Mask(err)
+		}
+	} else {
+		return microerror.Maskf(executionFailedError, "invalid state cannot both install and upgrade tiller")
 	}
 
 	// Wait for tiller to be up and running. When verifying to be able to ping
@@ -273,6 +332,8 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 			t, err := c.newTunnel()
 			if IsTillerNotFound(err) {
 				return backoff.Permanent(microerror.Mask(err))
+			} else if upgradeTiller && IsTooManyResults(err) {
+				return microerror.Maskf(err, "too many tiller pods due to upgrade")
 			} else if err != nil {
 				return microerror.Mask(err)
 			}

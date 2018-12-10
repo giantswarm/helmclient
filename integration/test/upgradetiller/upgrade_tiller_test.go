@@ -26,10 +26,40 @@ func TestUpgradeTiller(t *testing.T) {
 
 	namespace := "giantswarm"
 	labelSelector := "app=helm,name=tiller"
+	outdatedTillerImage := "gcr.io/kubernetes-helm:v2.7.2"
 
-	_, err = getTillerImage(ctx, namespace, labelSelector)
+	latestTillerImage, err := getTillerImage(ctx, namespace, labelSelector)
 	if err != nil {
 		t.Fatalf("could not get tiller image %#v", err)
+	}
+
+	// Downgrade tiller to a previous version.
+	err = updateTillerImage(ctx, namespace, labelSelector, outdatedTillerImage)
+	if err != nil {
+		t.Fatalf("could not set tiller image %#v", err)
+	}
+
+	downgradedTillerImage, err := getTillerImage(ctx, namespace, labelSelector)
+	if err != nil {
+		t.Fatalf("could not get tiller image %#v", err)
+	}
+	if downgradedTillerImage != outdatedTillerImage {
+		t.Fatalf("tiller has not been downgraded got image %#q expected %#q", downgradedTillerImage, outdatedTillerImage)
+	}
+
+	// Upgrade tiller to the latest image.
+	err = config.HelmClient.EnsureTillerInstalled(ctx)
+	if err != nil {
+		t.Fatalf("could not install tiller %#v", err)
+	}
+
+	upgradedTillerImage, err := getTillerImage(ctx, namespace, labelSelector)
+	if err != nil {
+		t.Fatalf("could not get tiller image %#v", err)
+	}
+
+	if upgradedTillerImage != latestTillerImage {
+		t.Fatalf("tiller has not been upgraded to latest image got %#q expected %#q", upgradedTillerImage, outdatedTillerImage)
 	}
 }
 
@@ -85,4 +115,19 @@ func getTillerImage(ctx context.Context, namespace, labelSelector string) (strin
 	}
 
 	return tillerImage, nil
+}
+
+func updateTillerImage(ctx context.Context, namespace, labelSelector, tillerImage string) error {
+	d, err := getTillerDeployment(ctx, namespace, labelSelector)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	d.Spec.Template.Spec.Containers[0].Image = tillerImage
+	_, err = config.K8sClient.Apps().Deployments(namespace).Update(d)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	return nil
 }
