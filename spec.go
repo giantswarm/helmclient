@@ -7,12 +7,14 @@ import (
 )
 
 const (
+	// TillerImageSpec is the tiller image to be installed.
+	TillerImageSpec = "quay.io/giantswarm/tiller:v2.8.2"
+
 	// defaultMaxHistory is the maximum number of release versions stored per
 	// release by default.
 	defaultMaxHistory = 10
 
 	tillerDefaultNamespace = "kube-system"
-	tillerImageSpec        = "quay.io/giantswarm/tiller:v2.8.2"
 	tillerLabelSelector    = "app=helm,name=tiller"
 	tillerPodName          = "tiller-giantswarm"
 	tillerPort             = 44134

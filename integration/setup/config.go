@@ -19,6 +19,8 @@ type Config struct {
 	HelmClient *helmclient.Client
 	K8sClient  kubernetes.Interface
 	Logger     micrologger.Logger
+
+	RestConfig *rest.Config
 }
 
 func NewConfig() (Config, error) {
@@ -70,6 +72,8 @@ func NewConfig() (Config, error) {
 		HelmClient: helmClient,
 		K8sClient:  k8sClient,
 		Logger:     logger,
+
+		RestConfig: restConfig,
 	}
 
 	return c, nil

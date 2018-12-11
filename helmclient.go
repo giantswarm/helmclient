@@ -57,6 +57,7 @@ type Config struct {
 
 	RestConfig      *rest.Config
 	TillerNamespace string
+	TillerImage     string
 }
 
 // Client knows how to talk with a Helm Tiller server.
@@ -66,6 +67,7 @@ type Client struct {
 	logger     micrologger.Logger
 
 	restConfig      *rest.Config
+	tillerImage     string
 	tillerNamespace string
 }
 
@@ -82,6 +84,9 @@ func New(config Config) (*Client, error) {
 		return nil, microerror.Maskf(invalidConfigError, "%T.RestConfig must not be empty", config)
 	}
 
+	if config.TillerImage == "" {
+		config.TillerNamespace = TillerImageSpec
+	}
 	if config.TillerNamespace == "" {
 		config.TillerNamespace = tillerDefaultNamespace
 	}
@@ -92,6 +97,7 @@ func New(config Config) (*Client, error) {
 		logger:     config.Logger,
 
 		restConfig:      config.RestConfig,
+		tillerImage:     config.TillerImage,
 		tillerNamespace: config.TillerNamespace,
 	}
 
@@ -263,7 +269,7 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 	}
 
 	i := &installer.Options{
-		ImageSpec:      tillerImageSpec,
+		ImageSpec:      TillerImageSpec,
 		MaxHistory:     defaultMaxHistory,
 		Namespace:      c.tillerNamespace,
 		ServiceAccount: tillerPodName,
@@ -812,7 +818,7 @@ func isTillerOutdated(pod *corev1.Pod) (bool, error) {
 		return false, microerror.Mask(err)
 	}
 
-	desiredTillerVersion, err := parseTillerVersion(tillerImageSpec)
+	desiredTillerVersion, err := parseTillerVersion(TillerImageSpec)
 	if err != nil {
 		return false, microerror.Mask(err)
 	}

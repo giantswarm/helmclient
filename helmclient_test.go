@@ -559,7 +559,7 @@ func Test_isTillerOutdated(t *testing.T) {
 				Spec: corev1.PodSpec{
 					Containers: []corev1.Container{
 						{
-							Image: tillerImageSpec,
+							Image: TillerImageSpec,
 						},
 					},
 				},
