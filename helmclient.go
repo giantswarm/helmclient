@@ -256,11 +256,8 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 	}
 
 	if pod != nil {
-		err = isTillerOutdated(pod)
-		if IsTillerOutdated(err) {
-			// Fall through as we need to upgrade Tiller.
-			upgradeTiller = true
-		} else if err != nil {
+		upgradeTiller, err = isTillerOutdated(pod)
+		if err != nil {
 			return microerror.Mask(err)
 		}
 	}
@@ -332,8 +329,6 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 			t, err := c.newTunnel()
 			if IsTillerNotFound(err) {
 				return backoff.Permanent(microerror.Mask(err))
-			} else if upgradeTiller && IsTooManyResults(err) {
-				return microerror.Maskf(err, "too many tiller pods due to upgrade")
 			} else if err != nil {
 				return microerror.Mask(err)
 			}
@@ -788,27 +783,23 @@ func getTillerImage(pod *corev1.Pod) (string, error) {
 	return tillerImage, nil
 }
 
-func isTillerOutdated(pod *corev1.Pod) error {
+func isTillerOutdated(pod *corev1.Pod) (bool, error) {
 	currentTillerImage, err := getTillerImage(pod)
 	if err != nil {
-		return microerror.Mask(err)
+		return false, microerror.Mask(err)
 	}
 
 	currentTillerVersion, err := parseTillerVersion(currentTillerImage)
 	if err != nil {
-		return microerror.Mask(err)
+		return false, microerror.Mask(err)
 	}
 
 	desiredTillerVersion, err := parseTillerVersion(tillerImageSpec)
 	if err != nil {
-		return microerror.Mask(err)
+		return false, microerror.Mask(err)
 	}
 
-	if currentTillerVersion.LessThan(desiredTillerVersion) {
-		return microerror.Maskf(tillerOutdatedError, "%#q older than %#q", currentTillerVersion, desiredTillerVersion)
-	}
-
-	return nil
+	return currentTillerVersion.LessThan(desiredTillerVersion), nil
 }
 
 func parseTillerVersion(tillerImage string) (*semver.Version, error) {
@@ -818,9 +809,7 @@ func parseTillerVersion(tillerImage string) (*semver.Version, error) {
 		return nil, microerror.Maskf(executionFailedError, "tiller image %#q is invalid", tillerImage)
 	}
 
-	// Version may be a release candidate. If so remove the -rc suffix.
 	tag := imageParts[1]
-
 	version, err := semver.NewVersion(tag)
 	if err != nil {
 		return nil, microerror.Maskf(executionFailedError, "version %#q cannot be parsed %#v", tag, err)
