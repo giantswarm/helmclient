@@ -85,7 +85,7 @@ func New(config Config) (*Client, error) {
 	}
 
 	if config.TillerImage == "" {
-		config.TillerNamespace = TillerImageSpec
+		config.TillerImage = TillerImageSpec
 	}
 	if config.TillerNamespace == "" {
 		config.TillerNamespace = tillerDefaultNamespace
