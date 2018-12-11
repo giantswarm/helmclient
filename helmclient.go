@@ -271,45 +271,12 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 
 	// Install the tiller deployment in the tenant cluster.
 	if installTiller && !upgradeTiller {
-		c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating tiller in namespace %#q", c.tillerNamespace))
-
-		o := func() error {
-			err := installer.Install(c.k8sClient, i)
-			if errors.IsAlreadyExists(err) {
-				c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("tiller in namespace %#q already exists", c.tillerNamespace))
-				// fall through
-			} else if err != nil {
-				return microerror.Mask(err)
-			} else {
-				c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("created tiller in namespace %#q", c.tillerNamespace))
-			}
-
-			return nil
-		}
-		b := backoff.NewExponential(2*time.Minute, 5*time.Second)
-		n := backoff.NewNotifier(c.logger, context.Background())
-
-		err := backoff.RetryNotify(o, b, n)
+		err = c.installTiller(ctx, i)
 		if err != nil {
 			return microerror.Mask(err)
 		}
 	} else if !installTiller && upgradeTiller {
-		c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("upgrading tiller in namespace %#q", c.tillerNamespace))
-
-		o := func() error {
-			err := installer.Upgrade(c.k8sClient, i)
-			if err != nil {
-				return microerror.Mask(err)
-			}
-
-			c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("upgraded tiller in namespace %#q", c.tillerNamespace))
-
-			return nil
-		}
-		b := backoff.NewExponential(2*time.Minute, 5*time.Second)
-		n := backoff.NewNotifier(c.logger, context.Background())
-
-		err := backoff.RetryNotify(o, b, n)
+		err = c.upgradeTiller(ctx, i)
 		if err != nil {
 			return microerror.Mask(err)
 		}
@@ -674,6 +641,33 @@ func (c *Client) closeTunnel(ctx context.Context, t *k8sportforward.Tunnel) {
 	}
 }
 
+func (c *Client) installTiller(ctx context.Context, installerOptions *installer.Options) error {
+	c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating tiller in namespace %#q", c.tillerNamespace))
+
+	o := func() error {
+		err := installer.Install(c.k8sClient, installerOptions)
+		if errors.IsAlreadyExists(err) {
+			c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("tiller in namespace %#q already exists", c.tillerNamespace))
+			// fall through
+		} else if err != nil {
+			return microerror.Mask(err)
+		} else {
+			c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("created tiller in namespace %#q", c.tillerNamespace))
+		}
+
+		return nil
+	}
+	b := backoff.NewExponential(2*time.Minute, 5*time.Second)
+	n := backoff.NewNotifier(c.logger, context.Background())
+
+	err := backoff.RetryNotify(o, b, n)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	return nil
+}
+
 func (c *Client) newHelmClientFromTunnel(t *k8sportforward.Tunnel) helmclient.Interface {
 	// In case a helm client is configured we just go with it.
 	if c.helmClient != nil {
@@ -721,6 +715,30 @@ func (c *Client) newTunnel() (*k8sportforward.Tunnel, error) {
 	}
 
 	return tunnel, nil
+}
+
+func (c *Client) upgradeTiller(ctx context.Context, installerOptions *installer.Options) error {
+	c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("upgrading tiller in namespace %#q", c.tillerNamespace))
+
+	o := func() error {
+		err := installer.Upgrade(c.k8sClient, installerOptions)
+		if err != nil {
+			return microerror.Mask(err)
+		}
+
+		c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("upgraded tiller in namespace %#q", c.tillerNamespace))
+
+		return nil
+	}
+	b := backoff.NewExponential(2*time.Minute, 5*time.Second)
+	n := backoff.NewNotifier(c.logger, context.Background())
+
+	err := backoff.RetryNotify(o, b, n)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	return nil
 }
 
 // filterList returns a list scrubbed of old releases.
