@@ -30,22 +30,24 @@ func TestUpgradeTiller(t *testing.T) {
 		currentHelmClient = config.HelmClient
 	}
 
-	var outdatedHelmClient *helmclient.Client
-	{
-		c := helmclient.Config{
-			K8sClient: config.K8sClient,
-			Logger:    config.Logger,
+	/*
+		var outdatedHelmClient *helmclient.Client
+		{
+			c := helmclient.Config{
+				K8sClient: config.K8sClient,
+				Logger:    config.Logger,
 
-			RestConfig:      config.RestConfig,
-			TillerImage:     outdatedTillerImage,
-			TillerNamespace: tillerNamespace,
-		}
+				RestConfig:      config.RestConfig,
+				TillerImage:     outdatedTillerImage,
+				TillerNamespace: tillerNamespace,
+			}
 
-		outdatedHelmClient, err = helmclient.New(c)
-		if err != nil {
-			t.Fatalf("could not create tiller client %#v", err)
+			outdatedHelmClient, err = helmclient.New(c)
+			if err != nil {
+				t.Fatalf("could not create tiller client %#v", err)
+			}
 		}
-	}
+	*/
 
 	// Install outdated tiller using outdated helm client.
 	{
