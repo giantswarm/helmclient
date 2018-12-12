@@ -56,8 +56,8 @@ type Config struct {
 	Logger     micrologger.Logger
 
 	RestConfig      *rest.Config
-	TillerNamespace string
 	TillerImage     string
+	TillerNamespace string
 }
 
 // Client knows how to talk with a Helm Tiller server.
@@ -85,10 +85,10 @@ func New(config Config) (*Client, error) {
 	}
 
 	if config.TillerImage == "" {
-		config.TillerImage = TillerImageSpec
+		config.TillerImage = defaultTillerImage
 	}
 	if config.TillerNamespace == "" {
-		config.TillerNamespace = tillerDefaultNamespace
+		config.TillerNamespace = defaultTillerNamespace
 	}
 
 	c := &Client{
@@ -97,8 +97,9 @@ func New(config Config) (*Client, error) {
 		logger:     config.Logger,
 
 		restConfig:      config.RestConfig,
-		tillerImage:     config.TillerImage,
 		tillerNamespace: config.TillerNamespace,
+
+		tillerImage: defaultTillerImage,
 	}
 
 	return c, nil
@@ -262,8 +263,10 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 	}
 
 	if pod != nil {
-		upgradeTiller, err = isTillerOutdated(pod)
-		if err != nil {
+		err = validateTillerVersion(pod, c.tillerImage)
+		if IsTillerOutdated(err) {
+			upgradeTiller = true
+		} else if err != nil {
 			return microerror.Mask(err)
 		}
 	}
@@ -701,10 +704,8 @@ func (c *Client) newTunnel() (*k8sportforward.Tunnel, error) {
 	}
 
 	// Do not create a tunnel if tiller is outdated. It will be upgraded.
-	tillerOutdated, err := isTillerOutdated(pod)
-	if tillerOutdated {
-		return nil, microerror.Maskf(tillerOutdatedError, "tiller must be upgraded to %#q", TillerImageSpec)
-	} else if err != nil {
+	err = validateTillerVersion(pod, c.tillerImage)
+	if err != nil {
 		return nil, microerror.Mask(err)
 	}
 
@@ -799,7 +800,7 @@ func getPod(client kubernetes.Interface, labelSelector, namespace string) (*core
 	return &pods.Items[0], nil
 }
 
-func getTillerImage(pod *corev1.Pod) (string, error) {
+func getPodImage(pod *corev1.Pod) (string, error) {
 	if len(pod.Spec.Containers) > 1 {
 		return "", microerror.Maskf(tooManyResultsError, "%d", len(pod.Spec.Containers))
 	}
@@ -815,23 +816,31 @@ func getTillerImage(pod *corev1.Pod) (string, error) {
 	return tillerImage, nil
 }
 
-func isTillerOutdated(pod *corev1.Pod) (bool, error) {
-	currentTillerImage, err := getTillerImage(pod)
+func validateTillerVersion(pod *corev1.Pod, desiredImage string) error {
+	currentImage, err := getPodImage(pod)
 	if err != nil {
-		return false, microerror.Mask(err)
+		return microerror.Mask(err)
 	}
 
-	currentTillerVersion, err := parseTillerVersion(currentTillerImage)
+	currentVersion, err := parseTillerVersion(currentImage)
 	if err != nil {
-		return false, microerror.Mask(err)
+		return microerror.Mask(err)
 	}
 
-	desiredTillerVersion, err := parseTillerVersion(TillerImageSpec)
+	desiredVersion, err := parseTillerVersion(desiredImage)
 	if err != nil {
-		return false, microerror.Mask(err)
+		return microerror.Mask(err)
 	}
 
-	return currentTillerVersion.LessThan(desiredTillerVersion), nil
+	if currentVersion.GreaterThan(desiredVersion) {
+		return microerror.Maskf(executionFailedError, "current tiller version %#q is greater than desired tiller version %#q", currentVersion.String(), desiredVersion.String())
+	}
+
+	if currentVersion.LessThan(desiredVersion) {
+		return microerror.Maskf(tillerOutdatedError, "current tiller version %#q is lower than desired tiller version %#q", currentVersion.String(), desiredVersion.String())
+	}
+
+	return nil
 }
 
 func parseTillerVersion(tillerImage string) (*semver.Version, error) {
@@ -844,7 +853,7 @@ func parseTillerVersion(tillerImage string) (*semver.Version, error) {
 	tag := imageParts[1]
 	version, err := semver.NewVersion(tag)
 	if err != nil {
-		return nil, microerror.Maskf(executionFailedError, "version %#q cannot be parsed %#v", tag, err)
+		return nil, microerror.Maskf(executionFailedError, "parsing version %#q failed with error %#q", tag, err)
 	}
 
 	return version, nil

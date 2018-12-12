@@ -19,55 +19,64 @@ func TestUpgradeTiller(t *testing.T) {
 
 	var err error
 
-	labelSelector := "app=helm,name=tiller"
+	currentTillerImage := "quay.io/giantswarm/tiller:v2.8.2"
 	outdatedTillerImage := "gcr.io/kubernetes-helm:v2.7.2"
+
+	labelSelector := "app=helm,name=tiller"
 	tillerNamespace := "giantswarm"
 
-	var helmClient *helmclient.Client
+	var currentHelmClient *helmclient.Client
+	{
+		currentHelmClient = config.HelmClient
+	}
+
+	var outdatedHelmClient *helmclient.Client
 	{
 		c := helmclient.Config{
 			K8sClient: config.K8sClient,
 			Logger:    config.Logger,
 
-			RestConfig: config.RestConfig,
-			// Use outdated tiller for initial install.
+			RestConfig:      config.RestConfig,
 			TillerImage:     outdatedTillerImage,
 			TillerNamespace: tillerNamespace,
 		}
 
-		helmClient, err = helmclient.New(c)
+		outdatedHelmClient, err = helmclient.New(c)
 		if err != nil {
 			t.Fatalf("could not create tiller client %#v", err)
 		}
 	}
 
-	// Install tiller using helm client with outdated image.
-	err = helmClient.EnsureTillerInstalled(ctx)
-	if err != nil {
-		t.Fatalf("could not install tiller %#v", err)
+	// Install outdated tiller using outdated helm client.
+	{
+		err = outdatedHelmClient.EnsureTillerInstalled(ctx)
+		if err != nil {
+			t.Fatalf("could not install tiller %#v", err)
+		}
+
+		tillerImage, err := getTillerImage(ctx, tillerNamespace, labelSelector)
+		if err != nil {
+			t.Fatalf("could not get tiller image %#v", err)
+		}
+		if tillerImage != outdatedTillerImage {
+			t.Fatalf("tiller image == %#q, want %#q", tillerImage, outdatedTillerImage)
+		}
 	}
 
-	tillerImage, err := getTillerImage(ctx, tillerNamespace, labelSelector)
-	if err != nil {
-		t.Fatalf("could not get tiller image %#v", err)
-	}
-	if tillerImage != outdatedTillerImage {
-		t.Fatalf("tiller has not been downgraded got image %#q expected %#q", tillerImage, outdatedTillerImage)
-	}
+	// Upgrade tiller to the latest image using current helm client.
+	{
+		err := currentHelmClient.EnsureTillerInstalled(ctx)
+		if err != nil {
+			t.Fatalf("could not install tiller %#v", err)
+		}
 
-	// Upgrade tiller to the latest image using default helm client.
-	err = config.HelmClient.EnsureTillerInstalled(ctx)
-	if err != nil {
-		t.Fatalf("could not install tiller %#v", err)
-	}
-
-	upgradedTillerImage, err := getTillerImage(ctx, tillerNamespace, labelSelector)
-	if err != nil {
-		t.Fatalf("could not get tiller image %#v", err)
-	}
-
-	if upgradedTillerImage != helmclient.TillerImageSpec {
-		t.Fatalf("tiller has not been upgraded to latest image got %#q expected %#q", upgradedTillerImage, helmclient.TillerImageSpec)
+		tillerImage, err := getTillerImage(ctx, tillerNamespace, labelSelector)
+		if err != nil {
+			t.Fatalf("could not get tiller image %#v", err)
+		}
+		if tillerImage != currentTillerImage {
+			t.Fatalf("tiller image == %#q, want %#q", tillerImage, currentTillerImage)
+		}
 	}
 }
 
