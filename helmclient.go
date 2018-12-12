@@ -269,7 +269,7 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 	}
 
 	i := &installer.Options{
-		ImageSpec:      TillerImageSpec,
+		ImageSpec:      c.tillerImage,
 		MaxHistory:     defaultMaxHistory,
 		Namespace:      c.tillerNamespace,
 		ServiceAccount: tillerPodName,
