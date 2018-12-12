@@ -29,7 +29,8 @@ func TestUpgradeTiller(t *testing.T) {
 			K8sClient: config.K8sClient,
 			Logger:    config.Logger,
 
-			RestConfig:      config.RestConfig,
+			RestConfig: config.RestConfig,
+			// Use outdated tiller for initial install.
 			TillerImage:     outdatedTillerImage,
 			TillerNamespace: tillerNamespace,
 		}
