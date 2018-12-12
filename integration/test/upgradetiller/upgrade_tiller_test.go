@@ -49,7 +49,8 @@ func TestUpgradeTiller(t *testing.T) {
 
 	// Install outdated tiller using outdated helm client.
 	{
-		err = outdatedHelmClient.EnsureTillerInstalled(ctx)
+		// WIP: Test with current helm client.
+		err = currentHelmClient.EnsureTillerInstalled(ctx)
 		if err != nil {
 			t.Fatalf("could not install tiller %#v", err)
 		}
