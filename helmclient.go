@@ -700,6 +700,14 @@ func (c *Client) newTunnel() (*k8sportforward.Tunnel, error) {
 		return nil, microerror.Mask(err)
 	}
 
+	// Do not create a tunnel if tiller is outdated. It will be upgraded.
+	tillerOutdated, err := isTillerOutdated(pod)
+	if tillerOutdated {
+		return nil, microerror.Maskf(tillerOutdatedError, "tiller must be upgraded to %#q", TillerImageSpec)
+	} else if err != nil {
+		return nil, microerror.Mask(err)
+	}
+
 	var forwarder *k8sportforward.Forwarder
 	{
 		c := k8sportforward.ForwarderConfig{
