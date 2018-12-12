@@ -99,7 +99,7 @@ func New(config Config) (*Client, error) {
 		restConfig:      config.RestConfig,
 		tillerNamespace: config.TillerNamespace,
 
-		tillerImage: defaultTillerImage,
+		tillerImage: config.TillerImage,
 	}
 
 	return c, nil
