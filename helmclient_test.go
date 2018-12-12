@@ -548,10 +548,9 @@ func Test_UpdateReleaseFromTarball(t *testing.T) {
 
 func Test_isTillerOutdated(t *testing.T) {
 	testCases := []struct {
-		name           string
-		tillerPod      *corev1.Pod
-		tillerOutdated bool
-		errorMatcher   func(error) bool
+		name         string
+		tillerPod    *corev1.Pod
+		errorMatcher func(error) bool
 	}{
 		{
 			name: "case 0: tiller pod is up to date",
@@ -559,12 +558,11 @@ func Test_isTillerOutdated(t *testing.T) {
 				Spec: corev1.PodSpec{
 					Containers: []corev1.Container{
 						{
-							Image: TillerImageSpec,
+							Image: defaultTillerImage,
 						},
 					},
 				},
 			},
-			tillerOutdated: false,
 		},
 		{
 			name: "case 1: tiller pod is newer",
@@ -577,7 +575,7 @@ func Test_isTillerOutdated(t *testing.T) {
 					},
 				},
 			},
-			tillerOutdated: false,
+			errorMatcher: IsExecutionFailed,
 		},
 		{
 			name: "case 2: tiller pod is outdated",
@@ -590,7 +588,7 @@ func Test_isTillerOutdated(t *testing.T) {
 					},
 				},
 			},
-			tillerOutdated: true,
+			errorMatcher: IsTillerOutdated,
 		},
 		{
 			name: "case 3: tiller image is an outdated release candidate",
@@ -603,7 +601,7 @@ func Test_isTillerOutdated(t *testing.T) {
 					},
 				},
 			},
-			tillerOutdated: true,
+			errorMatcher: IsTillerOutdated,
 		},
 		{
 			name: "case 4: tiller image has no version tag",
@@ -648,10 +646,7 @@ func Test_isTillerOutdated(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			res, err := isTillerOutdated(tc.tillerPod)
-			if res != tc.tillerOutdated {
-				t.Fatalf("want %t, got %t", tc.tillerOutdated, res)
-			}
+			err := validateTillerVersion(tc.tillerPod, defaultTillerImage)
 
 			switch {
 			case err == nil && tc.errorMatcher == nil:
