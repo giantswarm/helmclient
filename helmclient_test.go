@@ -558,12 +558,11 @@ func Test_isTillerOutdated(t *testing.T) {
 				Spec: corev1.PodSpec{
 					Containers: []corev1.Container{
 						{
-							Image: tillerImageSpec,
+							Image: defaultTillerImage,
 						},
 					},
 				},
 			},
-			errorMatcher: nil,
 		},
 		{
 			name: "case 1: tiller pod is newer",
@@ -576,7 +575,7 @@ func Test_isTillerOutdated(t *testing.T) {
 					},
 				},
 			},
-			errorMatcher: nil,
+			errorMatcher: IsExecutionFailed,
 		},
 		{
 			name: "case 2: tiller pod is outdated",
@@ -647,7 +646,7 @@ func Test_isTillerOutdated(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			err := isTillerOutdated(tc.tillerPod)
+			err := validateTillerVersion(tc.tillerPod, defaultTillerImage)
 
 			switch {
 			case err == nil && tc.errorMatcher == nil:

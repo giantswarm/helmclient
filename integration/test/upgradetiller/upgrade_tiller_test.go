@@ -18,18 +18,58 @@ func TestUpgradeTiller(t *testing.T) {
 
 	var err error
 
-	// Install tiller with the latest image.
-	err = config.HelmClient.EnsureTillerInstalled(ctx)
-	if err != nil {
-		t.Fatalf("could not install tiller %#v", err)
+	currentTillerImage := "quay.io/giantswarm/tiller:v2.8.2"
+	outdatedTillerImage := "gcr.io/kubernetes-helm/tiller:v2.7.2"
+
+	labelSelector := "app=helm,name=tiller"
+	tillerNamespace := "giantswarm"
+
+	// Install tiller using current image.
+	{
+		err = config.HelmClient.EnsureTillerInstalled(ctx)
+		if err != nil {
+			t.Fatalf("could not install tiller %#v", err)
+		}
+
+		tillerImage, err := getTillerImage(ctx, tillerNamespace, labelSelector)
+		if err != nil {
+			t.Fatalf("could not get tiller image %#v", err)
+		}
+		if tillerImage != currentTillerImage {
+			t.Fatalf("tiller image == %#q, want %#q", tillerImage, outdatedTillerImage)
+		}
 	}
 
-	namespace := "giantswarm"
-	labelSelector := "app=helm,name=tiller"
+	// Downgrade tiller image to test the upgrade process.
+	{
+		err = updateTillerImage(ctx, tillerNamespace, labelSelector, outdatedTillerImage)
+		if err != nil {
+			t.Fatalf("could not downgrade tiller image %#v", err)
+		}
 
-	_, err = getTillerImage(ctx, namespace, labelSelector)
-	if err != nil {
-		t.Fatalf("could not get tiller image %#v", err)
+		tillerImage, err := getTillerImage(ctx, tillerNamespace, labelSelector)
+		if err != nil {
+			t.Fatalf("could not get tiller image %#v", err)
+		}
+		if tillerImage != outdatedTillerImage {
+			t.Fatalf("tiller image == %#q, want %#q", tillerImage, outdatedTillerImage)
+		}
+	}
+
+	// Upgrade tiller to the current image.
+	{
+		err := config.HelmClient.EnsureTillerInstalled(ctx)
+		if err != nil {
+			t.Fatalf("could not install tiller %#v", err)
+		}
+
+		tillerImage, err := getTillerImage(ctx, tillerNamespace, labelSelector)
+		if err != nil {
+			t.Fatalf("could not get tiller image %#v", err)
+		}
+		if tillerImage != currentTillerImage {
+			t.Fatalf("tiller image == %#q, want %#q", tillerImage, currentTillerImage)
+		}
 	}
 }
 
@@ -85,4 +125,19 @@ func getTillerImage(ctx context.Context, namespace, labelSelector string) (strin
 	}
 
 	return tillerImage, nil
+}
+
+func updateTillerImage(ctx context.Context, namespace, labelSelector, tillerImage string) error {
+	d, err := getTillerDeployment(ctx, namespace, labelSelector)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	d.Spec.Template.Spec.Containers[0].Image = tillerImage
+	_, err = config.K8sClient.Apps().Deployments(namespace).Update(d)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	return nil
 }
