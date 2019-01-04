@@ -558,6 +558,24 @@ func (c *Client) ListReleaseContents(ctx context.Context) ([]*ReleaseContent, er
 	return contents, nil
 }
 
+// LoadChart loads a Helm Chart and returns relevant metadata.
+func (c *Client) LoadChart(ctx context.Context, chartPath string) (*Chart, error) {
+	helmChart, err := chartutil.Load(chartPath)
+	if err != nil {
+		return nil, microerror.Mask(err)
+	}
+
+	if helmChart.Metadata == nil || helmChart.Metadata.Version == "" {
+		return nil, microerror.Maskf(notFoundError, ".Metadata.Version is empty")
+	}
+
+	chart := &Chart{
+		Version: helmChart.Metadata.Version,
+	}
+
+	return chart, nil
+}
+
 // PingTiller proxies the underlying Helm client PingTiller method.
 func (c *Client) PingTiller(ctx context.Context) error {
 	t, err := c.newTunnel()

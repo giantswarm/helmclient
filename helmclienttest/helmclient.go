@@ -9,6 +9,7 @@ import (
 
 type Config struct {
 	DefaultError          error
+	DefaultHelmChart      *helmclient.Chart
 	DefaultReleaseContent *helmclient.ReleaseContent
 	DefaultReleaseHistory *helmclient.ReleaseHistory
 	DefaultTarballPath    string
@@ -16,6 +17,7 @@ type Config struct {
 
 type Client struct {
 	defaultError          error
+	defaultHelmChart      *helmclient.Chart
 	defaultReleaseContent *helmclient.ReleaseContent
 	defaultReleaseHistory *helmclient.ReleaseHistory
 	defaultTarballPath    string
@@ -24,6 +26,7 @@ type Client struct {
 func New(config Config) (helmclient.Interface, error) {
 	c := &Client{
 		defaultError:          config.DefaultError,
+		defaultHelmChart:      config.DefaultHelmChart,
 		defaultReleaseContent: config.DefaultReleaseContent,
 		defaultReleaseHistory: config.DefaultReleaseHistory,
 		defaultTarballPath:    config.DefaultTarballPath,
@@ -66,6 +69,14 @@ func (c *Client) InstallReleaseFromTarball(ctx context.Context, path, ns string,
 
 func (c *Client) ListReleaseContents(ctx context.Context) ([]*helmclient.ReleaseContent, error) {
 	return nil, nil
+}
+
+func (c *Client) LoadChart(ctx context.Context, chartPath string) (*helmclient.Chart, error) {
+	if c.defaultError != nil {
+		return nil, c.defaultError
+	}
+
+	return c.defaultHelmChart, nil
 }
 
 func (c *Client) PingTiller(ctx context.Context) error {
