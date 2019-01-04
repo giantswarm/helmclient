@@ -65,14 +65,14 @@ func (c *Client) ListReleaseContents(ctx context.Context) ([]*helmclient.Release
 	return nil, nil
 }
 
+func (c *Client) PingTiller(ctx context.Context) error {
+	return nil
+}
+
 func (c *Client) RunReleaseTest(ctx context.Context, releaseName string, options ...helm.ReleaseTestOption) error {
 	return nil
 }
 
 func (c *Client) UpdateReleaseFromTarball(ctx context.Context, releaseName, path string, options ...helm.UpdateOption) error {
-	return nil
-}
-
-func (c *Client) PingTiller(ctx context.Context) error {
 	return nil
 }
