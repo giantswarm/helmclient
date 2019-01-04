@@ -41,6 +41,9 @@ type Interface interface {
 	ListReleaseContents(ctx context.Context) ([]*ReleaseContent, error)
 	// PingTiller proxies the underlying Helm client PingTiller method.
 	PingTiller(ctx context.Context) error
+	// PullChartTarball downloads a tarball from the provided tarball URL,
+	// returning the file path.
+	PullChartTarball(ctx context.Context, tarballURL string) (string, error)
 	// RunReleaseTest runs the tests for a Helm Release. This is the same
 	// action as running the helm test command.
 	RunReleaseTest(ctx context.Context, releaseName string, options ...helm.ReleaseTestOption) error

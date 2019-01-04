@@ -8,22 +8,25 @@ import (
 )
 
 type Config struct {
+	DefaultError          error
 	DefaultReleaseContent *helmclient.ReleaseContent
 	DefaultReleaseHistory *helmclient.ReleaseHistory
-	DefaultError          error
+	DefaultTarballPath    string
 }
 
 type Client struct {
+	defaultError          error
 	defaultReleaseContent *helmclient.ReleaseContent
 	defaultReleaseHistory *helmclient.ReleaseHistory
-	defaultError          error
+	defaultTarballPath    string
 }
 
 func New(config Config) (helmclient.Interface, error) {
 	c := &Client{
+		defaultError:          config.DefaultError,
 		defaultReleaseContent: config.DefaultReleaseContent,
 		defaultReleaseHistory: config.DefaultReleaseHistory,
-		defaultError:          config.DefaultError,
+		defaultTarballPath:    config.DefaultTarballPath,
 	}
 
 	return c, nil
@@ -67,6 +70,14 @@ func (c *Client) ListReleaseContents(ctx context.Context) ([]*helmclient.Release
 
 func (c *Client) PingTiller(ctx context.Context) error {
 	return nil
+}
+
+func (c *Client) PullChartTarball(ctx context.Context, tarballURL string) (string, error) {
+	if c.defaultError != nil {
+		return "", c.defaultError
+	}
+
+	return c.defaultTarballPath, nil
 }
 
 func (c *Client) RunReleaseTest(ctx context.Context, releaseName string, options ...helm.ReleaseTestOption) error {
