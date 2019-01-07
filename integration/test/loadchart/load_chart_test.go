@@ -11,7 +11,7 @@ import (
 	"github.com/giantswarm/helmclient/integration/charttarball"
 )
 
-func TestBasic(t *testing.T) {
+func TestLoadChart(t *testing.T) {
 	ctx := context.Background()
 	var err error
 
