@@ -11,6 +11,4 @@ maintainers:
   - name: giantswarm
     email: info@giantswarm.io
 engine: gotpl
-annotations:
-  - chart-operator.giantswarm.io/allow-force-upgrade: true
 tillerVersion: ">=2.8.0"
