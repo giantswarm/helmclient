@@ -53,15 +53,20 @@ jobs:
     environment:
       TEST_DIR: "integration/test/basic"
     <<: *e2eTest
+  
+  e2eTestDeleteRelease:
+    environment:
+      TEST_DIR: "integration/test/deleterelease"
+    <<: *e2eTest
 
   e2eTestInstallRelease:
     environment:
       TEST_DIR: "integration/test/installrelease"
     <<: *e2eTest
-
-  e2eTestDeleteRelease:
+  
+  e2eTestLoadChart:
     environment:
-      TEST_DIR: "integration/test/deleterelease"
+      TEST_DIR: "integration/test/loadchart"
     <<: *e2eTest
 
   e2eTestUpgradeTiller:
@@ -78,10 +83,13 @@ workflows:
       - e2eTestBasic:
           requires:
           - build
+      - e2eTestDeleteRelease:
+          requires:
+          - build
       - e2eTestInstallRelease:
           requires:
           - build
-      - e2eTestDeleteRelease:
+      - e2eTestLoadChart:
           requires:
           - build
       - e2eTestUpgradeTiller:

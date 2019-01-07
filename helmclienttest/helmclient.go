@@ -5,18 +5,21 @@ import (
 
 	"github.com/giantswarm/helmclient"
 	"k8s.io/helm/pkg/helm"
+	hapichart "k8s.io/helm/pkg/proto/hapi/chart"
 )
 
 type Config struct {
+	DefaultChart          *hapichart.Chart
+	DefaultError          error
 	DefaultReleaseContent *helmclient.ReleaseContent
 	DefaultReleaseHistory *helmclient.ReleaseHistory
-	DefaultError          error
 }
 
 type Client struct {
+	defaultChart          *hapichart.Chart
+	defaultError          error
 	defaultReleaseContent *helmclient.ReleaseContent
 	defaultReleaseHistory *helmclient.ReleaseHistory
-	defaultError          error
 }
 
 func New(config Config) (helmclient.Interface, error) {
@@ -65,8 +68,20 @@ func (c *Client) ListReleaseContents(ctx context.Context) ([]*helmclient.Release
 	return nil, nil
 }
 
+func (c *Client) LoadChart(ctx context.Context, chartPath string) (*hapichart.Chart, error) {
+	if c.defaultError != nil {
+		return nil, c.defaultError
+	}
+
+	return c.defaultChart, nil
+}
+
 func (c *Client) PingTiller(ctx context.Context) error {
 	return nil
+}
+
+func (c *Client) PullChartTarball(ctx context.Context, tarballURL string) (string, error) {
+	return "", nil
 }
 
 func (c *Client) RunReleaseTest(ctx context.Context, releaseName string, options ...helm.ReleaseTestOption) error {
