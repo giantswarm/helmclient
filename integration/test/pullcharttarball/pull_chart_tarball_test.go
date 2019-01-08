@@ -4,6 +4,7 @@ package pullcharttarball
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"testing"
 
@@ -44,6 +45,8 @@ func TestPullChartTarball(t *testing.T) {
 		t.Fatalf("could not create chart archive %#v", err)
 	}
 	defer os.Remove(tarballPath)
+
+	config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("chart tarball %#q", tarballPath))
 
 	chart, err := config.HelmClient.LoadChart(ctx, tarballPath)
 	if err != nil {
