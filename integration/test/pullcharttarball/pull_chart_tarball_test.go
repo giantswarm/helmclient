@@ -4,11 +4,11 @@ package pullcharttarball
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"testing"
 
 	"github.com/giantswarm/helmclient/integration/charttarball"
+	"github.com/giantswarm/helmclient/key"
 )
 
 func TestPullChartTarball(t *testing.T) {
@@ -28,5 +28,8 @@ func TestPullChartTarball(t *testing.T) {
 		t.Fatalf("could not load chart %#v", err)
 	}
 
-	config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("chart metadata %#v", chart.Metadata))
+	expectedVersion := "1.2.3"
+	if key.ChartVersion(chart) != expectedVersion {
+		t.Fatalf("expected chart version %#q got %#q", expectedVersion, key.ChartVersion(chart))
+	}
 }
