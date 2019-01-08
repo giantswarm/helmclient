@@ -64,9 +64,9 @@ jobs:
       TEST_DIR: "integration/test/installrelease"
     <<: *e2eTest
   
-  e2eTestLoadChart:
+  e2eTestPullChartTarball:
     environment:
-      TEST_DIR: "integration/test/loadchart"
+      TEST_DIR: "integration/test/pullcharttarball"
     <<: *e2eTest
 
   e2eTestUpgradeTiller:
@@ -89,7 +89,7 @@ workflows:
       - e2eTestInstallRelease:
           requires:
           - build
-      - e2eTestLoadChart:
+      - e2eTestPullChartTarball:
           requires:
           - build
       - e2eTestUpgradeTiller:

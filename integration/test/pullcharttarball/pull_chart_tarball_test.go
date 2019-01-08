@@ -1,6 +1,6 @@
 // +build k8srequired
 
-package loadchart
+package pullcharttarball
 
 import (
 	"context"
@@ -11,7 +11,7 @@ import (
 	"github.com/giantswarm/helmclient/integration/charttarball"
 )
 
-func TestLoadChart(t *testing.T) {
+func TestPullChartTarball(t *testing.T) {
 	ctx := context.Background()
 	var err error
 

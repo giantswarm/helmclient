@@ -1,6 +1,6 @@
 // +build k8srequired
 
-package loadchart
+package pullcharttarball
 
 import (
 	"fmt"
