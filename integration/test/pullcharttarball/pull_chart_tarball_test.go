@@ -9,13 +9,11 @@ import (
 	"os"
 	"testing"
 
-	"k8s.io/helm/pkg/helm"
-
-	"github.com/cenkalti/backoff"
-	"github.com/giantswarm/helmclient/integration/charttarball"
+	"github.com/giantswarm/backoff"
 	"github.com/giantswarm/helmclient/key"
 	"github.com/giantswarm/k8sportforward"
 	"github.com/giantswarm/microerror"
+	"k8s.io/helm/pkg/helm"
 )
 
 // TestPullChartTarball starts a chartmuseum server and pushes a test chart.
