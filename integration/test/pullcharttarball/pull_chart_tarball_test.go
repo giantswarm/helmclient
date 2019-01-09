@@ -13,6 +13,8 @@ import (
 	"github.com/giantswarm/k8sportforward"
 	"github.com/giantswarm/microerror"
 	"k8s.io/helm/pkg/helm"
+
+	"github.com/giantswarm/helmclient/integration/charttarball"
 )
 
 // TestPullChartTarball starts a chartmuseum server and pushes a test chart.
@@ -26,7 +28,6 @@ func TestPullChartTarball(t *testing.T) {
 	if err != nil {
 		t.Fatalf("could not install chartmuseum %#v", err)
 	}
-
 	var fw *k8sportforward.Forwarder
 	{
 		c := k8sportforward.ForwarderConfig{
