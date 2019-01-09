@@ -107,7 +107,7 @@ func waitForServer(ctx context.Context, url string) error {
 	}
 
 	b := backoff.NewExponential(backoff.ShortMaxWait, backoff.ShortMaxInterval)
-	n := backoff.NewNotifier(c.logger, ctx)
+	n := backoff.NewNotifier(config.Logger, ctx)
 
 	err = backoff.RetryNotify(o, b, n)
 	if err != nil {
