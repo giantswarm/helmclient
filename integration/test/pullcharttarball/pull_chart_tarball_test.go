@@ -5,16 +5,13 @@ package pullcharttarball
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"testing"
-	"time"
 
 	"k8s.io/helm/pkg/helm"
 
 	"github.com/cenkalti/backoff"
-	"github.com/giantswarm/e2e-harness/pkg/framework"
 	"github.com/giantswarm/helmclient/integration/charttarball"
 	"github.com/giantswarm/helmclient/key"
 	"github.com/giantswarm/k8sportforward"
@@ -28,23 +25,9 @@ func TestPullChartTarball(t *testing.T) {
 	ctx := context.Background()
 	var err error
 
-	chartMuseumRelease := "chartmuseum"
-	chartMuseumTarball, err := charttarball.Create("chartmuseum-chart")
+	err = installChartMuseum(ctx)
 	if err != nil {
-		t.Fatalf("could not create chartmuseum archive %#v", err)
-	}
-	defer os.Remove(chartMuseumTarball)
-
-	err = config.HelmClient.EnsureTillerInstalled(ctx)
-	if err != nil {
-		t.Fatalf("could not install Tiller %#v", err)
-	}
-
-	// We need to pass the ValueOverrides option to make the install process
-	// use the default values and prevent errors on nested values.
-	err = config.HelmClient.InstallReleaseFromTarball(ctx, chartMuseumTarball, "default", helm.ReleaseName(chartMuseumRelease), helm.ValueOverrides([]byte("{}")))
-	if err != nil {
-		t.Fatalf("failed to install release %#q %#v", chartMuseumRelease, err)
+		t.Fatalf("could not install chartmuseum %#v", err)
 	}
 
 	var fw *k8sportforward.Forwarder
@@ -69,7 +52,7 @@ func TestPullChartTarball(t *testing.T) {
 	}
 
 	serverAddress := "http://" + tunnel.LocalAddress()
-	err = waitForServer(config.Host, serverAddress+"/health")
+	err = waitForServer(ctx, serverAddress+"/health")
 	if err != nil {
 		t.Fatalf("server didn't come up on time")
 	}
@@ -91,10 +74,33 @@ func TestPullChartTarball(t *testing.T) {
 	}
 }
 
-func waitForServer(h *framework.Host, url string) error {
+func installChartMuseum(ctx context.Context) error {
+	chartMuseumRelease := "chartmuseum"
+	chartMuseumTarball, err := charttarball.Create("chartmuseum-chart")
+	if err != nil {
+		return microerror.Mask(err)
+	}
+	defer os.Remove(chartMuseumTarball)
+
+	err = config.HelmClient.EnsureTillerInstalled(ctx)
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	// We need to pass the ValueOverrides option to make the install process
+	// use the default values and prevent errors on nested values.
+	err = config.HelmClient.InstallReleaseFromTarball(ctx, chartMuseumTarball, "default", helm.ReleaseName(chartMuseumRelease), helm.ValueOverrides([]byte("{}")))
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	return nil
+}
+
+func waitForServer(ctx context.Context, url string) error {
 	var err error
 
-	operation := func() error {
+	o := func() error {
 		_, err := http.Get(url)
 		if err != nil {
 			return fmt.Errorf("could not retrieve %s: %v", url, err)
@@ -102,13 +108,13 @@ func waitForServer(h *framework.Host, url string) error {
 		return nil
 	}
 
-	notify := func(err error, t time.Duration) {
-		log.Printf("waiting for server at %s: %v", t, err)
-	}
+	b := backoff.NewExponential(backoff.ShortMaxWait, backoff.ShortMaxInterval)
+	n := backoff.NewNotifier(c.logger, ctx)
 
-	err = backoff.RetryNotify(operation, backoff.NewExponentialBackOff(), notify)
+	err = backoff.RetryNotify(o, b, n)
 	if err != nil {
 		return microerror.Mask(err)
 	}
+
 	return nil
 }
