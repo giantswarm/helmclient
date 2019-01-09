@@ -42,6 +42,12 @@
   version = "v2.0.0"
 
 [[projects]]
+  name = "github.com/coreos/go-semver"
+  packages = ["semver"]
+  revision = "8ab6407b697782a06568d4b7f1db25550ec2e4c6"
+  version = "v0.2.0"
+
+[[projects]]
   name = "github.com/dgrijalva/jwt-go"
   packages = ["."]
   revision = "06ea1031745cb8b3dab3f6a236daf2b0aa468b7e"
@@ -86,9 +92,35 @@
 
 [[projects]]
   branch = "master"
+  name = "github.com/giantswarm/apiextensions"
+  packages = [
+    "pkg/apis/application/v1alpha1",
+    "pkg/apis/core/v1alpha1",
+    "pkg/apis/example/v1alpha1",
+    "pkg/apis/provider/v1alpha1",
+    "pkg/clientset/versioned",
+    "pkg/clientset/versioned/scheme",
+    "pkg/clientset/versioned/typed/application/v1alpha1",
+    "pkg/clientset/versioned/typed/core/v1alpha1",
+    "pkg/clientset/versioned/typed/example/v1alpha1",
+    "pkg/clientset/versioned/typed/provider/v1alpha1"
+  ]
+  revision = "501ab139e06931011ab14410fb86432625563477"
+
+[[projects]]
+  branch = "master"
   name = "github.com/giantswarm/backoff"
   packages = ["."]
   revision = "9922087c8f77cf4aff19bb8cf4c488a9dc4206f8"
+
+[[projects]]
+  name = "github.com/giantswarm/e2e-harness"
+  packages = [
+    "pkg/framework",
+    "pkg/harness"
+  ]
+  revision = "9218541e7e6b23dbac5bca8478a34043173196f6"
+  version = "9218541"
 
 [[projects]]
   branch = "master"
@@ -125,6 +157,12 @@
   revision = "d2e3330111940efc1f304fb5c4d1bd909acf3cf6"
 
 [[projects]]
+  branch = "master"
+  name = "github.com/giantswarm/versionbundle"
+  packages = ["."]
+  revision = "9a4f3249a5b5a080d13f1db2580cf09ba5d14ca1"
+
+[[projects]]
   name = "github.com/go-kit/kit"
   packages = ["log"]
   revision = "4dc7be5d2d12881735283bcab7352178e190fc71"
@@ -135,6 +173,12 @@
   packages = ["."]
   revision = "07c9b44f60d7ffdfb7d8efe1ad539965737836dc"
   version = "v0.4.0"
+
+[[projects]]
+  name = "github.com/go-resty/resty"
+  packages = ["."]
+  revision = "03c09fa32a21b7b27b8dbb3877826c1ab3d2daa2"
+  version = "v1.11.0"
 
 [[projects]]
   name = "github.com/go-stack/stack"
@@ -189,6 +233,18 @@
   name = "github.com/golang/snappy"
   packages = ["."]
   revision = "2e65f85255dbc3072edf28d6b5b8efc472979f5a"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/google/go-github"
+  packages = ["github"]
+  revision = "d8ef5e048be02fce9eac6482d2c1a92bf73761cf"
+
+[[projects]]
+  name = "github.com/google/go-querystring"
+  packages = ["query"]
+  revision = "44c6ddd0a2342c386950e880b658017258da92fc"
+  version = "v1.0.0"
 
 [[projects]]
   branch = "master"
@@ -328,14 +384,31 @@
   name = "golang.org/x/net"
   packages = [
     "context",
+    "context/ctxhttp",
     "http/httpguts",
     "http2",
     "http2/hpack",
     "idna",
     "internal/timeseries",
+    "publicsuffix",
     "trace"
   ]
   revision = "adae6a3d119ae4890b46832a2e88a95adc62b8e7"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/oauth2"
+  packages = [
+    ".",
+    "internal"
+  ]
+  revision = "d668ce993890a79bda886613ee587a69dd5da7a6"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/sync"
+  packages = ["errgroup"]
+  revision = "37e7f081c4d4c64e13b10787722085407fe5d15f"
 
 [[projects]]
   branch = "master"
@@ -372,6 +445,20 @@
   name = "golang.org/x/time"
   packages = ["rate"]
   revision = "85acf8d2951cb2a3bde7632f9ff273ef0379bcbd"
+
+[[projects]]
+  name = "google.golang.org/appengine"
+  packages = [
+    "internal",
+    "internal/base",
+    "internal/datastore",
+    "internal/log",
+    "internal/remote_api",
+    "internal/urlfetch",
+    "urlfetch"
+  ]
+  revision = "e9657d882bb81064595ca3b56cbe2546bbabf7b1"
+  version = "v1.4.0"
 
 [[projects]]
   branch = "master"
@@ -422,8 +509,8 @@
 [[projects]]
   name = "gopkg.in/yaml.v2"
   packages = ["."]
-  revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
-  version = "v2.2.1"
+  revision = "51d6538a90f86fe93ac480b35f37b2be17fef232"
+  version = "v2.2.2"
 
 [[projects]]
   name = "k8s.io/api"
@@ -458,6 +545,15 @@
     "storage/v1beta1"
   ]
   revision = "8b7507fac302640dd5f1efbf9643199952cc58db"
+  version = "kubernetes-1.10.4"
+
+[[projects]]
+  name = "k8s.io/apiextensions-apiserver"
+  packages = [
+    "pkg/apis/apiextensions",
+    "pkg/apis/apiextensions/v1beta1"
+  ]
+  revision = "8e7f43002fec5394a8d96ebca781aa9d4b37aaef"
   version = "kubernetes-1.10.4"
 
 [[projects]]
@@ -599,6 +695,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "6b64522edeeebd665a5a3b064cbb467b8a5eaa935bfd4c0a248c56ad69bfeec1"
+  inputs-digest = "3b91ab9adb6ae2c2625ca2c9c84022b5d7b998c7fa60e394c83153ef313cc7fc"
   solver-name = "gps-cdcl"
   solver-version = 1

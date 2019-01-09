@@ -3,12 +3,14 @@
 package setup
 
 import (
-	"github.com/giantswarm/helmclient"
+	"github.com/giantswarm/e2e-harness/pkg/framework"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
+
+	"github.com/giantswarm/helmclient"
 )
 
 const (
@@ -17,6 +19,7 @@ const (
 
 type Config struct {
 	HelmClient *helmclient.Client
+	Host       *framework.Host
 	K8sClient  kubernetes.Interface
 	Logger     micrologger.Logger
 
@@ -68,8 +71,24 @@ func NewConfig() (Config, error) {
 		}
 	}
 
+	var host *framework.Host
+	{
+		c := framework.HostConfig{
+			Logger: logger,
+
+			ClusterID:  "na",
+			VaultToken: "na",
+		}
+
+		host, err = framework.NewHost(c)
+		if err != nil {
+			return Config{}, microerror.Mask(err)
+		}
+	}
+
 	c := Config{
 		HelmClient: helmClient,
+		Host:       host,
 		K8sClient:  k8sClient,
 		Logger:     logger,
 
