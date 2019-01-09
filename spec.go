@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"k8s.io/helm/pkg/helm"
-	hapichart "k8s.io/helm/pkg/proto/hapi/chart"
 )
 
 const (
@@ -41,7 +40,7 @@ type Interface interface {
 	// ListReleaseContents gets the current status of all Helm Releases.
 	ListReleaseContents(ctx context.Context) ([]*ReleaseContent, error)
 	// LoadChart loads a Helm Chart and returns its structure.
-	LoadChart(ctx context.Context, chartPath string) (*hapichart.Chart, error)
+	LoadChart(ctx context.Context, chartPath string) (*Chart, error)
 	// PingTiller proxies the underlying Helm client PingTiller method.
 	PingTiller(ctx context.Context) error
 	// RunReleaseTest runs the tests for a Helm Release. This is the same
@@ -50,22 +49,4 @@ type Interface interface {
 	// UpdateReleaseFromTarball updates the given release using the chart packaged
 	// in the tarball.
 	UpdateReleaseFromTarball(ctx context.Context, releaseName, path string, options ...helm.UpdateOption) error
-}
-
-// ReleaseContent returns status information about a Helm Release.
-type ReleaseContent struct {
-	// Name is the name of the Helm Release.
-	Name string
-	// Status is the Helm status code of the Release.
-	Status string
-	// Values are the values provided when installing the Helm Release.
-	Values map[string]interface{}
-}
-
-// ReleaseHistory returns version information about a Helm Release.
-type ReleaseHistory struct {
-	// Name is the name of the Helm Release.
-	Name string
-	// Version is the version of the Helm Chart that has been deployed.
-	Version string
 }

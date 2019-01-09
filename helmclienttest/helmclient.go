@@ -4,20 +4,19 @@ import (
 	"context"
 
 	"k8s.io/helm/pkg/helm"
-	hapichart "k8s.io/helm/pkg/proto/hapi/chart"
 
 	"github.com/giantswarm/helmclient"
 )
 
 type Config struct {
-	DefaultChart          *hapichart.Chart
+	DefaultChart          *helmclient.Chart
 	DefaultError          error
 	DefaultReleaseContent *helmclient.ReleaseContent
 	DefaultReleaseHistory *helmclient.ReleaseHistory
 }
 
 type Client struct {
-	defaultChart          *hapichart.Chart
+	defaultChart          *helmclient.Chart
 	defaultError          error
 	defaultReleaseContent *helmclient.ReleaseContent
 	defaultReleaseHistory *helmclient.ReleaseHistory
@@ -70,7 +69,7 @@ func (c *Client) ListReleaseContents(ctx context.Context) ([]*helmclient.Release
 	return nil, nil
 }
 
-func (c *Client) LoadChart(ctx context.Context, chartPath string) (*hapichart.Chart, error) {
+func (c *Client) LoadChart(ctx context.Context, chartPath string) (*helmclient.Chart, error) {
 	if c.defaultError != nil {
 		return nil, c.defaultError
 	}
