@@ -24,10 +24,16 @@ func TestPullChartTarball(t *testing.T) {
 	ctx := context.Background()
 	var err error
 
+	err = config.HelmClient.EnsureTillerInstalled(ctx)
+	if err != nil {
+		t.Fatalf("could not install tiller %#v", err)
+	}
+
 	err = installChartMuseum(ctx)
 	if err != nil {
 		t.Fatalf("could not install chartmuseum %#v", err)
 	}
+
 	var fw *k8sportforward.Forwarder
 	{
 		c := k8sportforward.ForwarderConfig{
@@ -79,11 +85,6 @@ func installChartMuseum(ctx context.Context) error {
 		return microerror.Mask(err)
 	}
 	defer os.Remove(chartMuseumTarball)
-
-	err = config.HelmClient.EnsureTillerInstalled(ctx)
-	if err != nil {
-		return microerror.Mask(err)
-	}
 
 	// We need to pass the ValueOverrides option to make the install process
 	// use the default values and prevent errors on nested values.
