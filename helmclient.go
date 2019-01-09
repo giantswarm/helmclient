@@ -24,7 +24,6 @@ import (
 	"k8s.io/helm/cmd/helm/installer"
 	"k8s.io/helm/pkg/chartutil"
 	helmclient "k8s.io/helm/pkg/helm"
-	hapichart "k8s.io/helm/pkg/proto/hapi/chart"
 	hapirelease "k8s.io/helm/pkg/proto/hapi/release"
 	hapiservices "k8s.io/helm/pkg/proto/hapi/services"
 )
@@ -559,11 +558,19 @@ func (c *Client) ListReleaseContents(ctx context.Context) ([]*ReleaseContent, er
 	return contents, nil
 }
 
-// LoadChart loads a Helm Chart and returns its structure.
-func (c *Client) LoadChart(ctx context.Context, chartPath string) (*hapichart.Chart, error) {
-	chart, err := chartutil.Load(chartPath)
+// LoadChart loads a Helm Chart and returns relevant parts of its structure.
+func (c *Client) LoadChart(ctx context.Context, chartPath string) (*Chart, error) {
+	helmChart, err := chartutil.Load(chartPath)
 	if err != nil {
 		return nil, microerror.Mask(err)
+	}
+
+	if helmChart == nil || helmChart.Metadata == nil {
+		return nil, nil
+	}
+
+	chart := &Chart{
+		Version: helmChart.Metadata.Version,
 	}
 
 	return chart, nil
