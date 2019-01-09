@@ -18,7 +18,7 @@ const (
 )
 
 type Config struct {
-	HelmClient *helmclient.Client
+	HelmClient helmclient.Interface
 	Host       *framework.Host
 	K8sClient  kubernetes.Interface
 	Logger     micrologger.Logger
@@ -55,7 +55,7 @@ func NewConfig() (Config, error) {
 		}
 	}
 
-	var helmClient *helmclient.Client
+	var helmClient helmclient.Interface
 	{
 		c := helmclient.Config{
 			K8sClient: k8sClient,

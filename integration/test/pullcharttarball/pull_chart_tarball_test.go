@@ -10,7 +10,6 @@ import (
 	"testing"
 
 	"github.com/giantswarm/backoff"
-	"github.com/giantswarm/helmclient/key"
 	"github.com/giantswarm/k8sportforward"
 	"github.com/giantswarm/microerror"
 	"k8s.io/helm/pkg/helm"
@@ -67,8 +66,8 @@ func TestPullChartTarball(t *testing.T) {
 	}
 
 	expectedVersion := "1.2.3"
-	if key.ChartVersion(chart) != expectedVersion {
-		t.Fatalf("expected chart version %#q got %#q", expectedVersion, key.ChartVersion(chart))
+	if chart.Version != expectedVersion {
+		t.Fatalf("expected chart version %#q got %#q", expectedVersion, chart.Version)
 	}
 }
 
