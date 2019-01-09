@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"k8s.io/helm/pkg/helm"
+	hapichart "k8s.io/helm/pkg/proto/hapi/chart"
 )
 
 const (
@@ -39,6 +40,8 @@ type Interface interface {
 	InstallReleaseFromTarball(ctx context.Context, path, ns string, options ...helm.InstallOption) error
 	// ListReleaseContents gets the current status of all Helm Releases.
 	ListReleaseContents(ctx context.Context) ([]*ReleaseContent, error)
+	// LoadChart loads a Helm Chart and returns its structure.
+	LoadChart(ctx context.Context, chartPath string) (*hapichart.Chart, error)
 	// PingTiller proxies the underlying Helm client PingTiller method.
 	PingTiller(ctx context.Context) error
 	// RunReleaseTest runs the tests for a Helm Release. This is the same
