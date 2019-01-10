@@ -542,17 +542,17 @@ func (c *Client) ListReleaseContents(ctx context.Context) ([]*ReleaseContent, er
 }
 
 // LoadChart loads a Helm Chart and returns relevant parts of its structure.
-func (c *Client) LoadChart(ctx context.Context, chartPath string) (*Chart, error) {
+func (c *Client) LoadChart(ctx context.Context, chartPath string) (Chart, error) {
 	helmChart, err := chartutil.Load(chartPath)
 	if err != nil {
-		return nil, microerror.Mask(err)
+		return Chart{}, microerror.Mask(err)
 	}
 
 	if helmChart == nil || helmChart.Metadata == nil {
-		return nil, nil
+		return Chart{}, nil
 	}
 
-	chart := &Chart{
+	chart := Chart{
 		Version: helmChart.Metadata.Version,
 	}
 
