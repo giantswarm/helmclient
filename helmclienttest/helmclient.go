@@ -12,16 +12,16 @@ type Config struct {
 	DefaultError          error
 	DefaultReleaseContent *helmclient.ReleaseContent
 	DefaultReleaseHistory *helmclient.ReleaseHistory
-	LoadChartResponse     helmclient.Chart
 	LoadChartError        error
+	LoadChartResponse     helmclient.Chart
 }
 
 type Client struct {
 	defaultError          error
 	defaultReleaseContent *helmclient.ReleaseContent
 	defaultReleaseHistory *helmclient.ReleaseHistory
-	loadChartResponse     helmclient.Chart
 	loadChartError        error
+	loadChartResponse     helmclient.Chart
 }
 
 func New(config Config) (helmclient.Interface, error) {
@@ -29,8 +29,8 @@ func New(config Config) (helmclient.Interface, error) {
 		defaultError:          config.DefaultError,
 		defaultReleaseContent: config.DefaultReleaseContent,
 		defaultReleaseHistory: config.DefaultReleaseHistory,
-		loadChartResponse:     config.LoadChartResponse,
 		loadChartError:        config.LoadChartError,
+		loadChartResponse:     config.LoadChartResponse,
 	}
 
 	return c, nil
