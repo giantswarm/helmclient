@@ -77,6 +77,15 @@ func IsInvalidGZipHeader(err error) bool {
 	return false
 }
 
+var invalidStatusCodeError = &microerror.Error{
+	Kind: "invalidStatusCodeError",
+}
+
+// IsInvalidStatusCode asserts invalidStatusCodeError.
+func IsInvalidStatusCode(err error) bool {
+	return microerror.Cause(err) == invalidStatusCodeError
+}
+
 var notFoundError = &microerror.Error{
 	Kind: "notFoundError",
 }
