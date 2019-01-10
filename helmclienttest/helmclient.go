@@ -9,7 +9,6 @@ import (
 )
 
 type Config struct {
-	DefaultChart          *helmclient.Chart
 	DefaultError          error
 	DefaultReleaseContent *helmclient.ReleaseContent
 	DefaultReleaseHistory *helmclient.ReleaseHistory
@@ -18,7 +17,6 @@ type Config struct {
 }
 
 type Client struct {
-	defaultChart          *helmclient.Chart
 	defaultError          error
 	defaultReleaseContent *helmclient.ReleaseContent
 	defaultReleaseHistory *helmclient.ReleaseHistory
@@ -28,7 +26,6 @@ type Client struct {
 
 func New(config Config) (helmclient.Interface, error) {
 	c := &Client{
-		defaultChart:          config.DefaultChart,
 		defaultError:          config.DefaultError,
 		defaultReleaseContent: config.DefaultReleaseContent,
 		defaultReleaseHistory: config.DefaultReleaseHistory,
