@@ -22,6 +22,7 @@ import (
 	"k8s.io/helm/cmd/helm/installer"
 	"k8s.io/helm/pkg/chartutil"
 	helmclient "k8s.io/helm/pkg/helm"
+	hapichart "k8s.io/helm/pkg/proto/hapi/chart"
 	hapirelease "k8s.io/helm/pkg/proto/hapi/release"
 	hapiservices "k8s.io/helm/pkg/proto/hapi/services"
 )
@@ -541,6 +542,21 @@ func (c *Client) ListReleaseContents(ctx context.Context) ([]*ReleaseContent, er
 	return contents, nil
 }
 
+// LoadChart loads a Helm Chart and returns relevant parts of its structure.
+func (c *Client) LoadChart(ctx context.Context, chartPath string) (Chart, error) {
+	helmChart, err := chartutil.Load(chartPath)
+	if err != nil {
+		return Chart{}, microerror.Mask(err)
+	}
+
+	chart, err := newChart(helmChart)
+	if err != nil {
+		return Chart{}, microerror.Mask(err)
+	}
+
+	return chart, nil
+}
+
 // PingTiller proxies the underlying Helm client PingTiller method.
 func (c *Client) PingTiller(ctx context.Context) error {
 	t, err := c.newTunnel()
@@ -676,6 +692,18 @@ func (c *Client) installTiller(ctx context.Context, installerOptions *installer.
 	}
 
 	return nil
+}
+
+func newChart(helmChart *hapichart.Chart) (Chart, error) {
+	if helmChart == nil || helmChart.Metadata == nil {
+		return Chart{}, microerror.Maskf(executionFailedError, "expected non nil argument but got %#v", helmChart)
+	}
+
+	chart := Chart{
+		Version: helmChart.Metadata.Version,
+	}
+
+	return chart, nil
 }
 
 func (c *Client) newHelmClientFromTunnel(t *k8sportforward.Tunnel) helmclient.Interface {

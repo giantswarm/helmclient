@@ -3,27 +3,34 @@ package helmclienttest
 import (
 	"context"
 
-	"github.com/giantswarm/helmclient"
 	"k8s.io/helm/pkg/helm"
+
+	"github.com/giantswarm/helmclient"
 )
 
 type Config struct {
+	DefaultError          error
 	DefaultReleaseContent *helmclient.ReleaseContent
 	DefaultReleaseHistory *helmclient.ReleaseHistory
-	DefaultError          error
+	LoadChartResponse     helmclient.Chart
+	LoadChartError        error
 }
 
 type Client struct {
+	defaultError          error
 	defaultReleaseContent *helmclient.ReleaseContent
 	defaultReleaseHistory *helmclient.ReleaseHistory
-	defaultError          error
+	loadChartResponse     helmclient.Chart
+	loadChartError        error
 }
 
 func New(config Config) (helmclient.Interface, error) {
 	c := &Client{
+		defaultError:          config.DefaultError,
 		defaultReleaseContent: config.DefaultReleaseContent,
 		defaultReleaseHistory: config.DefaultReleaseHistory,
-		defaultError:          config.DefaultError,
+		loadChartResponse:     config.LoadChartResponse,
+		loadChartError:        config.LoadChartError,
 	}
 
 	return c, nil
@@ -63,6 +70,14 @@ func (c *Client) InstallReleaseFromTarball(ctx context.Context, path, ns string,
 
 func (c *Client) ListReleaseContents(ctx context.Context) ([]*helmclient.ReleaseContent, error) {
 	return nil, nil
+}
+
+func (c *Client) LoadChart(ctx context.Context, chartPath string) (helmclient.Chart, error) {
+	if c.loadChartError != nil {
+		return helmclient.Chart{}, c.loadChartError
+	}
+
+	return c.loadChartResponse, nil
 }
 
 func (c *Client) PingTiller(ctx context.Context) error {
