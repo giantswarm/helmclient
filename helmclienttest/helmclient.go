@@ -12,16 +12,20 @@ type Config struct {
 	DefaultError          error
 	DefaultReleaseContent *helmclient.ReleaseContent
 	DefaultReleaseHistory *helmclient.ReleaseHistory
-	LoadChartResponse     helmclient.Chart
 	LoadChartError        error
+	LoadChartResponse     helmclient.Chart
+	PullChartTarballError error
+	PullChartTarballPath  string
 }
 
 type Client struct {
 	defaultError          error
 	defaultReleaseContent *helmclient.ReleaseContent
 	defaultReleaseHistory *helmclient.ReleaseHistory
-	loadChartResponse     helmclient.Chart
 	loadChartError        error
+	loadChartResponse     helmclient.Chart
+	pullChartTarballError error
+	pullChartTarballPath  string
 }
 
 func New(config Config) (helmclient.Interface, error) {
@@ -29,8 +33,10 @@ func New(config Config) (helmclient.Interface, error) {
 		defaultError:          config.DefaultError,
 		defaultReleaseContent: config.DefaultReleaseContent,
 		defaultReleaseHistory: config.DefaultReleaseHistory,
-		loadChartResponse:     config.LoadChartResponse,
 		loadChartError:        config.LoadChartError,
+		loadChartResponse:     config.LoadChartResponse,
+		pullChartTarballError: config.PullChartTarballError,
+		pullChartTarballPath:  config.PullChartTarballPath,
 	}
 
 	return c, nil
@@ -82,6 +88,14 @@ func (c *Client) LoadChart(ctx context.Context, chartPath string) (helmclient.Ch
 
 func (c *Client) PingTiller(ctx context.Context) error {
 	return nil
+}
+
+func (c *Client) PullChartTarball(ctx context.Context, tarballURL string) (string, error) {
+	if c.pullChartTarballError != nil {
+		return "", c.pullChartTarballError
+	}
+
+	return c.pullChartTarballPath, nil
 }
 
 func (c *Client) RunReleaseTest(ctx context.Context, releaseName string, options ...helm.ReleaseTestOption) error {

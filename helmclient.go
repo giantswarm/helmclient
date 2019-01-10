@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"io/ioutil"
+	"net/http"
 	"strings"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/giantswarm/k8sportforward"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
+	"github.com/spf13/afero"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -25,11 +27,6 @@ import (
 	hapichart "k8s.io/helm/pkg/proto/hapi/chart"
 	hapirelease "k8s.io/helm/pkg/proto/hapi/release"
 	hapiservices "k8s.io/helm/pkg/proto/hapi/services"
-)
-
-const (
-	// runReleaseTestTimeout is the timeout in seconds when running tests.
-	runReleaseTestTimout = 300
 )
 
 var (
@@ -48,6 +45,7 @@ var (
 
 // Config represents the configuration used to create a helm client.
 type Config struct {
+	Fs afero.Fs
 	// HelmClient sets a helm client used for all operations of the initiated
 	// client. If this is nil, a new helm client will be created for each
 	// operation via proper port forwarding. Setting the helm client here manually
@@ -63,7 +61,9 @@ type Config struct {
 
 // Client knows how to talk with a Helm Tiller server.
 type Client struct {
+	fs         afero.Fs
 	helmClient helmclient.Interface
+	httpClient *http.Client
 	k8sClient  kubernetes.Interface
 	logger     micrologger.Logger
 
@@ -74,6 +74,9 @@ type Client struct {
 
 // New creates a new configured Helm client.
 func New(config Config) (*Client, error) {
+	if config.Fs == nil {
+		config.Fs = afero.NewOsFs()
+	}
 	if config.Logger == nil {
 		return nil, microerror.Maskf(invalidConfigError, "%T.Logger must not be empty", config)
 	}
@@ -92,8 +95,15 @@ func New(config Config) (*Client, error) {
 		config.TillerNamespace = defaultTillerNamespace
 	}
 
+	// Set client timeout to prevent leakages.
+	httpClient := &http.Client{
+		Timeout: time.Second * httpClientTimeout,
+	}
+
 	c := &Client{
+		fs:         config.Fs,
 		helmClient: config.HelmClient,
+		httpClient: httpClient,
 		k8sClient:  config.K8sClient,
 		logger:     config.Logger,
 
