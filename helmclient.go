@@ -22,6 +22,7 @@ import (
 	"k8s.io/helm/cmd/helm/installer"
 	"k8s.io/helm/pkg/chartutil"
 	helmclient "k8s.io/helm/pkg/helm"
+	hapichart "k8s.io/helm/pkg/proto/hapi/chart"
 	hapirelease "k8s.io/helm/pkg/proto/hapi/release"
 	hapiservices "k8s.io/helm/pkg/proto/hapi/services"
 )
@@ -548,12 +549,9 @@ func (c *Client) LoadChart(ctx context.Context, chartPath string) (Chart, error)
 		return Chart{}, microerror.Mask(err)
 	}
 
-	if helmChart == nil || helmChart.Metadata == nil {
-		return Chart{}, nil
-	}
-
-	chart := Chart{
-		Version: helmChart.Metadata.Version,
+	chart, err := newChart(helmChart)
+	if err != nil {
+		return Chart{}, microerror.Mask(err)
 	}
 
 	return chart, nil
@@ -694,6 +692,18 @@ func (c *Client) installTiller(ctx context.Context, installerOptions *installer.
 	}
 
 	return nil
+}
+
+func newChart(helmChart *hapichart.Chart) (Chart, error) {
+	if helmChart == nil || helmChart.Metadata == nil {
+		return Chart{}, microerror.Maskf(executionFailedError, "expected non nil argument but got %#v", helmChart)
+	}
+
+	chart := Chart{
+		Version: helmChart.Metadata.Version,
+	}
+
+	return chart, nil
 }
 
 func (c *Client) newHelmClientFromTunnel(t *k8sportforward.Tunnel) helmclient.Interface {
