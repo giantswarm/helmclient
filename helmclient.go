@@ -14,6 +14,7 @@ import (
 	"github.com/giantswarm/k8sportforward"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
+	"github.com/golang/protobuf/ptypes"
 	"github.com/spf13/afero"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
@@ -393,6 +394,7 @@ func (c *Client) GetReleaseContent(ctx context.Context, releaseName string) (*Re
 // The releaseName is the name of the Helm Release that is set when the Helm
 // Chart is installed.
 func (c *Client) GetReleaseHistory(ctx context.Context, releaseName string) (*ReleaseHistory, error) {
+	var err error
 	var resp *hapiservices.GetHistoryResponse
 	{
 		o := func() error {
@@ -416,7 +418,7 @@ func (c *Client) GetReleaseHistory(ctx context.Context, releaseName string) (*Re
 		b := backoff.NewExponential(backoff.ShortMaxWait, backoff.ShortMaxInterval)
 		n := backoff.NewNotifier(c.logger, ctx)
 
-		err := backoff.RetryNotify(o, b, n)
+		err = backoff.RetryNotify(o, b, n)
 		if err != nil {
 			return nil, microerror.Mask(err)
 		}
@@ -437,10 +439,19 @@ func (c *Client) GetReleaseHistory(ctx context.Context, releaseName string) (*Re
 			version = release.Chart.Metadata.Version
 		}
 
+		var lastUpdated time.Time
+		if release.Info != nil {
+			lastUpdated, err = ptypes.Timestamp(release.Info.LastDeployed)
+			if err != nil {
+				return nil, microerror.Mask(err)
+			}
+		}
+
 		history = &ReleaseHistory{
-			AppVersion: appVersion,
-			Name:       release.Name,
-			Version:    version,
+			AppVersion:  appVersion,
+			LastUpdated: lastUpdated,
+			Name:        release.Name,
+			Version:     version,
 		}
 	}
 
