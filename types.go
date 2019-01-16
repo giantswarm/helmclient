@@ -18,6 +18,8 @@ type ReleaseContent struct {
 
 // ReleaseHistory returns version information about a Helm Release.
 type ReleaseHistory struct {
+	// AppVersion is the app version of the Helm Chart that has been deployed.
+	AppVersion string
 	// Name is the name of the Helm Release.
 	Name string
 	// Version is the version of the Helm Chart that has been deployed.

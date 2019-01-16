@@ -181,14 +181,16 @@ func Test_GetReleaseHistory(t *testing.T) {
 					Namespace: "default",
 					Chart: &helmchart.Chart{
 						Metadata: &helmchart.Metadata{
-							Version: "0.1.0",
+							AppVersion: "1.0.0",
+							Version:    "0.1.0",
 						},
 					},
 				}),
 			},
 			expectedHistory: &ReleaseHistory{
-				Name:    "chart-operator",
-				Version: "0.1.0",
+				AppVersion: "1.0.0",
+				Name:       "chart-operator",
+				Version:    "0.1.0",
 			},
 			errorMatcher: nil,
 		},
@@ -201,14 +203,16 @@ func Test_GetReleaseHistory(t *testing.T) {
 					Namespace: "default",
 					Chart: &helmchart.Chart{
 						Metadata: &helmchart.Metadata{
-							Version: "1.0.0-rc1",
+							AppVersion: "2.0.0",
+							Version:    "1.0.0-rc1",
 						},
 					},
 				}),
 			},
 			expectedHistory: &ReleaseHistory{
-				Name:    "chart-operator",
-				Version: "1.0.0-rc1",
+				AppVersion: "2.0.0",
+				Name:       "chart-operator",
+				Version:    "1.0.0-rc1",
 			},
 			errorMatcher: nil,
 		},

@@ -430,14 +430,17 @@ func (c *Client) GetReleaseHistory(ctx context.Context, releaseName string) (*Re
 	{
 		release := resp.Releases[0]
 
+		var appVersion string
 		var version string
 		if release.Chart != nil && release.Chart.Metadata != nil {
+			appVersion = release.Chart.Metadata.AppVersion
 			version = release.Chart.Metadata.Version
 		}
 
 		history = &ReleaseHistory{
-			Name:    release.Name,
-			Version: version,
+			AppVersion: appVersion,
+			Name:       release.Name,
+			Version:    version,
 		}
 	}
 
