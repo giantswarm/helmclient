@@ -4,6 +4,7 @@ import (
 	"context"
 	"reflect"
 	"testing"
+	"time"
 
 	"github.com/giantswarm/micrologger/microloggertest"
 	corev1 "k8s.io/api/core/v1"
@@ -190,7 +191,9 @@ func Test_GetReleaseHistory(t *testing.T) {
 			expectedHistory: &ReleaseHistory{
 				AppVersion: "1.0.0",
 				Name:       "chart-operator",
-				Version:    "0.1.0",
+				// LastDeployed is hardcoded in the fake Helm Client.
+				LastDeployed: time.Unix(242085845, 0).UTC(),
+				Version:      "0.1.0",
 			},
 			errorMatcher: nil,
 		},
@@ -212,7 +215,9 @@ func Test_GetReleaseHistory(t *testing.T) {
 			expectedHistory: &ReleaseHistory{
 				AppVersion: "2.0.0",
 				Name:       "chart-operator",
-				Version:    "1.0.0-rc1",
+				// LastDeployed is hardcoded in the fake Helm Client.
+				LastDeployed: time.Unix(242085845, 0).UTC(),
+				Version:      "1.0.0-rc1",
 			},
 			errorMatcher: nil,
 		},
