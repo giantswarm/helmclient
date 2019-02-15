@@ -120,8 +120,8 @@ func New(config Config) (*Client, error) {
 
 // DeleteRelease uninstalls a chart given its release name.
 func (c *Client) DeleteRelease(ctx context.Context, releaseName string, options ...helmclient.DeleteOption) error {
-	t := prometheus.NewTimer(operationHistogram.WithLabelValues("DeleteRelease"))
-	defer t.ObserveDuration()
+	timer := prometheus.NewTimer(operationHistogram.WithLabelValues("DeleteRelease"))
+	defer timer.ObserveDuration()
 
 	o := func() error {
 		t, err := c.newTunnel()
@@ -157,8 +157,8 @@ func (c *Client) DeleteRelease(ctx context.Context, releaseName string, options 
 // As a first step, it checks if Tiller is already ready, in which case it
 // returns early.
 func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
-	t := prometheus.NewTimer(operationHistogram.WithLabelValues("EnsureTillerInstalled"))
-	defer t.ObserveDuration()
+	timer := prometheus.NewTimer(operationHistogram.WithLabelValues("EnsureTillerInstalled"))
+	defer timer.ObserveDuration()
 
 	// Check if Tiller is already present and return early if so.
 	{
@@ -358,8 +358,8 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 // values provided when the chart was installed. The releaseName is the name
 // of the Helm Release that is set when the Helm Chart is installed.
 func (c *Client) GetReleaseContent(ctx context.Context, releaseName string) (*ReleaseContent, error) {
-	t := prometheus.NewTimer(operationHistogram.WithLabelValues("GetReleaseContent"))
-	defer t.ObserveDuration()
+	timer := prometheus.NewTimer(operationHistogram.WithLabelValues("GetReleaseContent"))
+	defer timer.ObserveDuration()
 
 	var err error
 	var resp *hapiservices.GetReleaseContentResponse
@@ -403,8 +403,8 @@ func (c *Client) GetReleaseContent(ctx context.Context, releaseName string) (*Re
 // The releaseName is the name of the Helm Release that is set when the Helm
 // Chart is installed.
 func (c *Client) GetReleaseHistory(ctx context.Context, releaseName string) (*ReleaseHistory, error) {
-	t := prometheus.NewTimer(operationHistogram.WithLabelValues("GetReleaseHistory"))
-	defer t.ObserveDuration()
+	timer := prometheus.NewTimer(operationHistogram.WithLabelValues("GetReleaseHistory"))
+	defer timer.ObserveDuration()
 
 	var err error
 	var resp *hapiservices.GetHistoryResponse
@@ -472,8 +472,8 @@ func (c *Client) GetReleaseHistory(ctx context.Context, releaseName string) (*Re
 
 // InstallReleaseFromTarball installs a chart packaged in the given tarball.
 func (c *Client) InstallReleaseFromTarball(ctx context.Context, path, ns string, options ...helmclient.InstallOption) error {
-	t := prometheus.NewTimer(operationHistogram.WithLabelValues("InstallReleaseFromTarball"))
-	defer t.ObserveDuration()
+	timer := prometheus.NewTimer(operationHistogram.WithLabelValues("InstallReleaseFromTarball"))
+	defer timer.ObserveDuration()
 
 	o := func() error {
 		t, err := c.newTunnel()
@@ -518,8 +518,8 @@ func (c *Client) InstallReleaseFromTarball(ctx context.Context, path, ns string,
 
 // ListReleaseContents gets the current status of all Helm Releases.
 func (c *Client) ListReleaseContents(ctx context.Context) ([]*ReleaseContent, error) {
-	t := prometheus.NewTimer(operationHistogram.WithLabelValues("ListReleaseContents"))
-	defer t.ObserveDuration()
+	timer := prometheus.NewTimer(operationHistogram.WithLabelValues("ListReleaseContents"))
+	defer timer.ObserveDuration()
 
 	var releases []*hapirelease.Release
 	{
@@ -583,8 +583,8 @@ func (c *Client) ListReleaseContents(ctx context.Context) ([]*ReleaseContent, er
 
 // LoadChart loads a Helm Chart and returns relevant parts of its structure.
 func (c *Client) LoadChart(ctx context.Context, chartPath string) (Chart, error) {
-	t := prometheus.NewTimer(operationHistogram.WithLabelValues("LoadChart"))
-	defer t.ObserveDuration()
+	timer := prometheus.NewTimer(operationHistogram.WithLabelValues("LoadChart"))
+	defer timer.ObserveDuration()
 
 	helmChart, err := chartutil.Load(chartPath)
 	if err != nil {
@@ -601,8 +601,8 @@ func (c *Client) LoadChart(ctx context.Context, chartPath string) (Chart, error)
 
 // PingTiller proxies the underlying Helm client PingTiller method.
 func (c *Client) PingTiller(ctx context.Context) error {
-	t := prometheus.NewTimer(operationHistogram.WithLabelValues("PingTiller"))
-	defer t.ObserveDuration()
+	timer := prometheus.NewTimer(operationHistogram.WithLabelValues("PingTiller"))
+	defer timer.ObserveDuration()
 
 	t, err := c.newTunnel()
 	if err != nil {
@@ -622,8 +622,8 @@ func (c *Client) PingTiller(ctx context.Context) error {
 // name of the Helm Release that is set when the Helm Chart is installed. This
 // is the same action as running the helm test command.
 func (c *Client) RunReleaseTest(ctx context.Context, releaseName string, options ...helmclient.ReleaseTestOption) error {
-	t := prometheus.NewTimer(operationHistogram.WithLabelValues("RunReleaseTest"))
-	defer t.ObserveDuration()
+	timer := prometheus.NewTimer(operationHistogram.WithLabelValues("RunReleaseTest"))
+	defer timer.ObserveDuration()
 
 	c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("running tests for release %#q", releaseName))
 
@@ -665,8 +665,8 @@ func (c *Client) RunReleaseTest(ctx context.Context, releaseName string, options
 // UpdateReleaseFromTarball updates the given release using the chart packaged
 // in the tarball.
 func (c *Client) UpdateReleaseFromTarball(ctx context.Context, releaseName, path string, options ...helmclient.UpdateOption) error {
-	t := prometheus.NewTimer(operationHistogram.WithLabelValues("UpdateReleaseFromTarball"))
-	defer t.ObserveDuration()
+	timer := prometheus.NewTimer(operationHistogram.WithLabelValues("UpdateReleaseFromTarball"))
+	defer timer.ObserveDuration()
 
 	o := func() error {
 		t, err := c.newTunnel()
