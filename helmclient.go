@@ -262,7 +262,7 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 
 			return nil
 		}
-		b := backoff.NewExponential(2*time.Minute, 5*time.Second)
+		b := backoff.NewExponential(1*time.Minute, 5*time.Second)
 		n := backoff.NewNotifier(c.logger, context.Background())
 
 		err := backoff.RetryNotify(o, b, n)
@@ -333,7 +333,7 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 
 			return nil
 		}
-		b := backoff.NewExponential(backoff.ShortMaxWait, backoff.ShortMaxInterval)
+		b := backoff.NewExponential(1*time.Minute, 5*time.Second)
 		n := backoff.NewNotifier(c.logger, ctx)
 
 		err := backoff.RetryNotify(o, b, n)
