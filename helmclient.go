@@ -309,7 +309,7 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 		if err != nil {
 			return microerror.Mask(err)
 		}
-	} else {
+	} else if installTiller && upgradeTiller {
 		return microerror.Maskf(executionFailedError, "invalid state cannot both install and upgrade tiller")
 	}
 
