@@ -58,9 +58,20 @@ func TestUpgradeTiller(t *testing.T) {
 
 	// Upgrade tiller to the current image.
 	{
-		err := config.HelmClient.EnsureTillerInstalled(ctx)
+		o := func() error {
+			err := config.HelmClient.EnsureTillerInstalled(ctx)
+			if err != nil {
+				return microerror.Mask(err)
+			}
+
+			return nil
+		}
+		b := backoff.NewMaxRetries(20, 1*time.Second)
+		n := backoff.NewNotifier(config.Logger, ctx)
+
+		err := backoff.RetryNotify(o, b, n)
 		if err != nil {
-			t.Fatalf("could not install tiller %#v", err)
+			t.Fatal("expected", nil, "got", err)
 		}
 
 		tillerImage, err := getTillerImage(ctx, tillerNamespace, labelSelector)
