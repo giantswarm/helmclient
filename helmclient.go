@@ -343,7 +343,7 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 
 			return nil
 		}
-		b := backoff.NewMaxRetries(3, 1*time.Second)
+		b := backoff.NewMaxRetries(5, 1*time.Second)
 		n := backoff.NewNotifier(c.logger, ctx)
 
 		err := backoff.RetryNotify(o, b, n)
