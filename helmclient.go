@@ -137,7 +137,7 @@ func (c *Client) DeleteRelease(ctx context.Context, releaseName string, options 
 
 		return nil
 	}
-	b := backoff.NewMaxRetries(3, 1*time.Second)
+	b := backoff.NewMaxRetries(5, 1*time.Second)
 	n := backoff.NewNotifier(c.logger, ctx)
 
 	err := backoff.RetryNotify(o, b, n)
@@ -153,7 +153,12 @@ func (c *Client) DeleteRelease(ctx context.Context, releaseName string, options 
 // As a first step, it checks if Tiller is already ready, in which case it
 // returns early.
 func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
-	return c.EnsureTillerInstalledWithValues(ctx, []string{})
+	err := c.EnsureTillerInstalledWithValues(ctx, []string{})
+	if err != nil {
+		return microerror.Mask(err)
+	}
+
+	return nil
 }
 
 // EnsureTillerInstalledWithValues installs Tiller by creating its deployment
@@ -271,7 +276,7 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 
 			return nil
 		}
-		b := backoff.NewMaxRetries(3, 1*time.Second)
+		b := backoff.NewMaxRetries(5, 1*time.Second)
 		n := backoff.NewNotifier(c.logger, context.Background())
 
 		err := backoff.RetryNotify(o, b, n)
@@ -383,7 +388,7 @@ func (c *Client) GetReleaseContent(ctx context.Context, releaseName string) (*Re
 
 			return nil
 		}
-		b := backoff.NewMaxRetries(3, 1*time.Second)
+		b := backoff.NewMaxRetries(5, 1*time.Second)
 		n := backoff.NewNotifier(c.logger, ctx)
 
 		err := backoff.RetryNotify(o, b, n)
@@ -425,7 +430,7 @@ func (c *Client) GetReleaseHistory(ctx context.Context, releaseName string) (*Re
 
 			return nil
 		}
-		b := backoff.NewMaxRetries(3, 1*time.Second)
+		b := backoff.NewMaxRetries(5, 1*time.Second)
 		n := backoff.NewNotifier(c.logger, ctx)
 
 		err = backoff.RetryNotify(o, b, n)
@@ -500,7 +505,7 @@ func (c *Client) InstallReleaseFromTarball(ctx context.Context, path, ns string,
 
 		return nil
 	}
-	b := backoff.NewMaxRetries(3, 1*time.Second)
+	b := backoff.NewMaxRetries(5, 1*time.Second)
 	n := backoff.NewNotifier(c.logger, ctx)
 
 	err := backoff.RetryNotify(o, b, n)
@@ -546,7 +551,7 @@ func (c *Client) ListReleaseContents(ctx context.Context) ([]*ReleaseContent, er
 
 			return nil
 		}
-		b := backoff.NewMaxRetries(3, 1*time.Second)
+		b := backoff.NewMaxRetries(5, 1*time.Second)
 		n := backoff.NewNotifier(c.logger, ctx)
 
 		err := backoff.RetryNotify(o, b, n)
@@ -674,7 +679,7 @@ func (c *Client) UpdateReleaseFromTarball(ctx context.Context, releaseName, path
 
 		return nil
 	}
-	b := backoff.NewMaxRetries(3, 1*time.Second)
+	b := backoff.NewMaxRetries(5, 1*time.Second)
 	n := backoff.NewNotifier(c.logger, ctx)
 
 	err := backoff.RetryNotify(o, b, n)
@@ -714,7 +719,7 @@ func (c *Client) installTiller(ctx context.Context, installerOptions *installer.
 
 		return nil
 	}
-	b := backoff.NewMaxRetries(3, 1*time.Second)
+	b := backoff.NewMaxRetries(5, 1*time.Second)
 	n := backoff.NewNotifier(c.logger, context.Background())
 
 	err := backoff.RetryNotify(o, b, n)
@@ -805,7 +810,7 @@ func (c *Client) upgradeTiller(ctx context.Context, installerOptions *installer.
 
 		return nil
 	}
-	b := backoff.NewMaxRetries(3, 1*time.Second)
+	b := backoff.NewMaxRetries(5, 1*time.Second)
 	n := backoff.NewNotifier(c.logger, context.Background())
 
 	err := backoff.RetryNotify(o, b, n)
