@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/afero"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
-	schedulingv1alpha1 "k8s.io/api/scheduling/v1alpha1"
+	schedulingv1beta1 "k8s.io/api/scheduling/v1beta1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -255,11 +255,10 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 	}
 
 	// Create the priority class for tiller to make sure it is always deployed.
-
 	{
 		priorityClassName := "giantswarm-critical"
 
-		p := &schedulingv1alpha1.PriorityClass{
+		p := &schedulingv1beta1.PriorityClass{
 			TypeMeta: metav1.TypeMeta{
 				APIVersion: "scheduling.k8s.io/v1alpha1",
 				Kind:       "PriorityClass",
