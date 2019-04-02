@@ -18,6 +18,7 @@ import (
 	"github.com/spf13/afero"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
+	schedulingv1alpha1 "k8s.io/api/scheduling/v1alpha1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -250,6 +251,35 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 			return microerror.Mask(err)
 		} else {
 			c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("created clusterrolebinding %#q", name))
+		}
+	}
+
+	// Create the priority class for tiller to make sure it is always deployed.
+
+	{
+		priorityClassName := "giantswarm-critical"
+
+		p := &schedulingv1alpha1.PriorityClass{
+			TypeMeta: metav1.TypeMeta{
+				APIVersion: "scheduling.k8s.io/v1alpha1",
+				Kind:       "PriorityClass",
+			},
+			ObjectMeta: metav1.ObjectMeta{
+				Name: priorityClassName,
+			},
+			Value:         1000000000,
+			GlobalDefault: false,
+			Description:   "This priority class is used by giantswarm kubernetes components.",
+		}
+
+		_, err := c.k8sClient.SchedulingV1alpha1().PriorityClasses().Create(p)
+		if errors.IsAlreadyExists(err) {
+			c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("priorityclass %#q already exists", priorityClassName))
+			// fall through
+		} else if err != nil {
+			return microerror.Mask(err)
+		} else {
+			c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("created priorityclass %#q", priorityClassName))
 		}
 	}
 
