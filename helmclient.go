@@ -258,6 +258,8 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 	{
 		priorityClassName := "giantswarm-critical"
 
+		c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating priorityclass %#q", priorityClassName))
+
 		p := &schedulingv1beta1.PriorityClass{
 			TypeMeta: metav1.TypeMeta{
 				APIVersion: "scheduling.k8s.io/v1alpha1",
@@ -271,7 +273,7 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 			Description:   "This priority class is used by giantswarm kubernetes components.",
 		}
 
-		_, err := c.k8sClient.SchedulingV1alpha1().PriorityClasses().Create(p)
+		_, err := c.k8sClient.SchedulingV1beta1().PriorityClasses().Create(p)
 		if errors.IsAlreadyExists(err) {
 			c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("priorityclass %#q already exists", priorityClassName))
 			// fall through
