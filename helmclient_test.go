@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/giantswarm/micrologger/microloggertest"
+	"github.com/google/go-cmp/cmp"
 	corev1 "k8s.io/api/core/v1"
 	helmclient "k8s.io/helm/pkg/helm"
 	helmchart "k8s.io/helm/pkg/proto/hapi/chart"
@@ -550,6 +551,253 @@ func Test_UpdateReleaseFromTarball(t *testing.T) {
 				t.Fatalf("error == nil, want non-nil")
 			case !tc.errorMatcher(err):
 				t.Fatalf("error == %#v, want matching", err)
+			}
+		})
+	}
+}
+
+func Test_MergeValues(t *testing.T) {
+	testCases := []struct {
+		name           string
+		destValues     map[string]interface{}
+		srcValues      map[string]interface{}
+		expectedValues map[string]interface{}
+		errorMatcher   func(error) bool
+	}{
+		{
+			name:           "case 0: empty dest and src, expected empty",
+			destValues:     map[string]interface{}{},
+			srcValues:      map[string]interface{}{},
+			expectedValues: map[string]interface{}{},
+		},
+		{
+			name:       "case 1: empty dest, non-empty src, expected src",
+			destValues: map[string]interface{}{},
+			srcValues: map[string]interface{}{
+				"test": "val",
+			},
+			expectedValues: map[string]interface{}{
+				"test": "val",
+			},
+		},
+		{
+			name: "case 2: non-empty dest, non-empty src, expected dest",
+			destValues: map[string]interface{}{
+				"test": "val",
+			},
+			srcValues: map[string]interface{}{},
+			expectedValues: map[string]interface{}{
+				"test": "val",
+			},
+		},
+		{
+			name: "case 3: non-intersecting values",
+			destValues: map[string]interface{}{
+				"test": "val",
+			},
+			srcValues: map[string]interface{}{
+				"another": "val",
+			},
+			expectedValues: map[string]interface{}{
+				"another": "val",
+				"test":    "val",
+			},
+		},
+		{
+			name: "case 4: non-intersecting mixed types",
+			destValues: map[string]interface{}{
+				"numeric": 1,
+				"test":    "test",
+			},
+			srcValues: map[string]interface{}{
+				"another": "val",
+				"boolean": true,
+			},
+			expectedValues: map[string]interface{}{
+				"another": "val",
+				"boolean": true,
+				"numeric": 1,
+				"test":    "test",
+			},
+		},
+		{
+			name: "case 5: intersecting values, source preferred",
+			destValues: map[string]interface{}{
+				"boolean": false,
+				"test":    "test",
+			},
+			srcValues: map[string]interface{}{
+				"another": "val",
+				"boolean": true,
+				"test":    "updated",
+			},
+			expectedValues: map[string]interface{}{
+				"another": "val",
+				"boolean": true,
+				"test":    "updated",
+			},
+		},
+		{
+			name: "case 6: source nested and dest non-nested",
+			destValues: map[string]interface{}{
+				"test": "test",
+			},
+			srcValues: map[string]interface{}{
+				"another": "val",
+				"nested": map[string]interface{}{
+					"more": "values",
+				},
+			},
+			expectedValues: map[string]interface{}{
+				"another": "val",
+				"nested": map[string]interface{}{
+					"more": "values",
+				},
+				"test": "test",
+			},
+		},
+		{
+			name: "case 7: source non-nested and dest nested",
+			destValues: map[string]interface{}{
+				"another": "val",
+				"nested": map[string]interface{}{
+					"more": "values",
+				},
+			},
+			srcValues: map[string]interface{}{
+				"test": "test",
+			},
+			expectedValues: map[string]interface{}{
+				"another": "val",
+				"nested": map[string]interface{}{
+					"more": "values",
+				},
+				"test": "test",
+			},
+		},
+		{
+			name: "case 8: non-intersecting deep merge",
+			destValues: map[string]interface{}{
+				"v1": map[string]interface{}{
+					"installations": map[string]interface{}{
+						"test": "test",
+					},
+				},
+			},
+			srcValues: map[string]interface{}{
+				"v1": map[string]interface{}{
+					"installations": map[string]interface{}{
+						"another": "value",
+					},
+				},
+			},
+			expectedValues: map[string]interface{}{
+				"v1": map[string]interface{}{
+					"installations": map[string]interface{}{
+						"another": "value",
+						"test":    "test",
+					},
+				},
+			},
+		},
+		{
+			name: "case 9: intersecting deep merge, source preferred",
+			destValues: map[string]interface{}{
+				"v1": map[string]interface{}{
+					"installations": map[string]interface{}{
+						"test": "test",
+					},
+				},
+			},
+			srcValues: map[string]interface{}{
+				"v1": map[string]interface{}{
+					"installations": map[string]interface{}{
+						"another": "value",
+						"test":    "updated",
+					},
+				},
+			},
+			expectedValues: map[string]interface{}{
+				"v1": map[string]interface{}{
+					"installations": map[string]interface{}{
+						"another": "value",
+						"test":    "updated",
+					},
+				},
+			},
+		},
+		{
+			name: "case 10: deeper nested merge",
+			destValues: map[string]interface{}{
+				"v1": map[string]interface{}{
+					"installations": map[string]interface{}{
+						"gauss": map[string]interface{}{
+							"test": "value",
+						},
+					},
+					"test": "value",
+				},
+			},
+			srcValues: map[string]interface{}{
+				"v1": map[string]interface{}{
+					"installations": map[string]interface{}{
+						"another": "value",
+						"ginger": map[string]interface{}{
+							"test": "value",
+						},
+					},
+				},
+			},
+			expectedValues: map[string]interface{}{
+				"v1": map[string]interface{}{
+					"installations": map[string]interface{}{
+						"another": "value",
+						"gauss": map[string]interface{}{
+							"test": "value",
+						},
+						"ginger": map[string]interface{}{
+							"test": "value",
+						},
+					},
+					"test": "value",
+				},
+			},
+		},
+		{
+			name:       "case 10: nil destination values returns error",
+			destValues: nil,
+			srcValues: map[string]interface{}{
+				"test": "test",
+			},
+			errorMatcher: IsExecutionFailed,
+		},
+		{
+			name: "case 11: nil source values returns error",
+			destValues: map[string]interface{}{
+				"test": "test",
+			},
+			srcValues:    nil,
+			errorMatcher: IsExecutionFailed,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			result, err := MergeValues(tc.destValues, tc.srcValues)
+
+			switch {
+			case err == nil && tc.errorMatcher == nil:
+				// correct; carry on
+			case err != nil && tc.errorMatcher == nil:
+				t.Fatalf("error == %#v, want nil", err)
+			case err == nil && tc.errorMatcher != nil:
+				t.Fatalf("error == nil, want non-nil")
+			case !tc.errorMatcher(err):
+				t.Fatalf("error == %#v, want matching", err)
+			}
+
+			if !reflect.DeepEqual(result, tc.expectedValues) {
+				t.Fatalf("want matching values \n %s", cmp.Diff(result, tc.expectedValues))
 			}
 		})
 	}
