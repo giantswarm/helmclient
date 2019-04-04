@@ -581,7 +581,7 @@ func Test_MergeValues(t *testing.T) {
 			},
 		},
 		{
-			name: "case 2: non-empty dest, non-empty src, expected dest",
+			name: "case 2: non-empty dest, empty src, expected dest",
 			destValues: map[string]interface{}{
 				"test": "val",
 			},
