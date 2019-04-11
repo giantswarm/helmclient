@@ -674,7 +674,7 @@ func (c *Client) UpdateReleaseFromTarball(ctx context.Context, releaseName, path
 
 		return nil
 	}
-	b := backoff.NewExponential(backoff.ShortMaxWait, backoff.ShortMaxInterval)
+	b := backoff.NewExponential(30*time.Second, 5*time.Second)
 	n := backoff.NewNotifier(c.logger, ctx)
 
 	err := backoff.RetryNotify(o, b, n)
