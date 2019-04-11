@@ -137,7 +137,7 @@ func (c *Client) DeleteRelease(ctx context.Context, releaseName string, options 
 
 		return nil
 	}
-	b := backoff.NewExponential(30*time.Second, 5*time.Second)
+	b := backoff.NewMaxRetries(10, 5*time.Second)
 	n := backoff.NewNotifier(c.logger, ctx)
 
 	err := backoff.RetryNotify(o, b, n)
@@ -383,7 +383,7 @@ func (c *Client) GetReleaseContent(ctx context.Context, releaseName string) (*Re
 
 			return nil
 		}
-		b := backoff.NewExponential(30*time.Second, 5*time.Second)
+		b := backoff.NewMaxRetries(10, 5*time.Second)
 		n := backoff.NewNotifier(c.logger, ctx)
 
 		err := backoff.RetryNotify(o, b, n)
@@ -425,7 +425,7 @@ func (c *Client) GetReleaseHistory(ctx context.Context, releaseName string) (*Re
 
 			return nil
 		}
-		b := backoff.NewExponential(30*time.Second, 5*time.Second)
+		b := backoff.NewMaxRetries(10, 5*time.Second)
 
 		n := backoff.NewNotifier(c.logger, ctx)
 
@@ -501,7 +501,7 @@ func (c *Client) InstallReleaseFromTarball(ctx context.Context, path, ns string,
 
 		return nil
 	}
-	b := backoff.NewExponential(30*time.Second, 5*time.Second)
+	b := backoff.NewMaxRetries(10, 5*time.Second)
 	n := backoff.NewNotifier(c.logger, ctx)
 
 	err := backoff.RetryNotify(o, b, n)
@@ -675,7 +675,7 @@ func (c *Client) UpdateReleaseFromTarball(ctx context.Context, releaseName, path
 
 		return nil
 	}
-	b := backoff.NewExponential(30*time.Second, 5*time.Second)
+	b := backoff.NewMaxRetries(10, 5*time.Second)
 	n := backoff.NewNotifier(c.logger, ctx)
 
 	err := backoff.RetryNotify(o, b, n)
