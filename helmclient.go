@@ -383,7 +383,7 @@ func (c *Client) GetReleaseContent(ctx context.Context, releaseName string) (*Re
 
 			return nil
 		}
-		b := backoff.NewExponential(backoff.ShortMaxWait, backoff.ShortMaxInterval)
+		b := backoff.NewExponential(30*time.Second, 5*time.Second)
 		n := backoff.NewNotifier(c.logger, ctx)
 
 		err := backoff.RetryNotify(o, b, n)
@@ -425,7 +425,8 @@ func (c *Client) GetReleaseHistory(ctx context.Context, releaseName string) (*Re
 
 			return nil
 		}
-		b := backoff.NewExponential(backoff.ShortMaxWait, backoff.ShortMaxInterval)
+		b := backoff.NewExponential(30*time.Second, 5*time.Second)
+
 		n := backoff.NewNotifier(c.logger, ctx)
 
 		err = backoff.RetryNotify(o, b, n)
