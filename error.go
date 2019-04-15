@@ -227,10 +227,10 @@ var (
 )
 
 var yamlConversionFailedError = &microerror.Error{
-	Kind: "yamlConvertingFailedError",
+	Kind: "yamlConversionFailedError",
 }
 
-// IsYamlConversionFailed asserts yamlConvertingFailedError.
+// IsYamlConversionFailed asserts yamlConversionFailedError.
 func IsYamlConversionFailed(err error) bool {
 	if err == nil {
 		return false
