@@ -60,6 +60,9 @@ func mergeMapValues(inputMap map[string][]byte) (map[string]interface{}, error) 
 
 // mergeValues implements the merge logic. It performs a deep merge. If a value
 // is present in both then the source map is preferred.
+//
+// Logic is based on the upstream logic implemented by Helm.
+// https://github.com/helm/helm/blob/240e539cec44e2b746b3541529d41f4ba01e77df/cmd/helm/install.go#L358
 func mergeValues(dest, src map[string]interface{}) map[string]interface{} {
 	for k, v := range src {
 		if _, exists := dest[k]; !exists {
