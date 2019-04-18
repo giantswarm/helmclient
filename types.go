@@ -22,7 +22,7 @@ type ReleaseContent struct {
 type ReleaseHistory struct {
 	// AppVersion is the app version of the Helm Chart that has been deployed.
 	AppVersion string
-	// Description is the incident log about past Helm chart deployment issue.
+	// Description is the log message about past Helm chart deployment provided by tiller API.
 	Description string
 	// LastDeployed is the time the Helm Chart was last deployed.
 	LastDeployed time.Time
