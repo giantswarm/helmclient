@@ -13,6 +13,12 @@ nested:
   deeper:
     value: "deeper"
 test: test`
+	mixedTypesYaml = `
+bool: true
+int: 1047552
+float: 274877.906944
+string: test
+text: test with a sentence`
 	nestedArrayYaml = `
 nested:
   array:
@@ -25,6 +31,16 @@ nested:
   array:
   - 1: "test 1"
   - 2: "test 2"
+test: test`
+	nestedMixedTypesYaml = `
+nested:
+  another: "test"
+  array:
+  - 1: 1
+  - 2: 2
+  deeper:
+    bottom: true
+    float: 274877.906944
 test: test`
 	simpleNestedYaml = `
 nested:
@@ -40,10 +56,14 @@ func Test_yamlToStringMap(t *testing.T) {
 		errorMatcher   func(error) bool
 	}{
 		{
-			name:  "case 0: simple yaml",
-			input: []byte("test: test"),
+			name:  "case 0: flat mixed types",
+			input: []byte(mixedTypesYaml),
 			expectedValues: map[string]interface{}{
-				"test": "test",
+				"bool":   true,
+				"int":    1047552,
+				"float":  274877.906944,
+				"string": "test",
+				"text":   "test with a sentence",
 			},
 		},
 		{
@@ -86,6 +106,28 @@ func Test_yamlToStringMap(t *testing.T) {
 						map[string]interface{}{
 							"2": "test 2",
 						},
+					},
+				},
+				"test": "test",
+			},
+		},
+		{
+			name:  "case 4: nested mixed types",
+			input: []byte(nestedMixedTypesYaml),
+			expectedValues: map[string]interface{}{
+				"nested": map[string]interface{}{
+					"another": "test",
+					"array": []interface{}{
+						map[string]interface{}{
+							"1": 1,
+						},
+						map[string]interface{}{
+							"2": 2,
+						},
+					},
+					"deeper": map[string]interface{}{
+						"bottom": true,
+						"float":  274877.906944,
 					},
 				},
 				"test": "test",
