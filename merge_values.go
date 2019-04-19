@@ -131,13 +131,19 @@ func processInterfaceMap(in map[interface{}]interface{}) map[string]interface{} 
 
 func processMapValue(v interface{}) interface{} {
 	switch v := v.(type) {
+	case bool:
+		return v
+	case float64:
+		return v
+	case int:
+		return v
+	case string:
+		return v
 	case []interface{}:
 		return processInterfaceArray(v)
 	case map[interface{}]interface{}:
 		return processInterfaceMap(v)
-	case string:
-		return v
 	default:
-		return fmt.Sprintf("%v", v)
+		return microerror.Maskf(yamlConversionFailedError, "%#v with type %T not supported")
 	}
 }
