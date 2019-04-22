@@ -144,6 +144,6 @@ func processMapValue(v interface{}) interface{} {
 	case map[interface{}]interface{}:
 		return processInterfaceMap(v)
 	default:
-		return microerror.Maskf(yamlConversionFailedError, "%#v with type %T not supported")
+		return microerror.Maskf(executionFailedError, "%#v with type %T not supported")
 	}
 }
