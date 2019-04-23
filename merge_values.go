@@ -7,7 +7,6 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-<<<<<<< HEAD
 // MergeValues merges config values so they can be used when installing or
 // updating Helm releases. It takes in 2 maps with string keys and YAML values
 // passed as a byte array.
@@ -94,8 +93,6 @@ func mergeValues(dest, src map[string]interface{}) map[string]interface{} {
 	return dest
 }
 
-=======
->>>>>>> master
 // yamlToStringMap unmarshals the YAML input into a map[string]interface{}
 // with string keys. This is necessary because the default behaviour of the
 // YAML parser is to return map[interface{}]interface{} types.
@@ -110,17 +107,12 @@ func yamlToStringMap(input []byte) (map[string]interface{}, error) {
 		return nil, microerror.Mask(err)
 	}
 
-<<<<<<< HEAD
-	output := processMapValue(raw)
-	result = output.(map[string]interface{})
-=======
 	inputMap, ok := raw.(map[interface{}]interface{})
 	if !ok {
 		return nil, microerror.Maskf(executionFailedError, "input type %T but expected %T", raw, inputMap)
 	}
 
 	result = processInterfaceMap(inputMap)
->>>>>>> master
 
 	return result, nil
 }
@@ -128,11 +120,7 @@ func yamlToStringMap(input []byte) (map[string]interface{}, error) {
 func processInterfaceArray(in []interface{}) []interface{} {
 	res := make([]interface{}, len(in))
 	for i, v := range in {
-<<<<<<< HEAD
-		res[i] = processMapValue(v)
-=======
 		res[i] = processValue(v)
->>>>>>> master
 	}
 	return res
 }
@@ -140,20 +128,12 @@ func processInterfaceArray(in []interface{}) []interface{} {
 func processInterfaceMap(in map[interface{}]interface{}) map[string]interface{} {
 	res := make(map[string]interface{})
 	for k, v := range in {
-<<<<<<< HEAD
-		res[fmt.Sprintf("%v", k)] = processMapValue(v)
-=======
 		res[fmt.Sprintf("%v", k)] = processValue(v)
->>>>>>> master
 	}
 	return res
 }
 
-<<<<<<< HEAD
-func processMapValue(v interface{}) interface{} {
-=======
 func processValue(v interface{}) interface{} {
->>>>>>> master
 	switch v := v.(type) {
 	case bool:
 		return v
@@ -168,10 +148,6 @@ func processValue(v interface{}) interface{} {
 	case map[interface{}]interface{}:
 		return processInterfaceMap(v)
 	default:
-<<<<<<< HEAD
-		return microerror.Maskf(executionFailedError, "%#v with type %T not supported")
-=======
 		return microerror.Maskf(executionFailedError, "value %#v with type %T not supported", v, v)
->>>>>>> master
 	}
 }
