@@ -21,8 +21,12 @@ func yamlToStringMap(input []byte) (map[string]interface{}, error) {
 		return nil, microerror.Mask(err)
 	}
 
-	output := processMapValue(raw)
-	result = output.(map[string]interface{})
+	inputMap, ok := raw.(map[interface{}]interface{})
+	if !ok {
+		return nil, microerror.Maskf(executionFailedError, "input type %T but expected %T", raw, inputMap)
+	}
+
+	result = processInterfaceMap(inputMap)
 
 	return result, nil
 }
@@ -30,7 +34,7 @@ func yamlToStringMap(input []byte) (map[string]interface{}, error) {
 func processInterfaceArray(in []interface{}) []interface{} {
 	res := make([]interface{}, len(in))
 	for i, v := range in {
-		res[i] = processMapValue(v)
+		res[i] = processValue(v)
 	}
 	return res
 }
@@ -38,12 +42,12 @@ func processInterfaceArray(in []interface{}) []interface{} {
 func processInterfaceMap(in map[interface{}]interface{}) map[string]interface{} {
 	res := make(map[string]interface{})
 	for k, v := range in {
-		res[fmt.Sprintf("%v", k)] = processMapValue(v)
+		res[fmt.Sprintf("%v", k)] = processValue(v)
 	}
 	return res
 }
 
-func processMapValue(v interface{}) interface{} {
+func processValue(v interface{}) interface{} {
 	switch v := v.(type) {
 	case bool:
 		return v
@@ -58,6 +62,6 @@ func processMapValue(v interface{}) interface{} {
 	case map[interface{}]interface{}:
 		return processInterfaceMap(v)
 	default:
-		return microerror.Maskf(executionFailedError, "%#v with type %T not supported")
+		return microerror.Maskf(executionFailedError, "value %#v with type %T not supported", v, v)
 	}
 }

@@ -133,6 +133,11 @@ func Test_yamlToStringMap(t *testing.T) {
 				"test": "test",
 			},
 		},
+		{
+			name:         "case 5: integer input returns error",
+			input:        []byte("123"),
+			errorMatcher: IsExecutionFailed,
+		},
 	}
 
 	for _, tc := range testCases {
