@@ -13,6 +13,15 @@ nested:
   deeper:
     value: "deeper"
 test: test`
+<<<<<<< HEAD
+=======
+	mixedTypesYaml = `
+bool: true
+int: 1047552
+float: 274877.906944
+string: test
+text: test with a sentence`
+>>>>>>> master
 	nestedArrayYaml = `
 nested:
   array:
@@ -26,12 +35,26 @@ nested:
   - 1: "test 1"
   - 2: "test 2"
 test: test`
+<<<<<<< HEAD
+=======
+	nestedMixedTypesYaml = `
+nested:
+  another: "test"
+  array:
+  - 1: 1
+  - 2: 2
+  deeper:
+    bottom: true
+    float: 274877.906944
+test: test`
+>>>>>>> master
 	simpleNestedYaml = `
 nested:
   value: "nested"
 test: test`
 )
 
+<<<<<<< HEAD
 func Test_MergeValues(t *testing.T) {
 	testCases := []struct {
 		name           string
@@ -103,6 +126,8 @@ func Test_MergeValues(t *testing.T) {
 	}
 }
 
+=======
+>>>>>>> master
 func Test_yamlToStringMap(t *testing.T) {
 	testCases := []struct {
 		name           string
@@ -111,10 +136,21 @@ func Test_yamlToStringMap(t *testing.T) {
 		errorMatcher   func(error) bool
 	}{
 		{
+<<<<<<< HEAD
 			name:  "case 0: simple yaml",
 			input: []byte("test: test"),
 			expectedValues: map[string]interface{}{
 				"test": "test",
+=======
+			name:  "case 0: flat mixed types",
+			input: []byte(mixedTypesYaml),
+			expectedValues: map[string]interface{}{
+				"bool":   true,
+				"int":    1047552,
+				"float":  274877.906944,
+				"string": "test",
+				"text":   "test with a sentence",
+>>>>>>> master
 			},
 		},
 		{
@@ -162,6 +198,36 @@ func Test_yamlToStringMap(t *testing.T) {
 				"test": "test",
 			},
 		},
+<<<<<<< HEAD
+=======
+		{
+			name:  "case 4: nested mixed types",
+			input: []byte(nestedMixedTypesYaml),
+			expectedValues: map[string]interface{}{
+				"nested": map[string]interface{}{
+					"another": "test",
+					"array": []interface{}{
+						map[string]interface{}{
+							"1": 1,
+						},
+						map[string]interface{}{
+							"2": 2,
+						},
+					},
+					"deeper": map[string]interface{}{
+						"bottom": true,
+						"float":  274877.906944,
+					},
+				},
+				"test": "test",
+			},
+		},
+		{
+			name:         "case 5: integer input returns error",
+			input:        []byte("123"),
+			errorMatcher: IsExecutionFailed,
+		},
+>>>>>>> master
 	}
 
 	for _, tc := range testCases {
