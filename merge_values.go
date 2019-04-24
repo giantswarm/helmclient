@@ -8,14 +8,11 @@ import (
 )
 
 // MergeValues merges config values so they can be used when installing or
-// updating Helm releases. It takes in 2 maps with string keys and YAML values
+// updating Helm releases. It takes in 2 maps with a string key and YAML values
 // passed as a byte array.
 //
 // A deep merge is performed into a single map[string]interface{} output. If a
 // value is present in both then the source map is preferred.
-//
-// Multiple keys with YAML values can be passed. If so the source and
-// destination maps will be merged first and then merged together.
 //
 // The YAML values are parsed using yamlToStringMap. This is because the
 // default behaviour of the YAML parser is to unmarshal into
@@ -41,15 +38,15 @@ func MergeValues(destMap, srcMap map[string][]byte) (map[string]interface{}, err
 }
 
 // processYAML accepts a map with a string key and YAML values passed as a
-// byte array. Only a single key is supported and the data structure matches
-// the configmap or secret where the data is stored.
+// byte array. Only a single key is supported and the input data structure
+// matches the configmap or secret where the data is stored.
 func processYAML(inputMap map[string][]byte) (map[string]interface{}, error) {
 	var err error
 
 	result := map[string]interface{}{}
 
 	if len(inputMap) > 1 {
-		return nil, microerror.Maskf(executionFailedError, "merging %d keys is unsupported expected 1", len(inputMap))
+		return nil, microerror.Maskf(executionFailedError, "merging %d keys is unsupported expected 1 key", len(inputMap))
 	}
 
 	for _, v := range inputMap {
