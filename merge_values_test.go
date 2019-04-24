@@ -42,6 +42,10 @@ nested:
     bottom: true
     float: 274877.906944
 test: test`
+	overrideNestedYaml = `
+nested:
+  value: "replaced"
+test: test`
 	simpleNestedYaml = `
 nested:
   value: "nested"
@@ -73,27 +77,73 @@ func Test_MergeValues(t *testing.T) {
 			},
 		},
 		{
-			name: "case 2: non-empty dest, empty src, expected dest",
+			name: "case 2: non-empty dest with mixed types, empty src, expected dest",
 			destMap: map[string][]byte{
-				"values": []byte("test: val"),
+				"values": []byte(mixedTypesYaml),
 			},
 			srcMap: map[string][]byte{},
 			expectedValues: map[string]interface{}{
-				"test": "val",
+				"bool":   true,
+				"int":    1047552,
+				"float":  274877.906944,
+				"string": "test",
+				"text":   "test with a sentence",
 			},
 		},
 		{
-			name: "case 3: non-intersecting values",
+			name: "case 3: non-empty non-intersecting values",
 			destMap: map[string][]byte{
-				"values": []byte("test: val"),
+				"deep": []byte(deepNestedYaml),
 			},
 			srcMap: map[string][]byte{
-				"values": []byte("another: val"),
+				"simple": []byte(simpleNestedYaml),
 			},
 			expectedValues: map[string]interface{}{
-				"another": "val",
-				"test":    "val",
+				"nested": map[string]interface{}{
+					"deeper": map[string]interface{}{
+						"value": "deeper",
+					},
+					"value": "nested",
+				},
+				"test": "test",
 			},
+		},
+		{
+			name: "case 4: non-empty intersecting values, src map is preferred",
+			destMap: map[string][]byte{
+				"simple": []byte(simpleNestedYaml),
+			},
+			srcMap: map[string][]byte{
+				"override": []byte(overrideNestedYaml),
+			},
+			expectedValues: map[string]interface{}{
+				"nested": map[string]interface{}{
+					"value": "replaced",
+				},
+				"test": "test",
+			},
+		},
+		{
+			name: "case 5: src map with multiple keys returns error",
+			destMap: map[string][]byte{
+				"test": []byte("test: val"),
+			},
+			srcMap: map[string][]byte{
+				"another": []byte("test: val"),
+				"test":    []byte("test: val"),
+			},
+			errorMatcher: IsExecutionFailed,
+		},
+		{
+			name: "case 6: dest map with multiple keys returns error",
+			destMap: map[string][]byte{
+				"another": []byte("test: val"),
+				"test":    []byte("test: val"),
+			},
+			srcMap: map[string][]byte{
+				"test": []byte("test: val"),
+			},
+			errorMatcher: IsExecutionFailed,
 		},
 	}
 

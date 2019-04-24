@@ -25,34 +25,38 @@ import (
 func MergeValues(destMap, srcMap map[string][]byte) (map[string]interface{}, error) {
 	result := map[string]interface{}{}
 
-	mergedDestMap, err := mergeMapValues(destMap)
+	destVals, err := processYAML(destMap)
 	if err != nil {
 		return nil, microerror.Mask(err)
 	}
 
-	mergedSrcMap, err := mergeMapValues(srcMap)
+	srcVals, err := processYAML(srcMap)
 	if err != nil {
 		return nil, microerror.Mask(err)
 	}
 
-	result = mergeValues(mergedDestMap, mergedSrcMap)
+	result = mergeValues(destVals, srcVals)
 
 	return result, nil
 }
 
-// mergeMapValues accepts a map with string keys and YAML values passed as a
-// byte array. A deep merge is performed into a single map[string]interface{}
-// output.
-func mergeMapValues(inputMap map[string][]byte) (map[string]interface{}, error) {
+// processYAML accepts a map with a string key and YAML values passed as a
+// byte array. Only a single key is supported and the data structure matches
+// the configmap or secret where the data is stored.
+func processYAML(inputMap map[string][]byte) (map[string]interface{}, error) {
+	var err error
+
 	result := map[string]interface{}{}
 
+	if len(inputMap) > 1 {
+		return nil, microerror.Maskf(executionFailedError, "merging %d keys is unsupported expected 1", len(inputMap))
+	}
+
 	for _, v := range inputMap {
-		vals, err := yamlToStringMap(v)
+		result, err = yamlToStringMap(v)
 		if err != nil {
 			return nil, microerror.Mask(err)
 		}
-
-		result = mergeValues(result, vals)
 	}
 
 	return result, nil
