@@ -7,32 +7,35 @@ import (
 	"github.com/google/go-cmp/cmp"
 )
 
-const (
-	deepNestedYaml = `
+const deepNestedYaml = `
 nested:
   deeper:
     value: "deeper"
 test: test`
-	mixedTypesYaml = `
+
+const mixedTypesYaml = `
 bool: true
 int: 1047552
 float: 274877.906944
 string: test
 text: test with a sentence`
-	nestedArrayYaml = `
+
+const nestedArrayYaml = `
 nested:
   array:
   - 1: "test 1"
   - 2: "test 2"
 test: test`
-	nestedArrayAndMapYaml = `
+
+const nestedArrayAndMapYaml = `
 nested:
   another: "test"
   array:
   - 1: "test 1"
   - 2: "test 2"
 test: test`
-	nestedMixedTypesYaml = `
+
+const nestedMixedTypesYaml = `
 nested:
   another: "test"
   array:
@@ -42,15 +45,16 @@ nested:
     bottom: true
     float: 274877.906944
 test: test`
-	overrideNestedYaml = `
+
+const overrideNestedYaml = `
 nested:
   value: "replaced"
 test: test`
-	simpleNestedYaml = `
+
+const simpleNestedYaml = `
 nested:
   value: "nested"
 test: test`
-)
 
 func Test_MergeValues(t *testing.T) {
 	testCases := []struct {
