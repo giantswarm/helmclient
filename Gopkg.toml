@@ -46,8 +46,8 @@ required = [
   branch = "master"
   name = "github.com/giantswarm/backoff"
 
-[[constraint]]
-  branch = "master"
+[[override]]
+  branch = "ensure-crd"
   name = "github.com/giantswarm/e2esetup"
 
 [[constraint]]
