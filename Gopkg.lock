@@ -144,12 +144,12 @@
   revision = "0e3e9c7ce207c881f003d5d91044902f79cb71ae"
 
 [[projects]]
-  branch = "ensure-crd"
+  branch = "master"
   digest = "1:766a1dc9804de1c692fbad5a8b3816fcb920586524a7c4f1996dff52152e164a"
   name = "github.com/giantswarm/e2esetup"
   packages = ["k8s"]
   pruneopts = "UT"
-  revision = "4424c711c56f2e3d6ff4a1424862458836be95b5"
+  revision = "d5d694bf51575b7110d466b8fe7f9c590decaec2"
 
 [[projects]]
   branch = "master"
@@ -873,6 +873,7 @@
     "github.com/Masterminds/semver",
     "github.com/docker/distribution/reference",
     "github.com/giantswarm/backoff",
+    "github.com/giantswarm/e2e-harness/pkg/harness",
     "github.com/giantswarm/e2esetup/k8s",
     "github.com/giantswarm/errors/guest",
     "github.com/giantswarm/k8sportforward",
@@ -892,7 +893,6 @@
     "k8s.io/apiserver/pkg/endpoints/request",
     "k8s.io/client-go/kubernetes",
     "k8s.io/client-go/rest",
-    "k8s.io/client-go/tools/clientcmd",
     "k8s.io/helm/cmd/helm/installer",
     "k8s.io/helm/pkg/chartutil",
     "k8s.io/helm/pkg/helm",
