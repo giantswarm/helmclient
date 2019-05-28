@@ -122,6 +122,7 @@ func New(config Config) (*Client, error) {
 func (c *Client) DeleteRelease(ctx context.Context, releaseName string, options ...helmclient.DeleteOption) (err error) {
 	eventName := "delete_release"
 	defer errorReporting(eventName, err)
+	t := prometheus.NewTimer(controllerHistogram.WithLabelValues(eventName))
 	o := func() error {
 		t, err := c.newTunnel()
 		if IsTillerNotFound(err) {
@@ -143,7 +144,6 @@ func (c *Client) DeleteRelease(ctx context.Context, releaseName string, options 
 	b := backoff.NewMaxRetries(10, 5*time.Second)
 	n := backoff.NewNotifier(c.logger, ctx)
 
-	t := prometheus.NewTimer(controllerHistogram.WithLabelValues(eventName))
 	err = backoff.RetryNotify(o, b, n)
 	if err != nil {
 		return microerror.Mask(err)
