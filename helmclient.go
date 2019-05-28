@@ -119,8 +119,9 @@ func New(config Config) (*Client, error) {
 }
 
 // DeleteRelease uninstalls a chart given its release name.
-func (c *Client) DeleteRelease(ctx context.Context, releaseName string, options ...helmclient.DeleteOption) error {
-	event_name := "delete_release"
+func (c *Client) DeleteRelease(ctx context.Context, releaseName string, options ...helmclient.DeleteOption) (err error) {
+	eventName := "delete_release"
+	defer errorReporting(eventName, err)
 	o := func() error {
 		t, err := c.newTunnel()
 		if IsTillerNotFound(err) {
@@ -142,10 +143,9 @@ func (c *Client) DeleteRelease(ctx context.Context, releaseName string, options 
 	b := backoff.NewMaxRetries(10, 5*time.Second)
 	n := backoff.NewNotifier(c.logger, ctx)
 
-	t := prometheus.NewTimer(controllerHistogram.WithLabelValues(releaseName, event_name))
-	err := backoff.RetryNotify(o, b, n)
+	t := prometheus.NewTimer(controllerHistogram.WithLabelValues(eventName))
+	err = backoff.RetryNotify(o, b, n)
 	if err != nil {
-		controllerErrorGauge.WithLabelValues(releaseName, event_name).Inc()
 		return microerror.Mask(err)
 	}
 	t.ObserveDuration()
@@ -166,7 +166,11 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 // also created. As a first step, it checks if Tiller is already ready, in
 // which case it returns early. Values can be provided to pass through to Tiller
 // and overwrite its deployment.
-func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []string) error {
+func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []string) (err error) {
+	eventName := "ensure_tiller_installed"
+	defer errorReporting(eventName, err)
+	t := prometheus.NewTimer(controllerHistogram.WithLabelValues(eventName))
+
 	// Check if Tiller is already present and return early if so.
 	{
 		c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("finding if tiller is installed in namespace %#q", c.tillerNamespace))
@@ -258,7 +262,6 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 		}
 	}
 
-	var err error
 	var installTiller bool
 	var pod *corev1.Pod
 	var upgradeTiller bool
@@ -358,6 +361,7 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 
 		c.logger.LogCtx(ctx, "level", "debug", "message", "waited for tiller to be up")
 	}
+	t.ObserveDuration()
 
 	return nil
 }
@@ -365,8 +369,10 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 // GetReleaseContent gets the current status of the Helm Release including any
 // values provided when the chart was installed. The releaseName is the name
 // of the Helm Release that is set when the Helm Chart is installed.
-func (c *Client) GetReleaseContent(ctx context.Context, releaseName string) (*ReleaseContent, error) {
-	var err error
+func (c *Client) GetReleaseContent(ctx context.Context, releaseName string) (releaseContent *ReleaseContent, err error) {
+	eventName := "get_release_content"
+	defer errorReporting(eventName, err)
+	t := prometheus.NewTimer(controllerHistogram.WithLabelValues(eventName))
 
 	var resp *hapiservices.GetReleaseContentResponse
 	{
@@ -401,15 +407,18 @@ func (c *Client) GetReleaseContent(ctx context.Context, releaseName string) (*Re
 	if err != nil {
 		return nil, microerror.Mask(err)
 	}
-
+	t.ObserveDuration()
 	return content, nil
 }
 
 // GetReleaseHistory gets the current installed version of the Helm Release.
 // The releaseName is the name of the Helm Release that is set when the Helm
 // Chart is installed.
-func (c *Client) GetReleaseHistory(ctx context.Context, releaseName string) (*ReleaseHistory, error) {
-	var err error
+func (c *Client) GetReleaseHistory(ctx context.Context, releaseName string) (releaseHistory *ReleaseHistory, err error) {
+	eventName := "get_release_history"
+	defer errorReporting(eventName, err)
+	t := prometheus.NewTimer(controllerHistogram.WithLabelValues(eventName))
+
 	var resp *hapiservices.GetHistoryResponse
 	{
 		o := func() error {
@@ -471,12 +480,17 @@ func (c *Client) GetReleaseHistory(ctx context.Context, releaseName string) (*Re
 			Version:      version,
 		}
 	}
+	t.ObserveDuration()
 
 	return history, nil
 }
 
 // InstallReleaseFromTarball installs a chart packaged in the given tarball.
-func (c *Client) InstallReleaseFromTarball(ctx context.Context, path, ns string, options ...helmclient.InstallOption) error {
+func (c *Client) InstallReleaseFromTarball(ctx context.Context, path, ns string, options ...helmclient.InstallOption) (err error) {
+	eventName := "install_release_from_tarball"
+	defer errorReporting(eventName, err)
+	t := prometheus.NewTimer(controllerHistogram.WithLabelValues(eventName))
+
 	o := func() error {
 		t, err := c.newTunnel()
 		if IsTillerNotFound(err) {
@@ -513,16 +527,20 @@ func (c *Client) InstallReleaseFromTarball(ctx context.Context, path, ns string,
 	b := backoff.NewMaxRetries(10, 5*time.Second)
 	n := backoff.NewNotifier(c.logger, ctx)
 
-	err := backoff.RetryNotify(o, b, n)
+	err = backoff.RetryNotify(o, b, n)
 	if err != nil {
 		return microerror.Mask(err)
 	}
-
+	t.ObserveDuration()
 	return nil
 }
 
 // ListReleaseContents gets the current status of all Helm Releases.
-func (c *Client) ListReleaseContents(ctx context.Context) ([]*ReleaseContent, error) {
+func (c *Client) ListReleaseContents(ctx context.Context) (releaseContents []*ReleaseContent, err error) {
+	eventName := "list_release_contents"
+	defer errorReporting(eventName, err)
+	t := prometheus.NewTimer(controllerHistogram.WithLabelValues(eventName))
+
 	var releases []*hapirelease.Release
 	{
 		o := func() error {
@@ -579,65 +597,79 @@ func (c *Client) ListReleaseContents(ctx context.Context) ([]*ReleaseContent, er
 
 		contents = append(contents, content)
 	}
-
+	t.ObserveDuration()
 	return contents, nil
 }
 
 // LoadChart loads a Helm Chart and returns relevant parts of its structure.
-func (c *Client) LoadChart(ctx context.Context, chartPath string) (Chart, error) {
+func (c *Client) LoadChart(ctx context.Context, chartPath string) (chart Chart, err error) {
+	eventName := "load_chart"
+	defer errorReporting(eventName, err)
+	t := prometheus.NewTimer(controllerHistogram.WithLabelValues(eventName))
+
 	helmChart, err := chartutil.Load(chartPath)
 	if err != nil {
 		return Chart{}, microerror.Mask(err)
 	}
 
-	chart, err := newChart(helmChart)
+	chart, err = newChart(helmChart)
 	if err != nil {
 		return Chart{}, microerror.Mask(err)
 	}
-
+	t.ObserveDuration()
 	return chart, nil
 }
 
 // PingTiller proxies the underlying Helm client PingTiller method.
-func (c *Client) PingTiller(ctx context.Context) error {
-	t, err := c.newTunnel()
+func (c *Client) PingTiller(ctx context.Context) (err error) {
+	eventName := "ping_tiller"
+	defer errorReporting(eventName, err)
+	t := prometheus.NewTimer(controllerHistogram.WithLabelValues(eventName))
+
+	tunnel, err := c.newTunnel()
 	if err != nil {
 		return microerror.Mask(err)
 	}
-	defer c.closeTunnel(ctx, t)
+	defer c.closeTunnel(ctx, tunnel)
 
-	err = c.newHelmClientFromTunnel(t).PingTiller()
+	err = c.newHelmClientFromTunnel(tunnel).PingTiller()
 	if err != nil {
 		return microerror.Mask(err)
 	}
-
+	t.ObserveDuration()
 	return nil
 }
 
 // RunReleaseTest runs the tests for a Helm Release. The releaseName is the
 // name of the Helm Release that is set when the Helm Chart is installed. This
 // is the same action as running the helm test command.
-func (c *Client) RunReleaseTest(ctx context.Context, releaseName string, options ...helmclient.ReleaseTestOption) error {
+func (c *Client) RunReleaseTest(ctx context.Context, releaseName string, options ...helmclient.ReleaseTestOption) (err error) {
+	eventName := "run_release_test"
+	defer errorReporting(eventName, err)
+	t := prometheus.NewTimer(controllerHistogram.WithLabelValues(eventName))
+
 	c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("running tests for release %#q", releaseName))
 
-	t, err := c.newTunnel()
+	tunnel, err := c.newTunnel()
 	if err != nil {
 		return microerror.Mask(err)
 	}
-	defer c.closeTunnel(ctx, t)
+	defer c.closeTunnel(ctx, tunnel)
 
-	resChan, errChan := c.newHelmClientFromTunnel(t).RunReleaseTest(releaseName, helmclient.ReleaseTestTimeout(int64(runReleaseTestTimout)))
+	resChan, errChan := c.newHelmClientFromTunnel(tunnel).RunReleaseTest(releaseName, helmclient.ReleaseTestTimeout(int64(runReleaseTestTimout)))
 	if IsReleaseNotFound(err) {
 		return backoff.Permanent(microerror.Mask(err))
 	} else if err != nil {
 		return microerror.Mask(err)
 	}
 
+W:
 	for {
 		select {
 		case err := <-errChan:
 			if err != nil {
-				return microerror.Mask(err)
+				err = microerror.Mask(err)
+				break W
 			}
 		case res := <-resChan:
 			c.logger.LogCtx(ctx, "level", "debug", "message", res.Msg)
@@ -645,19 +677,27 @@ func (c *Client) RunReleaseTest(ctx context.Context, releaseName string, options
 			switch res.Status {
 			case hapirelease.TestRun_SUCCESS:
 				c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("ran tests for release %#q", releaseName))
-				return nil
+				break W
 			case hapirelease.TestRun_FAILURE:
-				return microerror.Maskf(testReleaseFailureError, "failed to run tests for release %#q", releaseName)
+				err = microerror.Maskf(testReleaseFailureError, "failed to run tests for release %#q", releaseName)
+				break W
 			}
 		case <-time.After(runReleaseTestTimout * time.Second):
-			return microerror.Maskf(testReleaseTimeoutError, "failed to run tests for release %#q", releaseName)
+			err = microerror.Maskf(testReleaseTimeoutError, "failed to run tests for release %#q", releaseName)
+			break W
 		}
 	}
+	t.ObserveDuration()
+	return err
 }
 
 // UpdateReleaseFromTarball updates the given release using the chart packaged
 // in the tarball.
-func (c *Client) UpdateReleaseFromTarball(ctx context.Context, releaseName, path string, options ...helmclient.UpdateOption) error {
+func (c *Client) UpdateReleaseFromTarball(ctx context.Context, releaseName, path string, options ...helmclient.UpdateOption) (err error) {
+	eventName := "update_release_from_tarball"
+	defer errorReporting(eventName, err)
+	t := prometheus.NewTimer(controllerHistogram.WithLabelValues(eventName))
+
 	o := func() error {
 		t, err := c.newTunnel()
 		if IsTillerNotFound(err) {
@@ -690,11 +730,11 @@ func (c *Client) UpdateReleaseFromTarball(ctx context.Context, releaseName, path
 	b := backoff.NewMaxRetries(10, 5*time.Second)
 	n := backoff.NewNotifier(c.logger, ctx)
 
-	err := backoff.RetryNotify(o, b, n)
+	err = backoff.RetryNotify(o, b, n)
 	if err != nil {
 		return microerror.Mask(err)
 	}
-
+	t.ObserveDuration()
 	return nil
 }
 
@@ -967,4 +1007,10 @@ func releaseToReleaseContent(release *hapirelease.Release) (*ReleaseContent, err
 	}
 
 	return content, nil
+}
+
+func errorReporting(eventName string, err error) {
+	if err != nil {
+		controllerErrorGauge.WithLabelValues(eventName).Inc()
+	}
 }
