@@ -15,6 +15,7 @@ import (
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 	"github.com/golang/protobuf/ptypes"
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/afero"
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
@@ -119,6 +120,7 @@ func New(config Config) (*Client, error) {
 
 // DeleteRelease uninstalls a chart given its release name.
 func (c *Client) DeleteRelease(ctx context.Context, releaseName string, options ...helmclient.DeleteOption) error {
+	event_name := "delete_release"
 	o := func() error {
 		t, err := c.newTunnel()
 		if IsTillerNotFound(err) {
@@ -140,10 +142,13 @@ func (c *Client) DeleteRelease(ctx context.Context, releaseName string, options 
 	b := backoff.NewMaxRetries(10, 5*time.Second)
 	n := backoff.NewNotifier(c.logger, ctx)
 
+	t := prometheus.NewTimer(controllerHistogram.WithLabelValues(releaseName, event_name))
 	err := backoff.RetryNotify(o, b, n)
 	if err != nil {
+		controllerErrorGauge.WithLabelValues(releaseName, event_name).Inc()
 		return microerror.Mask(err)
 	}
+	t.ObserveDuration()
 
 	return nil
 }
