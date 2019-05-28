@@ -17,7 +17,7 @@ var (
 			Name:      "error_total",
 			Help:      "Number of helmclient errors.",
 		},
-		[]string{"event", "release"},
+		[]string{"event"},
 	)
 	controllerHistogram = prometheus.NewHistogramVec(
 		prometheus.HistogramOpts{
@@ -26,7 +26,7 @@ var (
 			Name:      "event",
 			Help:      "Histogram for events within the helmclient controller.",
 		},
-		[]string{"event", "release"},
+		[]string{"event"},
 	)
 )
 
