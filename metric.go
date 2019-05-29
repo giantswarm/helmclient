@@ -6,7 +6,7 @@ import (
 
 const (
 	PrometheusNamespace = "helmclient"
-	PrometheusSubsystem = "controller"
+	PrometheusSubsystem = "library"
 )
 
 var (
@@ -24,7 +24,7 @@ var (
 			Namespace: PrometheusNamespace,
 			Subsystem: PrometheusSubsystem,
 			Name:      "event",
-			Help:      "Histogram for events within the helmclient controller.",
+			Help:      "Histogram for events within the helmclient library.",
 		},
 		[]string{"event"},
 	)
