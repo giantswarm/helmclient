@@ -369,7 +369,7 @@ func (c *Client) GetReleaseContent(ctx context.Context, releaseName string) (*Re
 	releaseContent, err := c.getReleaseContent(ctx, releaseName)
 	if err != nil {
 		errorGauge.WithLabelValues(eventName).Inc()
-		return releaseContent, microerror.Mask(err)
+		return nil, microerror.Mask(err)
 	}
 
 	t.ObserveDuration()
