@@ -5,7 +5,7 @@ import (
 )
 
 const (
-	PrometheusNamespace = "operatorkit"
+	PrometheusNamespace = "helmclient"
 	PrometheusSubsystem = "controller"
 )
 
