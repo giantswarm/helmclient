@@ -3,6 +3,7 @@ package helmclient
 import (
 	"context"
 	"fmt"
+	"github.com/prometheus/client_golang/prometheus"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -361,10 +362,13 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 // values provided when the chart was installed. The releaseName is the name
 // of the Helm Release that is set when the Helm Chart is installed.
 func (c *Client) GetReleaseContent(ctx context.Context, releaseName string) (*ReleaseContent, error) {
+	eventName := "get_release_content"
+	t := prometheus.NewTimer(controllerHistogram.WithLabelValues(eventName))
 	releaseContent, err := c.getReleaseContent(ctx, releaseName)
 	if err != nil {
-		controllerErrorGauge.WithLabelValues("get_release_content").Inc()
+		controllerErrorGauge.WithLabelValues(eventName).Inc()
 	}
+	t.ObserveDuration()
 	return releaseContent, err
 }
 
