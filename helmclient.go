@@ -365,14 +365,13 @@ func (c *Client) GetReleaseContent(ctx context.Context, releaseName string) (*Re
 	eventName := "get_release_content"
 
 	t := prometheus.NewTimer(histogram.WithLabelValues(eventName))
+	defer t.ObserveDuration()
 
 	releaseContent, err := c.getReleaseContent(ctx, releaseName)
 	if err != nil {
 		errorGauge.WithLabelValues(eventName).Inc()
 		return nil, microerror.Mask(err)
 	}
-
-	t.ObserveDuration()
 
 	return releaseContent, nil
 }
