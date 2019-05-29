@@ -10,7 +10,7 @@ const (
 )
 
 var (
-	controllerErrorGauge = prometheus.NewGaugeVec(
+	errorGauge = prometheus.NewGaugeVec(
 		prometheus.GaugeOpts{
 			Namespace: PrometheusNamespace,
 			Subsystem: PrometheusSubsystem,
@@ -19,7 +19,7 @@ var (
 		},
 		[]string{"event"},
 	)
-	controllerHistogram = prometheus.NewHistogramVec(
+	histogram = prometheus.NewHistogramVec(
 		prometheus.HistogramOpts{
 			Namespace: PrometheusNamespace,
 			Subsystem: PrometheusSubsystem,
@@ -31,6 +31,6 @@ var (
 )
 
 func init() {
-	prometheus.MustRegister(controllerErrorGauge)
-	prometheus.MustRegister(controllerHistogram)
+	prometheus.MustRegister(errorGauge)
+	prometheus.MustRegister(histogram)
 }

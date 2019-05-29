@@ -364,11 +364,11 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 func (c *Client) GetReleaseContent(ctx context.Context, releaseName string) (*ReleaseContent, error) {
 	eventName := "get_release_content"
 
-	t := prometheus.NewTimer(controllerHistogram.WithLabelValues(eventName))
+	t := prometheus.NewTimer(histogram.WithLabelValues(eventName))
 
 	releaseContent, err := c.getReleaseContent(ctx, releaseName)
 	if err != nil {
-		controllerErrorGauge.WithLabelValues(eventName).Inc()
+		errorGauge.WithLabelValues(eventName).Inc()
 	}
 
 	t.ObserveDuration()
