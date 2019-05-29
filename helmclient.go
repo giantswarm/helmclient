@@ -361,6 +361,14 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 // values provided when the chart was installed. The releaseName is the name
 // of the Helm Release that is set when the Helm Chart is installed.
 func (c *Client) GetReleaseContent(ctx context.Context, releaseName string) (*ReleaseContent, error) {
+	releaseContent, err := c.getReleaseContent(ctx, releaseName)
+	if err != nil {
+		controllerErrorGauge.WithLabelValues("get_release_content").Inc()
+	}
+	return releaseContent, err
+}
+
+func (c *Client) getReleaseContent(ctx context.Context, releaseName string) (*ReleaseContent, error) {
 	var err error
 
 	var resp *hapiservices.GetReleaseContentResponse
