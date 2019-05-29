@@ -56,6 +56,9 @@ nested:
   value: "nested"
 test: test`
 
+const nullValuedNestedKeyYaml = `
+nested: null`
+
 func Test_MergeValues(t *testing.T) {
 	testCases := []struct {
 		name           string
@@ -148,6 +151,19 @@ func Test_MergeValues(t *testing.T) {
 				"test": []byte("test: val"),
 			},
 			errorMatcher: IsExecutionFailed,
+		},
+		{
+			name: "case 7: null-valued key in src overrides/removes intersecting tree in dest",
+			destMap: map[string][]byte{
+				"simple": []byte(simpleNestedYaml),
+			},
+			srcMap: map[string][]byte{
+				"override": []byte(nullValuedNestedKeyYaml),
+			},
+			expectedValues: map[string]interface{}{
+				"nested": nil,
+				"test":   "test",
+			},
 		},
 	}
 
@@ -262,6 +278,13 @@ func Test_yamlToStringMap(t *testing.T) {
 			name:         "case 5: integer input returns error",
 			input:        []byte("123"),
 			errorMatcher: IsExecutionFailed,
+		},
+		{
+			name:  "case 6: null value is supported",
+			input: []byte(nullValuedNestedKeyYaml),
+			expectedValues: map[string]interface{}{
+				"nested": nil,
+			},
 		},
 	}
 
