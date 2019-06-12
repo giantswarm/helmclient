@@ -773,7 +773,7 @@ func validateTillerVersion(pod *corev1.Pod, desiredImage string) error {
 	}
 
 	if !currentVersion.Equal(desiredVersion) {
-		return microerror.Maskf(tillerInvalidVersionError, "current tiller version %#q is not matching with desired tiller version %#q", currentVersion.String(), desiredVersion.String())
+		return microerror.Maskf(tillerInvalidVersionError, "current tiller version %#q does not match desired tiller version %#q", currentVersion.String(), desiredVersion.String())
 	}
 
 	return nil
