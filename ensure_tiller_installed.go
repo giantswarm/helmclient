@@ -169,25 +169,7 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 					},
 				},
 				Egress: []networkingv1.NetworkPolicyEgressRule{
-					networkingv1.NetworkPolicyEgressRule{
-						To: []networkingv1.NetworkPolicyPeer{
-							networkingv1.NetworkPolicyPeer{
-								IPBlock: &networkingv1.IPBlock{
-									CIDR: "10.0.0.0/8",
-								},
-							},
-							networkingv1.NetworkPolicyPeer{
-								IPBlock: &networkingv1.IPBlock{
-									CIDR: "172.16.0.0/12",
-								},
-							},
-							networkingv1.NetworkPolicyPeer{
-								IPBlock: &networkingv1.IPBlock{
-									CIDR: "192.168.0.0/16",
-								},
-							},
-						},
-					},
+					networkingv1.NetworkPolicyEgressRule{},
 				},
 				PolicyTypes: []networkingv1.PolicyType{
 					networkingv1.PolicyTypeIngress,
