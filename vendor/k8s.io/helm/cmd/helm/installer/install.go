@@ -36,7 +36,6 @@ import (
 	"k8s.io/helm/pkg/version"
 
 	"k8s.io/helm/pkg/chartutil"
-	"k8s.io/helm/pkg/tiller/environment"
 )
 
 // Install uses Kubernetes client to install Tiller.
@@ -227,8 +226,8 @@ func generateDeployment(opts *Options) (*v1beta1.Deployment, error) {
 							Image:           opts.SelectImage(),
 							ImagePullPolicy: opts.pullPolicy(),
 							Ports: []v1.ContainerPort{
-								{ContainerPort: environment.DefaultTillerPort, Name: "tiller"},
-								{ContainerPort: environment.DefaultTillerProbePort, Name: "http"},
+								{ContainerPort: 44134, Name: "tiller"},
+								{ContainerPort: 44135, Name: "http"},
 							},
 							Env: []v1.EnvVar{
 								{Name: "TILLER_NAMESPACE", Value: opts.Namespace},
@@ -238,7 +237,7 @@ func generateDeployment(opts *Options) (*v1beta1.Deployment, error) {
 								Handler: v1.Handler{
 									HTTPGet: &v1.HTTPGetAction{
 										Path: "/liveness",
-										Port: intstr.FromInt(environment.DefaultTillerProbePort),
+										Port: intstr.FromInt(44135),
 									},
 								},
 								InitialDelaySeconds: 1,
@@ -248,7 +247,7 @@ func generateDeployment(opts *Options) (*v1beta1.Deployment, error) {
 								Handler: v1.Handler{
 									HTTPGet: &v1.HTTPGetAction{
 										Path: "/readiness",
-										Port: intstr.FromInt(environment.DefaultTillerProbePort),
+										Port: intstr.FromInt(44135),
 									},
 								},
 								InitialDelaySeconds: 1,
@@ -342,7 +341,7 @@ func generateService(namespace string) *v1.Service {
 			Ports: []v1.ServicePort{
 				{
 					Name:       "tiller",
-					Port:       environment.DefaultTillerPort,
+					Port:       44134,
 					TargetPort: intstr.FromString("tiller"),
 				},
 			},

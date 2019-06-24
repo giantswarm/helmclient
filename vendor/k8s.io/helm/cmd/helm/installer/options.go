@@ -24,12 +24,7 @@ import (
 	"k8s.io/helm/pkg/version"
 )
 
-const (
-	defaultImage = "gcr.io/kubernetes-helm/tiller"
-
-	fmtJSON OutputFormat = "json"
-	fmtYAML OutputFormat = "yaml"
-)
+const defaultImage = "gcr.io/kubernetes-helm/tiller"
 
 // Options control how to install Tiller into a cluster, upgrade, and uninstall Tiller from a cluster.
 type Options struct {
@@ -158,6 +153,11 @@ func (f *OutputFormat) String() string {
 func (f *OutputFormat) Type() string {
 	return "OutputFormat"
 }
+
+const (
+	fmtJSON OutputFormat = "json"
+	fmtYAML OutputFormat = "yaml"
+)
 
 // Set validates and sets the value of the OutputFormat
 func (f *OutputFormat) Set(s string) error {
