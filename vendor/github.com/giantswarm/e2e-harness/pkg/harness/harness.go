@@ -1,7 +1,6 @@
 package harness
 
 import (
-	"context"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -15,14 +14,6 @@ import (
 const (
 	defaultConfigFile = "config.yaml"
 
-	// DefaultKubeConfig is the file path of the testing cluster
-	// kubeconfig.
-	//
-	// NOTE: This value is used in its raw form in helmclient repo. When it
-	// changes we need to change it in helmclient too.
-	//
-	//	See https://github.com/giantswarm/helmclient/pull/63
-	//
 	DefaultKubeConfig = "/workdir/.shipyard/config"
 )
 
@@ -46,7 +37,7 @@ func New(logger micrologger.Logger, fs afero.Fs, cfg Config) *Harness {
 }
 
 // Init initializes the harness.
-func (h *Harness) Init(ctx context.Context) error {
+func (h *Harness) Init() error {
 	h.logger.Log("info", "starting harness initialization")
 	baseDir, err := BaseDir()
 	if err != nil {
@@ -77,7 +68,7 @@ func (h *Harness) Init(ctx context.Context) error {
 }
 
 // WriteConfig is a Task that persists the current config to a file.
-func (h *Harness) WriteConfig(ctx context.Context) error {
+func (h *Harness) WriteConfig() error {
 	dir, err := BaseDir()
 	if err != nil {
 		return microerror.Mask(err)
