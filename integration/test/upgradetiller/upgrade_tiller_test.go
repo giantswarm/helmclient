@@ -18,8 +18,8 @@ func TestUpgradeTiller(t *testing.T) {
 
 	var err error
 
-	currentTillerImage := "quay.io/giantswarm/tiller:v2.12.0"
-	outdatedTillerImage := "quay.io/giantswarm/tiller:v2.8.2"
+	currentTillerImage := "quay.io/giantswarm/tiller:v2.14.1"
+	outdatedTillerImage := "quay.io/giantswarm/tiller:v2.12.0"
 
 	labelSelector := "app=helm,name=tiller"
 	tillerNamespace := "giantswarm"
