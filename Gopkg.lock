@@ -62,6 +62,14 @@
   version = "v2.2.0"
 
 [[projects]]
+  digest = "1:ec66ad050342a3573ed2f5a4337d51b4c6d5d2a717cc6c9ecf86b081235a5759"
+  name = "github.com/cyphar/filepath-securejoin"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "a261ee33d7a517f054effbf451841abaafe3e0fd"
+  version = "v0.2.2"
+
+[[projects]]
   digest = "1:ffe9824d294da03b391f44e1ae8281281b4afc1bdaa9588c9097785e3af10cec"
   name = "github.com/davecgh/go-spew"
   packages = ["spew"]
@@ -123,8 +131,8 @@
   version = "v1.0.0"
 
 [[projects]]
-  branch = "master"
-  digest = "1:f0aff88350586f72f11c7dcda7648efc356ab2a7b079e3a52f9a0a3d70211165"
+  branch = "k8s-1.14"
+  digest = "1:35c12df37a10937565e53687c02428d107da501379d1683c65e25619f9dde69b"
   name = "github.com/giantswarm/apiextensions"
   packages = [
     "pkg/apis/application/v1alpha1",
@@ -141,7 +149,7 @@
     "pkg/clientset/versioned/typed/release/v1alpha1",
   ]
   pruneopts = "UT"
-  revision = "594d5422de1e5df8d047f66f48e924d2ac3f3a22"
+  revision = "e6456df1abbc51d90801f03e1c3e0b3098b699a7"
 
 [[projects]]
   branch = "master"
@@ -152,12 +160,12 @@
   revision = "4763148864dc4815b691a69b4f60b4f4a8f88dad"
 
 [[projects]]
-  branch = "master"
+  branch = "k8s-1.14"
   digest = "1:0b4fd3b507391be0388ba170d99e096d9abe8e302e68d2ed20a71561aeaa1b66"
   name = "github.com/giantswarm/e2esetup"
   packages = ["k8s"]
   pruneopts = "UT"
-  revision = "5b23ce08dec2137cf3e348e11f88275bc0c39181"
+  revision = "ed1db670ca772bcd31cc0e0d4b24d61ecb4ffa1b"
 
 [[projects]]
   branch = "master"
@@ -196,12 +204,12 @@
   revision = "0926d9b7c5419173936b4556411a103bdf8d5966"
 
 [[projects]]
-  branch = "master"
+  branch = "k8s-1.14"
   digest = "1:7f108bbeae041753de0a3d8b4bc8d13d4d1c7884129523ece1495104f5591742"
   name = "github.com/giantswarm/operatorkit"
   packages = ["client/k8scrdclient"]
   pruneopts = "UT"
-  revision = "e5d2b8071b3678d427e342e6ae500b5059de778a"
+  revision = "3fc12ba8c5e50b51838ad074b65f22a7c3e9266b"
 
 [[projects]]
   branch = "master"
@@ -424,6 +432,14 @@
   pruneopts = "UT"
   revision = "057d66e894a4e55853274a3bbbf7de02ba639e43"
   version = "v2.2.4"
+
+[[projects]]
+  digest = "1:cf31692c14422fa27c83a05292eb5cbe0fb2775972e8f1f8446a71549bd8980b"
+  name = "github.com/pkg/errors"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "ba968bfe8b2f7e042a574c888954fccecfa385b4"
+  version = "v0.8.1"
 
 [[projects]]
   digest = "1:641a6f02ac68db91eee65eed28a23630b215aea79e39b3dbcfa0fdbb19cd11de"
@@ -711,7 +727,7 @@
   version = "kubernetes-1.14.2"
 
 [[projects]]
-  digest = "1:db0e48e58e92eddc9ae08e9efb3dfaa1d61e32de690fff0dae5bccf4b45ebcce"
+  digest = "1:65226935ef0a84716e327aa46c5a11cf2158ca6d0c79b379202d0b2c2be0e9bc"
   name = "k8s.io/apiextensions-apiserver"
   packages = [
     "pkg/apis/apiextensions",
@@ -721,8 +737,8 @@
     "pkg/client/clientset/clientset/typed/apiextensions/v1beta1",
   ]
   pruneopts = "UT"
-  revision = "7d26de67f177df719a36756e658973478df68485"
-  version = "kubernetes-1.13.2"
+  revision = "bf6753f2aa24fe1d69a2abeea1c106042bcf3f5f"
+  version = "kubernetes-1.14.2"
 
 [[projects]]
   digest = "1:c96c33b9c2eedd6fcc9d3f98a1fb459ecb23c242e4f6346448ed070f28832dee"
@@ -856,7 +872,7 @@
   version = "kubernetes-1.14.2"
 
 [[projects]]
-  digest = "1:cd9f912ae4effd7766091945c41a7ff07be6720c8ad7fd0c992fe31980d00889"
+  digest = "1:4b8df8b59b3c492a6cb8ab496ec3560c7b3f8bc4b45541ee75832a4107b61bb2"
   name = "k8s.io/helm"
   packages = [
     "cmd/helm/installer",
@@ -877,8 +893,8 @@
     "pkg/version",
   ]
   pruneopts = "UT"
-  revision = "d325d2a9c179b33af1a024cdb5a4472b6288016a"
-  version = "v2.12.0"
+  revision = "618447cbf203d147601b4b9bd7f8c37a5d39fbb4"
+  version = "v2.13.1"
 
 [[projects]]
   digest = "1:c283ca5951eb7d723d3300762f96ff94c2ea11eaceb788279e2b7327f92e4f2a"
