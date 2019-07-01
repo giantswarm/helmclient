@@ -106,9 +106,9 @@ required = [
   name = "k8s.io/client-go"
   version = "kubernetes-1.14.2"
 
-[[constraint]]
+[[override]]
   name = "k8s.io/helm"
-  version = "=2.13.1"
+  version = "=2.14.1"
 
 
 
