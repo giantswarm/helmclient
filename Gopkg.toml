@@ -75,6 +75,10 @@ required = [
   version = "0.9.3"
 
 [[override]]
+  version = "v1.5.2"
+  name = "github.com/russross/blackfriday"
+
+[[override]]
   name = "k8s.io/api"
   version = "kubernetes-1.15.0"
 
