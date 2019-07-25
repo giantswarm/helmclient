@@ -52,9 +52,10 @@ type Config struct {
 	K8sClient  kubernetes.Interface
 	Logger     micrologger.Logger
 
-	RestConfig      *rest.Config
-	TillerImage     string
-	TillerNamespace string
+	EnsureTillerInstalledMaxWait string
+	RestConfig                   *rest.Config
+	TillerImage                  string
+	TillerNamespace              string
 }
 
 // Client knows how to talk with a Helm Tiller server.
@@ -65,9 +66,10 @@ type Client struct {
 	k8sClient  kubernetes.Interface
 	logger     micrologger.Logger
 
-	restConfig      *rest.Config
-	tillerImage     string
-	tillerNamespace string
+	ensureTillerInstalledMaxWait string
+	restConfig                   *rest.Config
+	tillerImage                  string
+	tillerNamespace              string
 }
 
 // New creates a new configured Helm client.
@@ -86,6 +88,9 @@ func New(config Config) (*Client, error) {
 		return nil, microerror.Maskf(invalidConfigError, "%T.RestConfig must not be empty", config)
 	}
 
+	if config.EnsureTillerInstalledMaxWait == "" {
+		config.EnsureTillerInstalledMaxWait = defaultEnsureTillerInstalledMaxWait
+	}
 	if config.TillerImage == "" {
 		config.TillerImage = defaultTillerImage
 	}
