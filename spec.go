@@ -9,7 +9,7 @@ import (
 const (
 	// defaultEnsureTillerInstalledMaxWait is how long to wait in
 	// EnsureTillerInstalled to get a running tiller pod.
-	defaultEnsureTillerInstalledMaxWait = "1m"
+	defaultEnsureTillerInstalledMaxWait = "60s"
 
 	// defaultMaxHistory is the maximum number of release versions stored per
 	// release by default.
