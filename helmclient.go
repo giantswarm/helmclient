@@ -84,12 +84,11 @@ func New(config Config) (*Client, error) {
 		return nil, microerror.Maskf(invalidConfigError, "%T.K8sClient must not be empty", config)
 	}
 
-	if config.RestConfig == nil {
-		return nil, microerror.Maskf(invalidConfigError, "%T.RestConfig must not be empty", config)
-	}
-
 	if config.EnsureTillerInstalledMaxWait == "" {
 		config.EnsureTillerInstalledMaxWait = defaultEnsureTillerInstalledMaxWait
+	}
+	if config.RestConfig == nil {
+		return nil, microerror.Maskf(invalidConfigError, "%T.RestConfig must not be empty", config)
 	}
 	if config.TillerImage == "" {
 		config.TillerImage = defaultTillerImage
@@ -110,10 +109,10 @@ func New(config Config) (*Client, error) {
 		k8sClient:  config.K8sClient,
 		logger:     config.Logger,
 
-		restConfig:      config.RestConfig,
-		tillerNamespace: config.TillerNamespace,
-
-		tillerImage: config.TillerImage,
+		ensureTillerInstalledMaxWait: config.EnsureTillerInstalledMaxWait,
+		restConfig:                   config.RestConfig,
+		tillerImage:                  config.TillerImage,
+		tillerNamespace:              config.TillerNamespace,
 	}
 
 	return c, nil
