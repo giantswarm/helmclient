@@ -662,7 +662,7 @@ func (c *Client) newTunnel() (*k8sportforward.Tunnel, error) {
 
 	pod, err := getPod(c.k8sClient, c.tillerNamespace)
 	if IsNotFound(err) {
-		return nil, microerror.Maskf(tillerNotFoundError, "label selector: %#q namespace: %#q", tillerLabelSelector, c.tillerNamespace)
+		return nil, microerror.Maskf(tillerNotFoundError, "field selector: %#q label selector: %#q namespace: %#q", runningPodFieldSelector, tillerLabelSelector, c.tillerNamespace)
 	} else if err != nil {
 		return nil, microerror.Mask(err)
 	}
@@ -723,7 +723,7 @@ func filterList(rels []*hapirelease.Release) []*hapirelease.Release {
 
 func getPod(client kubernetes.Interface, namespace string) (*corev1.Pod, error) {
 	o := metav1.ListOptions{
-		FieldSelector: tillerFieldSelector,
+		FieldSelector: runningPodFieldSelector,
 		LabelSelector: tillerLabelSelector,
 	}
 	pods, err := client.CoreV1().Pods(namespace).List(o)
