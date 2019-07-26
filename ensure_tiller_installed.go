@@ -207,10 +207,11 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 
 			return nil
 		}
-		b := backoff.NewExponential(1*time.Minute, 5*time.Second)
+
+		b := backoff.NewConstant(c.ensureTillerInstalledMaxWait, 3*time.Second)
 		n := backoff.NewNotifier(c.logger, context.Background())
 
-		err := backoff.RetryNotify(o, b, n)
+		err = backoff.RetryNotify(o, b, n)
 		if err != nil {
 			return microerror.Mask(err)
 		}
