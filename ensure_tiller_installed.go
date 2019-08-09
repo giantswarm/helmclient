@@ -139,13 +139,13 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 			},
 			Rules: []rbacv1.PolicyRule{
 				{
-					APIGroups:
+					[]APIGroups:
 						"extensions",
-					Resources:
+					[]Resources:
 						"podsecuritypolicies",
-					ResourceNames:
+					[]ResourceNames:
 						name,
-					Verbs:
+					[]Verbs:
 						"use",
 				},
 			},
@@ -207,7 +207,7 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 
 	// create a pod security policy for tiller to ensure it runs with least possible privileges.
 	{
-		podSecurityPolicyName = tillerPodName + "-psp"
+		podSecurityPolicyName := tillerPodName + "-psp"
 		podSecurityPolicyNamespace := c.tillerNamespace
 		minRunAsID := intstr.IntOrString{
 			IntVal: 1,
@@ -215,7 +215,6 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 		maxRunAsID := intstr.IntOrString{
 			IntVal: 65535,
 		}
-		privilegedPod := false
 
 		name := fmt.Sprintf("%s-psp", tillerPodName)
 
@@ -231,7 +230,7 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 				Namespace: podSecurityPolicyNamespace,
 			},
 			Spec: extensionsv1beta1.PodSecurityPolicySpec{
-				Privileged: &privilegedPod,
+				Privileged: false,
 				Volumes: []extensionsv1beta1.FSType{
 					"secret",
 				},
@@ -265,7 +264,7 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 						Max: &maxRunAsID,
 					},
 				},
-				AllowPrivilegeEscalation: &privilegedPod,
+				AllowPrivilegeEscalation: false,
 			},
 		}
 
