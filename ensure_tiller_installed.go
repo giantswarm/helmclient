@@ -213,12 +213,8 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 	{
 		podSecurityPolicyName := tillerPodName + "-psp"
 		podSecurityPolicyNamespace := c.tillerNamespace
-		minRunAsID := intstr.IntOrString{
-			IntVal: 1,
-		}
-		maxRunAsID := intstr.IntOrString{
-			IntVal: 65535,
-		}
+		minRunAsID := 1
+		maxRunAsID := 65535
 
 		name := fmt.Sprintf("%s-psp", tillerPodName)
 
