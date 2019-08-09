@@ -9,6 +9,7 @@ import (
 	"github.com/giantswarm/errors/guest"
 	"github.com/giantswarm/microerror"
 	corev1 "k8s.io/api/core/v1"
+	extensionsv1beta1 "k8s.io/api/extensions/v1beta1"
 	networkingv1 "k8s.io/api/networking/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
@@ -120,6 +121,164 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 		} else {
 			c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("created clusterrolebinding %#q", name))
 		}
+	}
+
+	// Create the cluster role for tiller's PSP.
+	{
+		name := fmt.Sprintf("%s-psp", tillerPodName)
+
+		c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating clusterrole %#q", name))
+
+		cr := &rbacv1.ClusterRole{
+			TypeMeta: metav1.TypeMeta{
+				APIVersion: "rbac.authorization.k8s.io/v1",
+				Kind:       "ClusterRole",
+			},
+			ObjectMeta: metav1.ObjectMeta{
+				Name: name,
+			},
+			Rules: []rbacv1.PolicyRule{
+				{
+					APIGroups:
+						"extensions",
+					Resources:
+						"podsecuritypolicies",
+					ResourceNames:
+						name,
+					Verbs:
+						"use",
+				},
+			},
+		}
+
+		_, err := c.k8sClient.RbacV1().ClusterRoles().Create(cr)
+		if errors.IsAlreadyExists(err) {
+			c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("clusterrole %#q already exists", name))
+			// fall through
+		} else if err != nil {
+			return microerror.Mask(err)
+		} else {
+			c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("created clusterrole %#q", name))
+		}
+	}
+
+	// Create the cluster role binding for tiller's PSP.
+	{
+		serviceAccountName := tillerPodName
+		serviceAccountNamespace := c.tillerNamespace
+
+		name := fmt.Sprintf("%s-%s-psp", roleBindingNamePrefix, serviceAccountNamespace)
+		podSecurityPolicyName := fmt.Sprintf("%s-psp", roleBindingNamePrefix)
+
+		c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating clusterrolebinding %#q", name))
+
+		crb := &rbacv1.ClusterRoleBinding{
+			TypeMeta: metav1.TypeMeta{
+				APIVersion: "rbac.authorization.k8s.io/v1",
+				Kind:       "ClusterRoleBinding",
+			},
+			ObjectMeta: metav1.ObjectMeta{
+				Name: name,
+			},
+			Subjects: []rbacv1.Subject{
+				{
+					Kind:      "ServiceAccount",
+					Name:      serviceAccountName,
+					Namespace: serviceAccountNamespace,
+				},
+			},
+			RoleRef: rbacv1.RoleRef{
+				APIGroup: "rbac.authorization.k8s.io",
+				Kind:     "ClusterRole",
+				Name:     podSecurityPolicyName,
+			},
+		}
+
+		_, err := c.k8sClient.RbacV1().ClusterRoleBindings().Create(crb)
+		if errors.IsAlreadyExists(err) {
+			c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("clusterrolebinding %#q already exists", name))
+			// fall through
+		} else if err != nil {
+			return microerror.Mask(err)
+		} else {
+			c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("created clusterrolebinding %#q", name))
+		}
+	}
+
+	// create a pod security policy for tiller to ensure it runs with least possible privileges.
+	{
+		podSecurityPolicyName = tillerPodName + "-psp"
+		podSecurityPolicyNamespace := c.tillerNamespace
+		minRunAsID := intstr.IntOrString{
+			IntVal: 1,
+		}
+		maxRunAsID := intstr.IntOrString{
+			IntVal: 65535,
+		}
+		privilegedPod := false
+
+		name := fmt.Sprintf("%s-psp", tillerPodName)
+
+		c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating podsecuritypolicy %#q", name))
+
+		psp := &extensionsv1beta1.PodSecurityPolicy{
+			TypeMeta: metav1.TypeMeta{
+				APIVersion: "extensions/v1beta1",
+				Kind:       "PodSecurityPolicy",
+			},
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      podSecurityPolicyName,
+				Namespace: podSecurityPolicyNamespace,
+			},
+			Spec: extensionsv1beta1.PodSecurityPolicySpec{
+				Privileged: &privilegedPod,
+				Volumes: []extensionsv1beta1.FSType{
+					"secret",
+				},
+				HostNetwork: false,
+				HostPID:     false,
+				HostIPC:     false,
+				SELinux: []extensionsv1beta1.SELinuxStrategyOptions{
+					Rule: SELinuxStrategyRunAsAny,
+				},
+				RunAsUser: []extensionsv1beta1.RunAsUserStrategyOptions{
+					Rule: RunAsUserStrategyMustRunAs,
+					Ranges: []extensionsv1beta1.IDRange{
+						Min: &minRunAsID,
+						Max: &maxRunAsID,
+					},
+				},
+				RunAsGroup: []extensionsv1beta1.RunAsGroupStrategyOptions{
+					Rule: RunAsGroupStrategyMayRunAs,
+					Ranges: []extensionsv1beta1.IDRange{
+						Min: &minRunAsID,
+						Max: &maxRunAsID,
+					},
+				},
+				SupplementalGroups: []extensionsv1beta1.SupplementalGroupsStrategyOptions{
+					Rule: SupplementalGroupsStrategyRunAsAny,
+				},
+				FSGroup: []extensionsv1beta1.FSGroupStrategyOptions{
+					Rule: FSGroupStrategyMustRunAs,
+					Ranges: []extensionsv1beta1.IDRange{
+						Min: &minRunAsID,
+						Max: &maxRunAsID,
+					},
+				},
+				AllowPrivilegeEscalation: &privilegedPod,
+			},
+		}
+
+		_, err := c.k8sClient.ExtensionsV1beta1().PodSecurityPolicies().Create(psp)
+		if errors.IsAlreadyExists(err) {
+			c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("podsecuritypolicy %#q already exists", name))
+			// fall through
+		} else if err != nil {
+			return microerror.Mask(err)
+		} else {
+			c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("created podsecuritypolicy %#q", name))
+		}
+
 	}
 
 	// Create the network policy for tiller so it is allowed to do its job in case all traffic is blocked.
