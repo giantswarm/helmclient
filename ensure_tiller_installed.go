@@ -139,16 +139,16 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 			},
 			Rules: []rbacv1.PolicyRule{
 				{
-					APIGroups := []string{
+					APIGroups: []string{
 						"extensions",
 					},
-					Resources := []string{
+					Resources: []string{
 						"podsecuritypolicies",
 					},
-					ResourceNames := []string{
+					ResourceNames: []string{
 						name,
 					},
-					Verbs := []string{
+					Verbs: []string{
 						"use",
 					},
 				},
