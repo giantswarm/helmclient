@@ -9,8 +9,8 @@ import (
 	"github.com/giantswarm/errors/guest"
 	"github.com/giantswarm/microerror"
 	corev1 "k8s.io/api/core/v1"
-	extensionsv1beta1 "k8s.io/api/extensions/v1beta1"
 	networkingv1 "k8s.io/api/networking/v1"
+	policyv1beta1 "k8s.io/api/policy/v1beta1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -220,46 +220,46 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 
 		c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating podsecuritypolicy %#q", name))
 
-		psp := &extensionsv1beta1.PodSecurityPolicy{
+		psp := &policyv1beta1.PodSecurityPolicy{
 			TypeMeta: metav1.TypeMeta{
-				APIVersion: "extensions/v1beta1",
+				APIVersion: "policy/v1beta1",
 				Kind:       "PodSecurityPolicy",
 			},
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      podSecurityPolicyName,
 				Namespace: podSecurityPolicyNamespace,
 			},
-			Spec: extensionsv1beta1.PodSecurityPolicySpec{
+			Spec: policyv1beta1.PodSecurityPolicySpec{
 				Privileged: false,
-				Volumes: []extensionsv1beta1.FSType{
+				Volumes: []policyv1beta1.FSType{
 					"secret",
 				},
 				HostNetwork: false,
 				HostPID:     false,
 				HostIPC:     false,
-				SELinux: []extensionsv1beta1.SELinuxStrategyOptions{
+				SELinux: []policyv1beta1.SELinuxStrategyOptions{
 					Rule: SELinuxStrategyRunAsAny,
 				},
-				RunAsUser: []extensionsv1beta1.RunAsUserStrategyOptions{
+				RunAsUser: []policyv1beta1.RunAsUserStrategyOptions{
 					Rule: RunAsUserStrategyMustRunAs,
-					Ranges: []extensionsv1beta1.IDRange{
+					Ranges: []policyv1beta1.IDRange{
 						Min: &minRunAsID,
 						Max: &maxRunAsID,
 					},
 				},
-				RunAsGroup: []extensionsv1beta1.RunAsGroupStrategyOptions{
+				RunAsGroup: []policyv1beta1.RunAsGroupStrategyOptions{
 					Rule: RunAsGroupStrategyMayRunAs,
-					Ranges: []extensionsv1beta1.IDRange{
+					Ranges: []policyv1beta1.IDRange{
 						Min: &minRunAsID,
 						Max: &maxRunAsID,
 					},
 				},
-				SupplementalGroups: []extensionsv1beta1.SupplementalGroupsStrategyOptions{
+				SupplementalGroups: []policyv1beta1.SupplementalGroupsStrategyOptions{
 					Rule: SupplementalGroupsStrategyRunAsAny,
 				},
-				FSGroup: []extensionsv1beta1.FSGroupStrategyOptions{
+				FSGroup: []policyv1beta1.FSGroupStrategyOptions{
 					Rule: FSGroupStrategyMustRunAs,
-					Ranges: []extensionsv1beta1.IDRange{
+					Ranges: []policyv1beta1.IDRange{
 						Min: &minRunAsID,
 						Max: &maxRunAsID,
 					},
@@ -268,7 +268,7 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 			},
 		}
 
-		_, err := c.k8sClient.ExtensionsV1beta1().PodSecurityPolicies().Create(psp)
+		_, err := c.k8sClient.PolicyV1beta1().PodSecurityPolicies().Create(psp)
 		if errors.IsAlreadyExists(err) {
 			c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("podsecuritypolicy %#q already exists", name))
 			// fall through
