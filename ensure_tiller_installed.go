@@ -230,15 +230,24 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 				Namespace: podSecurityPolicyNamespace,
 			},
 			Spec: policyv1beta1.PodSecurityPolicySpec{
-				Privileged: false,
-				Volumes: []policyv1beta1.FSType{
-					"secret",
+				AllowPrivilegeEscalation: false,
+				FSGroup: []policyv1beta1.FSGroupStrategyOptions{
+					Rule: FSGroupStrategyMustRunAs,
+					Ranges: []policyv1beta1.IDRange{
+						Min: &minRunAsID,
+						Max: &maxRunAsID,
+					},
 				},
+				HostIPC:     false,
 				HostNetwork: false,
 				HostPID:     false,
-				HostIPC:     false,
-				SELinux: []policyv1beta1.SELinuxStrategyOptions{
-					Rule: SELinuxStrategyRunAsAny,
+				Privileged:  false,
+				RunAsGroup: []policyv1beta1.RunAsGroupStrategyOptions{
+					Rule: RunAsGroupStrategyMayRunAs,
+					Ranges: []policyv1beta1.IDRange{
+						Min: &minRunAsID,
+						Max: &maxRunAsID,
+					},
 				},
 				RunAsUser: []policyv1beta1.RunAsUserStrategyOptions{
 					Rule: RunAsUserStrategyMustRunAs,
@@ -247,24 +256,15 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 						Max: &maxRunAsID,
 					},
 				},
-				RunAsGroup: []policyv1beta1.RunAsGroupStrategyOptions{
-					Rule: RunAsGroupStrategyMayRunAs,
-					Ranges: []policyv1beta1.IDRange{
-						Min: &minRunAsID,
-						Max: &maxRunAsID,
-					},
+				SELinux: []policyv1beta1.SELinuxStrategyOptions{
+					Rule: SELinuxStrategyRunAsAny,
 				},
 				SupplementalGroups: []policyv1beta1.SupplementalGroupsStrategyOptions{
 					Rule: SupplementalGroupsStrategyRunAsAny,
 				},
-				FSGroup: []policyv1beta1.FSGroupStrategyOptions{
-					Rule: FSGroupStrategyMustRunAs,
-					Ranges: []policyv1beta1.IDRange{
-						Min: &minRunAsID,
-						Max: &maxRunAsID,
-					},
+				Volumes: []policyv1beta1.FSType{
+					"secret",
 				},
-				AllowPrivilegeEscalation: false,
 			},
 		}
 
