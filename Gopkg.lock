@@ -254,20 +254,20 @@
   revision = "4763148864dc4815b691a69b4f60b4f4a8f88dad"
 
 [[projects]]
-  branch = "k8s-1.15"
-  digest = "1:0b4fd3b507391be0388ba170d99e096d9abe8e302e68d2ed20a71561aeaa1b66"
-  name = "github.com/giantswarm/e2esetup"
-  packages = ["k8s"]
-  pruneopts = "UT"
-  revision = "3aa480ce2342c02b8c5ea95b0883ccb0f2063835"
-
-[[projects]]
   branch = "master"
   digest = "1:21b55eca1f822f4a2b5eb42c789b25565ee6affdade65ae6015144ee2a9398ec"
   name = "github.com/giantswarm/errors"
   packages = ["guest"]
   pruneopts = "UT"
   revision = "f6706eb80f388ce182dcee855eab59c5eb872119"
+
+[[projects]]
+  branch = "master"
+  digest = "1:85e475655fdc92e1e5f4b429fa8caa0e834327d53530bee29a4d72870166ba80"
+  name = "github.com/giantswarm/k8sclient"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "3a419f8675639d6f8b26f1846167f8aaee77a112"
 
 [[projects]]
   branch = "k8s-1.15"
@@ -1574,8 +1574,8 @@
     "github.com/Masterminds/semver",
     "github.com/docker/distribution/reference",
     "github.com/giantswarm/backoff",
-    "github.com/giantswarm/e2esetup/k8s",
     "github.com/giantswarm/errors/guest",
+    "github.com/giantswarm/k8sclient",
     "github.com/giantswarm/k8sportforward",
     "github.com/giantswarm/microerror",
     "github.com/giantswarm/micrologger",
