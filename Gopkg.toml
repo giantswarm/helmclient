@@ -48,11 +48,11 @@ required = [
 
 [[constraint]]
   branch = "master"
-  name = "github.com/giantswarm/k8sclient"
+  name = "github.com/giantswarm/errors"
 
 [[constraint]]
   branch = "master"
-  name = "github.com/giantswarm/errors"
+  name = "github.com/giantswarm/k8sclient"
 
 [[constraint]]
   branch = "k8s-1.15"
@@ -115,7 +115,3 @@ required = [
 [prune]
   go-tests = true
   unused-packages = true
-
-[[constraint]]
-  branch = "master"
-  name = "github.com/giantswarm/clientk8s"

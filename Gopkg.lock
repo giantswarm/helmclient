@@ -255,14 +255,6 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:8ec8d9b6fde1c3cd4b85536d4afb5a2c3276114f86ddb42149e53e1783056033"
-  name = "github.com/giantswarm/clientk8s"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "38c0ae29d90276db88a74e1a30afd04596d5427e"
-
-[[projects]]
-  branch = "master"
   digest = "1:21b55eca1f822f4a2b5eb42c789b25565ee6affdade65ae6015144ee2a9398ec"
   name = "github.com/giantswarm/errors"
   packages = ["guest"]
@@ -1582,7 +1574,6 @@
     "github.com/Masterminds/semver",
     "github.com/docker/distribution/reference",
     "github.com/giantswarm/backoff",
-    "github.com/giantswarm/clientk8s",
     "github.com/giantswarm/errors/guest",
     "github.com/giantswarm/k8sclient",
     "github.com/giantswarm/k8sportforward",
