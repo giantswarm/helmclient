@@ -3,7 +3,7 @@
 package setup
 
 import (
-	"github.com/giantswarm/clientk8s"
+	"github.com/giantswarm/k8sclient"
 	"github.com/giantswarm/helmclient"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
@@ -14,7 +14,7 @@ const (
 )
 
 type Config struct {
-	CPK8sClients *clientk8s.Clients
+	CPK8sClients *k8sclient.Clients
 	HelmClient   *helmclient.Client
 	Logger       micrologger.Logger
 }
@@ -32,15 +32,15 @@ func NewConfig() (Config, error) {
 		}
 	}
 
-	var cpK8sClients *clientk8s.Clients
+	var cpK8sClients *k8sclient.Clients
 	{
-		c := clientk8s.ClientsConfig{
+		c := k8sclient.ClientsConfig{
 			Logger: logger,
 
 			KubeConfigPath: e2eHarnessDefaultKubeconfig,
 		}
 
-		cpK8sClients, err = clientk8s.NewClients(c)
+		cpK8sClients, err = k8sclient.NewClients(c)
 		if err != nil {
 			return Config{}, microerror.Mask(err)
 		}
