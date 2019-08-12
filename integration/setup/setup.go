@@ -8,8 +8,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/giantswarm/k8sclient"
 	"github.com/giantswarm/helmclient/integration/env"
+	"github.com/giantswarm/k8sclient"
 	"github.com/giantswarm/microerror"
 )
 
