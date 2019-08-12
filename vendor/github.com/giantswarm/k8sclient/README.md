@@ -1,8 +1,8 @@
-[![CircleCI](https://circleci.com/gh/giantswarm/clientk8s.svg?&style=shield)](https://circleci.com/gh/giantswarm/clientk8s)
+[![CircleCI](https://circleci.com/gh/giantswarm/k8sclient.svg?&style=shield)](https://circleci.com/gh/giantswarm/k8sclient)
 
-# clientk8s
+# k8sclient
 
-clientk8s provides a set of clients for interacting with Kubernetes resources.
+k8sclient provides a set of clients for interacting with Kubernetes resources.
 
 * pods, services, nodes, etc.
 * CRDs, CRs

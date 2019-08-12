@@ -1,4 +1,4 @@
-package clientk8s
+package k8sclient
 
 const (
 	// e2eHarnessDefaultKubeconfig is defined to avoid dependency of
