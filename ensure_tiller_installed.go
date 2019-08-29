@@ -155,13 +155,13 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 					},
 				},
 				Ingress: []networkingv1.NetworkPolicyIngressRule{
-					networkingv1.NetworkPolicyIngressRule{
+					{
 						Ports: []networkingv1.NetworkPolicyPort{
-							networkingv1.NetworkPolicyPort{
+							{
 								Protocol: &protocolTCP,
 								Port:     &tillerPort,
 							},
-							networkingv1.NetworkPolicyPort{
+							{
 								Protocol: &protocolTCP,
 								Port:     &tillerHTTPPort,
 							},
@@ -169,7 +169,7 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 					},
 				},
 				Egress: []networkingv1.NetworkPolicyEgressRule{
-					networkingv1.NetworkPolicyEgressRule{},
+					{},
 				},
 				PolicyTypes: []networkingv1.PolicyType{
 					networkingv1.PolicyTypeIngress,
