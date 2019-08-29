@@ -939,6 +939,7 @@
     "github.com/giantswarm/backoff",
     "github.com/giantswarm/e2esetup/k8s",
     "github.com/giantswarm/errors/tenant",
+    "github.com/giantswarm/k8sclient",
     "github.com/giantswarm/k8sportforward",
     "github.com/giantswarm/microerror",
     "github.com/giantswarm/micrologger",
