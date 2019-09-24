@@ -122,6 +122,46 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 		}
 	}
 
+	// Create a clusterrole to allow Tiller to use PSPs
+	{
+		name := fmt.Sprintf("%s-psp", tillerPodName)
+
+		// apiGroups     := []string{"extensions"}
+		// resources     := []string{"podsecuritypolicies"}
+		// resourceNames := []string{name}
+		// verbs         := []string{"use"}
+
+		c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating clusterrole %#q", name))
+
+		cr := &rbacv1.ClusterRole{
+			TypeMeta: metav1.TypeMeta{
+				APIVersion: "rbac.authorization.k8s.io/v1",
+				Kind:       "ClusterRole",
+			},
+			ObjectMeta: metav1.ObjectMeta{
+				Name: name,
+			},
+			Rules: []rbacv1.PolicyRule{
+				{
+					APIGroups:     []string{"extensions"},
+					Resources:     []string{"podsecuritypolicies"},
+					ResourceNames: []string{"tiller-psp"},
+					Verbs:         []string{"use"},
+				},
+			},
+		}
+
+		_, err := c.k8sClient.RbacV1().ClusterRoles().Create(cr)
+		if errors.IsAlreadyExists(err) {
+			c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("clusterrole %#q already exists", name))
+			// fall through
+		} else if err != nil {
+			return microerror.Mask(err)
+		} else {
+			c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("created clusterrole %#q", name))
+		}
+	}
+
 	// Create the network policy for tiller so it is allowed to do its job in case all traffic is blocked.
 	{
 		networkPolicyName := tillerPodName
