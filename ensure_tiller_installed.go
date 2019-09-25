@@ -126,10 +126,10 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 	{
 		name := fmt.Sprintf("%s-psp", tillerPodName)
 
-		// apiGroups     := []string{"extensions"}
-		// resources     := []string{"podsecuritypolicies"}
-		// resourceNames := []string{name}
-		// verbs         := []string{"use"}
+		apiGroups := []string{"extensions"}
+		resources := []string{"podsecuritypolicies"}
+		resourceNames := []string{name}
+		verbs := []string{"use"}
 
 		c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating clusterrole %#q", name))
 
@@ -143,10 +143,10 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 			},
 			Rules: []rbacv1.PolicyRule{
 				{
-					APIGroups:     []string{"extensions"},
-					Resources:     []string{"podsecuritypolicies"},
-					ResourceNames: []string{"tiller-psp"},
-					Verbs:         []string{"use"},
+					APIGroups:     apiGroups,
+					Resources:     resources,
+					ResourceNames: resourceNames,
+					Verbs:         verbs,
 				},
 			},
 		}
