@@ -10,6 +10,7 @@ import (
 	"github.com/giantswarm/microerror"
 	corev1 "k8s.io/api/core/v1"
 	networkingv1 "k8s.io/api/networking/v1"
+	policyv1beta1 "k8s.io/api/policy/v1beta1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -126,11 +127,6 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 	{
 		name := fmt.Sprintf("%s-psp", tillerPodName)
 
-		apiGroups := []string{"extensions"}
-		resources := []string{"podsecuritypolicies"}
-		resourceNames := []string{name}
-		verbs := []string{"use"}
-
 		c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating clusterrole %#q", name))
 
 		cr := &rbacv1.ClusterRole{
@@ -143,10 +139,18 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 			},
 			Rules: []rbacv1.PolicyRule{
 				{
-					APIGroups:     apiGroups,
-					Resources:     resources,
-					ResourceNames: resourceNames,
-					Verbs:         verbs,
+					APIGroups: []string{
+						"extensions",
+					},
+					Resources: []string{
+						"podsecuritypolicies",
+					},
+					ResourceNames: []string{
+						name,
+					},
+					Verbs: []string{
+						"use",
+					},
 				},
 			},
 		}
@@ -201,6 +205,82 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 			return microerror.Mask(err)
 		} else {
 			c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("created clusterrolebinding %#q", name))
+		}
+	}
+
+	// create a pod security policy for tiller to ensure it runs with least possible privileges.
+	{
+		podSecurityPolicyNamespace := c.tillerNamespace
+		minRunAsID := int64(1)
+		maxRunAsID := int64(65535)
+		allowEscalation := false
+
+		name := fmt.Sprintf("%s-psp", tillerPodName)
+
+		c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating podsecuritypolicy %#q", name))
+
+		psp := &policyv1beta1.PodSecurityPolicy{
+			TypeMeta: metav1.TypeMeta{
+				APIVersion: "policy/v1beta1",
+				Kind:       "PodSecurityPolicy",
+			},
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      name,
+				Namespace: podSecurityPolicyNamespace,
+			},
+			Spec: policyv1beta1.PodSecurityPolicySpec{
+				Privileged: false,
+				Volumes: []policyv1beta1.FSType{
+					"secret",
+				},
+				HostNetwork: false,
+				HostPID:     false,
+				HostIPC:     false,
+				SELinux: policyv1beta1.SELinuxStrategyOptions{
+					Rule: "RunAsAny",
+				},
+				RunAsUser: policyv1beta1.RunAsUserStrategyOptions{
+					Rule: "MustRunAs",
+					Ranges: []policyv1beta1.IDRange{
+						{
+							Min: minRunAsID,
+							Max: maxRunAsID,
+						},
+					},
+				},
+				RunAsGroup: &policyv1beta1.RunAsGroupStrategyOptions{
+					Rule: "MustRunAs",
+					Ranges: []policyv1beta1.IDRange{
+						{
+							Min: minRunAsID,
+							Max: maxRunAsID,
+						},
+					},
+				},
+				SupplementalGroups: policyv1beta1.SupplementalGroupsStrategyOptions{
+					Rule: "RunAsAny",
+				},
+				FSGroup: policyv1beta1.FSGroupStrategyOptions{
+					Rule: "MustRunAs",
+					Ranges: []policyv1beta1.IDRange{
+						{
+							Min: minRunAsID,
+							Max: maxRunAsID,
+						},
+					},
+				},
+				AllowPrivilegeEscalation: &allowEscalation,
+			},
+		}
+
+		_, err := c.k8sClient.PolicyV1beta1().PodSecurityPolicies().Create(psp)
+		if errors.IsAlreadyExists(err) {
+			c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("podsecuritypolicy %#q already exists", name))
+			// fall through
+		} else if err != nil {
+			return microerror.Mask(err)
+		} else {
+			c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("created podsecuritypolicy %#q", name))
 		}
 	}
 
