@@ -176,7 +176,7 @@ func Test_MergeValues(t *testing.T) {
 			srcMap: map[string][]byte{
 				"override": []byte(nullValuedYaml),
 			},
-			expectedValues: map[string]interface{}(nil),
+			expectedValues: map[string]interface{}{},
 		},
 	}
 
