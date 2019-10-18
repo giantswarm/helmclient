@@ -8,6 +8,12 @@ e2eTest: &e2eTest
         at: .
 
     - run:
+        name: Get e2ectl binary
+        command: |
+          wget -q $(curl -sS https://api.github.com/repos/giantswarm/e2ectl/releases/latest | grep browser_download_url | head -n 1 | cut -d '"' -f 4)
+          chmod +x ./e2ectl
+
+    - run:
         name: Init cluster
         command: |
           ./e2ectl cluster create
