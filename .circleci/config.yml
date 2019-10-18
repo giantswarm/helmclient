@@ -72,22 +72,22 @@ jobs:
 
   e2eTestBasic:
     environment:
-      TEST_DIR: "integration/test/basic"
+      E2E_TEST_DIR: "integration/test/basic"
     <<: *e2eTest
 
   e2eTestInstallRelease:
     environment:
-      TEST_DIR: "integration/test/installrelease"
+      E2E_TEST_DIR: "integration/test/installrelease"
     <<: *e2eTest
 
   e2eTestDeleteRelease:
     environment:
-      TEST_DIR: "integration/test/deleterelease"
+      E2E_TEST_DIR: "integration/test/deleterelease"
     <<: *e2eTest
 
   e2eTestUpgradeTiller:
     environment:
-      TEST_DIR: "integration/test/upgradetiller"
+      E2E_TEST_DIR: "integration/test/upgradetiller"
     <<: *e2eTest
 
 
