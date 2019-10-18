@@ -37,7 +37,7 @@ func NewConfig() (Config, error) {
 		c := k8sclient.ClientsConfig{
 			Logger: logger,
 
-			KubeConfigPath: e2eHarnessDefaultKubeconfig,
+			KubeConfigPath: env.KubeConfigPath(),
 		}
 
 		cpK8sClients, err = k8sclient.NewClients(c)
