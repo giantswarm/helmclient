@@ -36,8 +36,8 @@ func (c *Client) doFile(ctx context.Context, req *http.Request) (string, error) 
 
 	o := func() error {
 		resp, err := c.httpClient.Do(req)
-		if isNoHostError(err) {
-			return backoff.Permanent(microerror.Maskf(executionFailedError, "couldn't access to host %#v", req.Host))
+		if isNoSuchHostError(err) {
+			return backoff.Permanent(microerror.Maskf(executionFailedError, "no such host %#q", req.Host))
 		} else if err != nil {
 			return microerror.Mask(err)
 		}
