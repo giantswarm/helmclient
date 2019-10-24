@@ -2,7 +2,7 @@ package helmclient
 
 import "strings"
 
-// isNoHostError asserts no route to Host error.
+// isNoSuchHostError asserts no such host error.
 func isNoHostError(err error) bool {
 	if err == nil {
 		return false
