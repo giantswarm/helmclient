@@ -87,6 +87,27 @@ func IsNotFound(err error) bool {
 }
 
 var (
+	noHostErrorString = "no such host"
+)
+
+var noHostError = &microerror.Error{
+	Kind: "noHostError",
+}
+
+// IsNoHostError asserts noHostError.
+func IsNoHostError(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	if err == noHostError {
+		return true
+	}
+
+	return strings.Contains(err.Error(), noHostErrorString)
+}
+
+var (
 	releaseAlreadyExistsRegexp = regexp.MustCompile(`release named \S+ already exists`)
 )
 

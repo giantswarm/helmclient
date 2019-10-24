@@ -37,7 +37,10 @@ func (c *Client) doFile(ctx context.Context, req *http.Request) (string, error) 
 	o := func() error {
 		resp, err := c.httpClient.Do(req)
 		if err != nil {
-			return backoff.Permanent(microerror.Mask(err))
+			if IsNoHostError(err) {
+				return backoff.Permanent(microerror.Mask(err))
+			}
+			return microerror.Mask(err)
 		}
 		defer resp.Body.Close()
 
