@@ -73,7 +73,7 @@ func (c *Client) doFile(ctx context.Context, req *http.Request) (string, error) 
 		return nil
 	}
 
-	b := backoff.NewMaxRetries(10, 5*time.Second)
+	b := backoff.NewMaxRetries(3, 5*time.Second)
 	n := backoff.NewNotifier(c.logger, ctx)
 
 	err := backoff.RetryNotify(o, b, n)
