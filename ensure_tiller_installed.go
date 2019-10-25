@@ -197,11 +197,7 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 	{
 		o := func() error {
 			pod, err = getPod(c.k8sClient, c.tillerNamespace)
-			if IsNotFound(err) {
-				// Fall through as we need to install Tiller.
-				installTiller = true
-				return nil
-			} else if err != nil {
+			if err != nil {
 				return microerror.Mask(err)
 			}
 
@@ -212,7 +208,9 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 		n := backoff.NewNotifier(c.logger, context.Background())
 
 		err = backoff.RetryNotify(o, b, n)
-		if err != nil {
+		if IsNotFound(err) {
+			installTiller = true
+		} else if err != nil {
 			return microerror.Mask(err)
 		}
 	}
