@@ -209,6 +209,7 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 
 		err = backoff.RetryNotify(o, b, n)
 		if IsNotFound(err) {
+			c.logger.LogCtx(ctx, "level", "debug", "message", "no tiller found, indicates installing it")
 			installTiller = true
 		} else if err != nil {
 			return microerror.Mask(err)
@@ -218,9 +219,16 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 	if !installTiller && pod != nil {
 		err = validateTillerVersion(pod, c.tillerImage)
 		if IsTillerInvalidVersion(err) {
+			c.logger.LogCtx(ctx, "level", "debug", "message", "older tiller found, indicates upgrade it")
 			upgradeTiller = true
 		} else if err != nil {
 			return microerror.Mask(err)
+		} else {
+			img, err := getPodImage(pod)
+			if err != nil {
+				return microerror.Mask(err)
+			}
+			c.logger.LogCtx(ctx, "level", "debug", "message", "no need to update a tiller, current version is %#q", img)
 		}
 	}
 
