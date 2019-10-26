@@ -23,7 +23,7 @@ e2eTest: &e2eTest
         name: Get helm binary
         command: |
           curl -LO https://get.helm.sh/helm-v2.14.2-linux-amd64.tar.gz
-          tar xzvf helm-v2.8.2-linux-amd64.tar.gz
+          tar xzvf helm-v2.14.2-linux-amd64.tar.gz
           mv linux-amd64/helm .
           chmod +x helm
           rm -rf linux-amd64/
