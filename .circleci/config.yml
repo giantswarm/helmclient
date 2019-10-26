@@ -18,6 +18,11 @@ e2eTest: &e2eTest
         command: |
           ./e2ectl cluster create
           cp $(./e2ectl kubeconfig path) ${E2E_TEST_DIR}/kubeconfig
+          if [ -z "$HELM_INIT" ]
+          then
+            export KUBECONFIG=$(./e2ectl kubeconfig path)
+            helm init --tiller-namespace giantswarm --tiller-image quay.io/giantswarm/tiller:v2.12.0 --wait
+          fi
 
     - run:
         name: Run test
@@ -88,6 +93,7 @@ jobs:
   e2eTestUpgradeTiller:
     environment:
       E2E_TEST_DIR: "integration/test/upgradetiller"
+      HELM_INIT: "true"
     <<: *e2eTest
 
 
