@@ -20,6 +20,15 @@ e2eTest: &e2eTest
           chmod +x ./kubectl
 
     - run:
+        name: Get helm binary
+        command: |
+          curl -LO https://get.helm.sh/helm-v2.14.2-linux-amd64.tar.gz
+          tar xzvf helm-v2.8.2-linux-amd64.tar.gz
+          mv linux-amd64/helm .
+          chmod +x helm
+          rm -rf linux-amd64/
+
+    - run:
         name: Init cluster
         command: |
           ./e2ectl cluster create
@@ -28,7 +37,7 @@ e2eTest: &e2eTest
           then
             export KUBECONFIG=$(./e2ectl kubeconfig path)
             ./kubectl create ns giantswarm
-            helm init --tiller-namespace giantswarm --tiller-image quay.io/giantswarm/tiller:v2.12.0 --wait
+            ./helm init --tiller-namespace giantswarm --tiller-image quay.io/giantswarm/tiller:v2.12.0 --wait
           fi
 
     - run:
