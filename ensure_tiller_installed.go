@@ -261,8 +261,10 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 
 		o := func() error {
 			t, err := c.newTunnel()
-			if err != nil {
+			if IsTillerNotFound(err) || IsTooManyResults(err) {
 				return microerror.Mask(err)
+			} else if err != nil {
+				return backoff.Permanent(microerror.Mask(err))
 			}
 			defer c.closeTunnel(ctx, t)
 
