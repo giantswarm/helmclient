@@ -186,13 +186,13 @@ func IsTestReleaseTimeout(err error) bool {
 	return microerror.Cause(err) == testReleaseTimeoutError
 }
 
-var tillerNotRunningError = &microerror.Error{
-	Kind: "tillerNotRunningError",
+var tillerStartingError = &microerror.Error{
+	Kind: "tillerStartingError",
 }
 
-// IsTillerNotRunningError asserts tillerNotRunningError.
-func IsTillerNotRunningError(err error) bool {
-	return microerror.Cause(err) == tillerNotRunningError
+// IsTillerStartingError asserts tillerStartingError.
+func IsTillerStartingError(err error) bool {
+	return microerror.Cause(err) == tillerStartingError
 }
 
 var tillerNotFoundError = &microerror.Error{
