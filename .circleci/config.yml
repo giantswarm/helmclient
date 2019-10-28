@@ -16,17 +16,14 @@ e2eTest: &e2eTest
     - run:
         name: Get kubectl binary
         command: |
-          curl -LO https://storage.googleapis.com/kubernetes-release/release/`curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt`/bin/linux/amd64/kubectl
+          curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
           chmod +x ./kubectl
 
     - run:
         name: Get helm binary
         command: |
-          curl -LO https://get.helm.sh/helm-v2.12.0-linux-amd64.tar.gz
-          tar xzvf helm-v2.12.0-linux-amd64.tar.gz
-          mv linux-amd64/helm .
+          curl -L https://get.helm.sh/helm-v2.12.0-linux-amd64.tar.gz | tar xvz --strip-components 1 linux-amd64/helm
           chmod +x helm
-          rm -rf linux-amd64/
 
     - run:
         name: Init cluster
