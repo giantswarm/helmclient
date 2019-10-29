@@ -14,10 +14,28 @@ e2eTest: &e2eTest
           chmod +x ./e2ectl
 
     - run:
+        name: Get kubectl binary
+        command: |
+          curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+          chmod +x ./kubectl
+
+    - run:
+        name: Get helm binary
+        command: |
+          curl -L https://get.helm.sh/helm-v2.12.0-linux-amd64.tar.gz | tar xvz --strip-components 1 linux-amd64/helm
+          chmod +x helm
+
+    - run:
         name: Init cluster
         command: |
           ./e2ectl cluster create
           cp $(./e2ectl kubeconfig path) ${E2E_TEST_DIR}/kubeconfig
+          if [ -n "$HELM_INIT" ]
+          then
+            export KUBECONFIG=$(./e2ectl kubeconfig path)
+            ./kubectl create ns giantswarm
+            ./helm init --tiller-namespace giantswarm --tiller-image quay.io/giantswarm/tiller:v2.12.0 --wait
+          fi
 
     - run:
         name: Run test
@@ -88,6 +106,7 @@ jobs:
   e2eTestUpgradeTiller:
     environment:
       E2E_TEST_DIR: "integration/test/upgradetiller"
+      HELM_INIT: "true"
     <<: *e2eTest
 
 
