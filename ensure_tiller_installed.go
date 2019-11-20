@@ -352,7 +352,7 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 				installTiller = true
 				return nil
 			} else if IsTooManyResults(err) {
-				return backoff.Permanent(err)
+				return backoff.Permanent(microerror.Mask(err))
 			} else if err != nil {
 				return microerror.Mask(err)
 			}
