@@ -9,21 +9,30 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+
+	"github.com/giantswarm/k8sclient/k8scrdclient"
 )
 
 type ClientsConfig struct {
 	Logger micrologger.Logger
 
+	// KubeConfigPath and RestConfig are mutually exclusive.
 	KubeConfigPath string
+	// RestConfig and KubeConfigPath are mutually exclusive.
+	RestConfig *rest.Config
 }
 
 type Clients struct {
 	logger micrologger.Logger
 
+	crdClient  k8scrdclient.Interface
+	ctrlClient client.Client
 	dynClient  dynamic.Interface
 	extClient  *apiextensionsclient.Clientset
 	g8sClient  *versioned.Clientset
 	k8sClient  *kubernetes.Clientset
+	restClient rest.Interface
 	restConfig *rest.Config
 }
 
@@ -32,24 +41,24 @@ func NewClients(config ClientsConfig) (*Clients, error) {
 		return nil, microerror.Maskf(invalidConfigError, "%T.Logger must not be empty", config)
 	}
 
-	if config.KubeConfigPath == "" {
-		config.KubeConfigPath = e2eHarnessDefaultKubeconfig
+	if config.KubeConfigPath == "" && config.RestConfig == nil {
+		return nil, microerror.Maskf(invalidConfigError, "%T.KubeConfigPath or %T.RestConfig must not be empty", config, config)
+	}
+	if config.KubeConfigPath != "" && config.RestConfig != nil {
+		return nil, microerror.Maskf(invalidConfigError, "%T.KubeConfigPath and %T.RestConfig must not be set at the same time", config, config)
 	}
 
 	var err error
 
-	restConfig, err := clientcmd.BuildConfigFromFlags("", config.KubeConfigPath)
-	if err != nil {
-		return nil, microerror.Mask(err)
-	}
-
-	var dynClient dynamic.Interface
+	var restConfig *rest.Config
 	{
-		c := rest.CopyConfig(restConfig)
-
-		dynClient, err = dynamic.NewForConfig(c)
-		if err != nil {
-			return nil, microerror.Mask(err)
+		if config.RestConfig != nil {
+			restConfig = config.RestConfig
+		} else {
+			restConfig, err = clientcmd.BuildConfigFromFlags("", config.KubeConfigPath)
+			if err != nil {
+				return nil, microerror.Mask(err)
+			}
 		}
 	}
 
@@ -58,6 +67,37 @@ func NewClients(config ClientsConfig) (*Clients, error) {
 		c := rest.CopyConfig(restConfig)
 
 		extClient, err = apiextensionsclient.NewForConfig(c)
+		if err != nil {
+			return nil, microerror.Mask(err)
+		}
+	}
+
+	var crdClient *k8scrdclient.CRDClient
+	{
+		c := k8scrdclient.Config{
+			K8sExtClient: extClient,
+			Logger:       config.Logger,
+		}
+
+		crdClient, err = k8scrdclient.New(c)
+		if err != nil {
+			return nil, microerror.Mask(err)
+		}
+	}
+
+	var ctrlClient client.Client
+	{
+		ctrlClient, err = client.New(rest.CopyConfig(restConfig), client.Options{})
+		if err != nil {
+			return nil, microerror.Mask(err)
+		}
+	}
+
+	var dynClient dynamic.Interface
+	{
+		c := rest.CopyConfig(restConfig)
+
+		dynClient, err = dynamic.NewForConfig(c)
 		if err != nil {
 			return nil, microerror.Mask(err)
 		}
@@ -83,17 +123,39 @@ func NewClients(config ClientsConfig) (*Clients, error) {
 		}
 	}
 
+	var restClient rest.Interface
+	{
+		// It would be cool to use rest.RESTClientFor here but it fails
+		// because GroupVersion is not configured. So underlying core
+		// RESTClient is taken.
+		//
+		//	panic: GroupVersion is required when initializing a RESTClient
+		//
+		restClient = k8sClient.RESTClient()
+	}
+
 	c := &Clients{
 		logger: config.Logger,
 
+		crdClient:  crdClient,
+		ctrlClient: ctrlClient,
 		dynClient:  dynClient,
 		extClient:  extClient,
 		g8sClient:  g8sClient,
 		k8sClient:  k8sClient,
+		restClient: restClient,
 		restConfig: restConfig,
 	}
 
 	return c, nil
+}
+
+func (c *Clients) CRDClient() k8scrdclient.Interface {
+	return c.crdClient
+}
+
+func (c *Clients) CtrlClient() client.Client {
+	return c.ctrlClient
 }
 
 func (c *Clients) DynClient() dynamic.Interface {
@@ -112,6 +174,10 @@ func (c *Clients) K8sClient() kubernetes.Interface {
 	return c.k8sClient
 }
 
-func (c *Clients) RestConfig() *rest.Config {
+func (c *Clients) RESTClient() rest.Interface {
+	return c.restClient
+}
+
+func (c *Clients) RESTConfig() *rest.Config {
 	return rest.CopyConfig(c.restConfig)
 }

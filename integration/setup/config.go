@@ -54,7 +54,7 @@ func NewConfig() (Config, error) {
 			K8sClient: cpK8sClients.K8sClient(),
 			Logger:    logger,
 
-			RestConfig:      cpK8sClients.RestConfig(),
+			RestConfig:      cpK8sClients.RESTConfig(),
 			TillerNamespace: tillerNamespace,
 		}
 
