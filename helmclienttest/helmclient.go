@@ -50,11 +50,11 @@ func (c *Client) DeleteRelease(ctx context.Context, releaseName string, options 
 	return nil
 }
 
-func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
+func (c *Client) EnsureTillerInstalled(ctx context.Context, upgrading bool) error {
 	return nil
 }
 
-func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []string) error {
+func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []string, upgrading bool) error {
 	return nil
 }
 

@@ -22,8 +22,8 @@ import (
 // for it to start. A service account and cluster role binding are also created.
 // As a first step, it checks if Tiller is already ready, in which case it
 // returns early.
-func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
-	return c.EnsureTillerInstalledWithValues(ctx, []string{})
+func (c *Client) EnsureTillerInstalled(ctx context.Context, upgrading bool) error {
+	return c.EnsureTillerInstalledWithValues(ctx, []string{}, upgrading)
 }
 
 // EnsureTillerInstalledWithValues installs Tiller by creating its deployment
@@ -31,7 +31,7 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 // also created. As a first step, it checks if Tiller is already ready, in
 // which case it returns early. Values can be provided to pass through to Tiller
 // and overwrite its deployment.
-func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []string) error {
+func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []string, upgrading bool) error {
 	// Check if Tiller is already present and return early if so.
 	{
 		c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("finding if tiller is installed in namespace %#q", c.tillerNamespace))
@@ -395,6 +395,9 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 			return microerror.Mask(err)
 		}
 	} else if !installTiller && upgradeTiller {
+		if !upgrading {
+			return nil
+		}
 		err = c.upgradeTiller(ctx, i)
 		if err != nil {
 			return microerror.Mask(err)
