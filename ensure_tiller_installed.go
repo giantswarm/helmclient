@@ -396,7 +396,7 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 		}
 	} else if !installTiller && upgradeTiller {
 		if !c.upgrading {
-			c.logger.LogCtx(ctx, "level", "debug", "message", "found an out-dated tiller but opt not to upgrade it.")
+			c.logger.LogCtx(ctx, "level", "debug", "message", "found an out-dated tiller but upgrades not enabled")
 		}
 		err = c.upgradeTiller(ctx, i)
 		if err != nil {
