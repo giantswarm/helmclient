@@ -23,7 +23,7 @@ func TestBasic(t *testing.T) {
 	}
 	defer os.Remove(tarballPath)
 
-	err = config.HelmClient.EnsureTillerInstalled(ctx, true)
+	err = config.HelmClient.EnsureTillerInstalled(ctx)
 	if err != nil {
 		t.Fatalf("could not install Tiller %#v", err)
 	}
