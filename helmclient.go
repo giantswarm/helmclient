@@ -57,6 +57,7 @@ type Config struct {
 	TillerImageName              string
 	TillerImageRegistry          string
 	TillerNamespace              string
+	Upgrading                    bool
 }
 
 // Client knows how to talk with a Helm Tiller server.
@@ -71,6 +72,7 @@ type Client struct {
 	restConfig                   *rest.Config
 	tillerImage                  string
 	tillerNamespace              string
+	upgrading                    bool
 }
 
 // New creates a new configured Helm client.
@@ -120,6 +122,7 @@ func New(config Config) (*Client, error) {
 		restConfig:                   config.RestConfig,
 		tillerImage:                  tillerImage,
 		tillerNamespace:              config.TillerNamespace,
+		upgrading:                    config.Upgrading,
 	}
 
 	return c, nil
