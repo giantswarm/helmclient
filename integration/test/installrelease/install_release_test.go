@@ -24,11 +24,6 @@ func TestInstallRelease_IsReleaseAlreadyExists(t *testing.T) {
 	}
 	defer os.Remove(tarballPath)
 
-	err = config.HelmClient.EnsureTillerInstalled(ctx)
-	if err != nil {
-		t.Fatalf("could not install Tiller %#v", err)
-	}
-
 	// We need to pass the ValueOverrides option to make the install process
 	// use the default values and prevent errors on nested values.
 	//
