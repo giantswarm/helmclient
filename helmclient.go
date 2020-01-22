@@ -3,29 +3,19 @@ package helmclient
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"net/http"
-	"strings"
 	"time"
 
-	"github.com/Masterminds/semver"
-	"github.com/giantswarm/backoff"
-	"github.com/giantswarm/errors/tenant"
-	"github.com/giantswarm/k8sportforward"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
-	"github.com/golang/protobuf/ptypes"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/afero"
-	corev1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/helm/pkg/chartutil"
 	helmclient "k8s.io/helm/pkg/helm"
 	hapichart "k8s.io/helm/pkg/proto/hapi/chart"
 	hapirelease "k8s.io/helm/pkg/proto/hapi/release"
-	hapiservices "k8s.io/helm/pkg/proto/hapi/services"
 )
 
 var (
