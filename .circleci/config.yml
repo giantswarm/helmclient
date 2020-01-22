@@ -118,7 +118,7 @@ orbs:
 # --- Installing Go: end
 
 
-
+jobs:
   basic-test:
     environment:
       E2E_TEST_DIR: "integration/test/basic"
