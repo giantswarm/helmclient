@@ -88,26 +88,23 @@ jobs:
 
 
 
-  e2eTestBasic:
-    environment:
-      E2E_TEST_DIR: "integration/test/basic"
-    <<: *e2eTest
+# Disable integration tests. They will be re-enabled as Helm 3 logic is added.
+#
+#  e2eTestBasic:
+#    environment:
+#      E2E_TEST_DIR: "integration/test/basic"
+#    <<: *e2eTest
 
-  e2eTestInstallRelease:
-    environment:
-      E2E_TEST_DIR: "integration/test/installrelease"
-    <<: *e2eTest
+#  e2eTestInstallRelease:
+#    environment:
+#      E2E_TEST_DIR: "integration/test/installrelease"
+#    <<: *e2eTest
 
-  e2eTestDeleteRelease:
-    environment:
-      E2E_TEST_DIR: "integration/test/deleterelease"
-    <<: *e2eTest
+#  e2eTestDeleteRelease:
+#    environment:
+#      E2E_TEST_DIR: "integration/test/deleterelease"
+#    <<: *e2eTest
 
-  e2eTestUpgradeTiller:
-    environment:
-      E2E_TEST_DIR: "integration/test/upgradetiller"
-      HELM_INIT: "true"
-    <<: *e2eTest
 
 
 workflows:
@@ -115,15 +112,14 @@ workflows:
   build_e2e:
     jobs:
       - build
-      - e2eTestBasic:
-          requires:
-          - build
-      - e2eTestInstallRelease:
-          requires:
-          - build
-      - e2eTestDeleteRelease:
-          requires:
-          - build
-      - e2eTestUpgradeTiller:
-          requires:
-          - build
+# Disable integration tests. They will be re-enabled as Helm 3 logic is added.
+#
+#      - e2eTestBasic:
+#          requires:
+#          - build
+#      - e2eTestInstallRelease:
+#          requires:
+#          - build
+#      - e2eTestDeleteRelease:
+#          requires:
+#         - build
