@@ -119,10 +119,22 @@ orbs:
 
 
 
+  basic-test:
+    environment:
+      E2E_TEST_DIR: "integration/test/basic"
+    executor: machine-executor
+    steps:
+    - install-go
+    - checkout
+    - attach_workspace:
+        at: .
+
+
+
 version: 2.1
 jobs:
   build:
-    executor: machine-executor
+    machine: true
     steps:
     - checkout
 
@@ -141,16 +153,6 @@ jobs:
           if [ "${CIRCLE_BRANCH}" == "master" ]; then
             ./architect deploy
           fi
-
-  basic-test:
-    environment:
-      E2E_TEST_DIR: "integration/test/basic"
-    executor: machine-executor
-    steps:
-    - install-go
-    - checkout
-    - attach_workspace:
-        at: .
 
 # Disable integration tests. They will be re-enabled as Helm 3 logic is added.
 #
