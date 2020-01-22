@@ -14,21 +14,6 @@ import (
 	"k8s.io/helm/pkg/chartutil"
 	helmclient "k8s.io/helm/pkg/helm"
 	hapichart "k8s.io/helm/pkg/proto/hapi/chart"
-	hapirelease "k8s.io/helm/pkg/proto/hapi/release"
-)
-
-var (
-	helmStatuses = []hapirelease.Status_Code{
-		hapirelease.Status_UNKNOWN,
-		hapirelease.Status_DEPLOYED,
-		hapirelease.Status_DELETED,
-		hapirelease.Status_SUPERSEDED,
-		hapirelease.Status_FAILED,
-		hapirelease.Status_DELETING,
-		hapirelease.Status_PENDING_INSTALL,
-		hapirelease.Status_PENDING_UPGRADE,
-		hapirelease.Status_PENDING_ROLLBACK,
-	}
 )
 
 // Config represents the configuration used to create a helm client.
