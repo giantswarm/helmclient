@@ -169,7 +169,7 @@ workflows:
   build_e2e:
     jobs:
       - build
-      - e2eTestBasic:
+      - integration-test/basic-test:
           requires:
           - build
 
