@@ -124,7 +124,6 @@ jobs:
   build:
     executor: machine-executor
     steps:
-    - install-go
     - checkout
 
     - run: |
@@ -143,12 +142,15 @@ jobs:
             ./architect deploy
           fi
 
-
-
-  e2eTestBasic:
+  basic-test:
     environment:
       E2E_TEST_DIR: "integration/test/basic"
-    <<: *e2eTest
+    executor: machine-executor
+    steps:
+    - install-go
+    - checkout
+    - attach_workspace:
+        at: .
 
 # Disable integration tests. They will be re-enabled as Helm 3 logic is added.
 #
