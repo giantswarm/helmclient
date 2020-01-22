@@ -63,11 +63,68 @@ e2eTest: &e2eTest
         command: ./e2ectl cluster delete
         when: always
 
-version: 2
+orbs:
+  integration-test:
+    executors:
+      machine-executor:
+        machine: true
+    commands:
+      install-go:
+        steps:
+
+# --- Installing Go: start
+          # TODO Skip steps till `save_cache` if cache is restored and we have proper version of Go installed.
+          #- restore_cache:
+          #    keys:
+          #      - machine-executor-go-1-13-4
+          - run:
+              name: "Remove old Go"
+              command: |
+                sudo rm -rf /usr/local/go
+          - run:
+              name: "Download Go"
+              command: |
+                wget https://dl.google.com/go/go1.13.4.linux-amd64.tar.gz
+          - run:
+              name: "Check downloaded Go checksum"
+              command: |
+                [[ "$(sha256sum go1.13.4.linux-amd64.tar.gz | cut -d ' ' -f 1)" == "692d17071736f74be04a72a06dab9cac1cd759377bd85316e52b2227604c004c" ]]
+          - run:
+              name: "Install Go"
+              command: |
+                sudo tar -C /usr/local -xzf go1.13.4.linux-amd64.tar.gz
+          - run:
+              name: "Remove downloaded Go files"
+              command: |
+                rm go1.13.4.linux-amd64.tar.gz
+          #- save_cache:
+          #    key: machine-executor-go-1-13-4
+          #    paths:
+          #      - "/usr/local/go"
+
+          #- run: 
+          #    name: "Configure GOPATH environment variable"
+          #    command: |
+          #      echo 'export GOPATH=/opt/go' >> $BASH_ENV
+          #- run: 
+          #    name: "Configure PATH environment variable"
+          #    command: |
+          #      echo 'export PATH=$GOPATH/bin:/opt/go/bin:$PATH' >> $BASH_ENV
+          - run: 
+              name: "Check Go version"
+              command: |
+                go version
+          - run: ls -la .
+# --- Installing Go: end
+
+
+
+version: 2.1
 jobs:
   build:
-    machine: true
+    executor: machine-executor
     steps:
+    - install-go
     - checkout
 
     - run: |
