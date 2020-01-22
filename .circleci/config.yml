@@ -88,10 +88,10 @@ jobs:
 
 
 
-   e2eTestBasic:
-     environment:
-       E2E_TEST_DIR: "integration/test/basic"
-     <<: *e2eTest
+  e2eTestBasic:
+    environment:
+      E2E_TEST_DIR: "integration/test/basic"
+    <<: *e2eTest
 
 # Disable integration tests. They will be re-enabled as Helm 3 logic is added.
 #
