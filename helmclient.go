@@ -2,7 +2,6 @@ package helmclient
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -15,40 +14,20 @@ import (
 	"k8s.io/helm/pkg/chartutil"
 	helmclient "k8s.io/helm/pkg/helm"
 	hapichart "k8s.io/helm/pkg/proto/hapi/chart"
-	hapirelease "k8s.io/helm/pkg/proto/hapi/release"
-)
-
-var (
-	helmStatuses = []hapirelease.Status_Code{
-		hapirelease.Status_UNKNOWN,
-		hapirelease.Status_DEPLOYED,
-		hapirelease.Status_DELETED,
-		hapirelease.Status_SUPERSEDED,
-		hapirelease.Status_FAILED,
-		hapirelease.Status_DELETING,
-		hapirelease.Status_PENDING_INSTALL,
-		hapirelease.Status_PENDING_UPGRADE,
-		hapirelease.Status_PENDING_ROLLBACK,
-	}
 )
 
 // Config represents the configuration used to create a helm client.
 type Config struct {
 	Fs afero.Fs
 	// HelmClient sets a helm client used for all operations of the initiated
-	// client. If this is nil, a new helm client will be created for each
-	// operation via proper port forwarding. Setting the helm client here manually
-	// might only be sufficient for testing or whenever you know what you do.
+	// client. If this is nil, a new helm client will be created. Setting the
+	// helm client here manually might only be sufficient for testing or
+	// whenever you know what you do.
 	HelmClient helmclient.Interface
 	K8sClient  kubernetes.Interface
 	Logger     micrologger.Logger
 
-	EnsureTillerInstalledMaxWait time.Duration
-	RestConfig                   *rest.Config
-	TillerImageName              string
-	TillerImageRegistry          string
-	TillerNamespace              string
-	TillerUpgradeEnabled         bool
+	RestConfig *rest.Config
 }
 
 // Client knows how to talk with a Helm Tiller server.
@@ -59,11 +38,7 @@ type Client struct {
 	k8sClient  kubernetes.Interface
 	logger     micrologger.Logger
 
-	ensureTillerInstalledMaxWait time.Duration
-	restConfig                   *rest.Config
-	tillerImage                  string
-	tillerNamespace              string
-	tillerUpgradeEnabled         bool
+	restConfig *rest.Config
 }
 
 // New creates a new configured Helm client.
@@ -78,29 +53,14 @@ func New(config Config) (*Client, error) {
 		return nil, microerror.Maskf(invalidConfigError, "%T.K8sClient must not be empty", config)
 	}
 
-	if config.EnsureTillerInstalledMaxWait == 0 {
-		config.EnsureTillerInstalledMaxWait = defaultEnsureTillerInstalledMaxWait
-	}
 	if config.RestConfig == nil {
 		return nil, microerror.Maskf(invalidConfigError, "%T.RestConfig must not be empty", config)
-	}
-	if config.TillerImageName == "" {
-		config.TillerImageName = defaultTillerImageName
-	}
-	if config.TillerImageRegistry == "" {
-		config.TillerImageRegistry = defaultTillerImageRegistry
-	}
-	if config.TillerNamespace == "" {
-		config.TillerNamespace = defaultTillerNamespace
 	}
 
 	// Set client timeout to prevent leakages.
 	httpClient := &http.Client{
 		Timeout: time.Second * httpClientTimeout,
 	}
-
-	// Registry is configurable for AWS China.
-	tillerImage := fmt.Sprintf("%s/%s", config.TillerImageRegistry, config.TillerImageName)
 
 	c := &Client{
 		fs:         config.Fs,
@@ -109,11 +69,7 @@ func New(config Config) (*Client, error) {
 		k8sClient:  config.K8sClient,
 		logger:     config.Logger,
 
-		ensureTillerInstalledMaxWait: config.EnsureTillerInstalledMaxWait,
-		restConfig:                   config.RestConfig,
-		tillerImage:                  tillerImage,
-		tillerNamespace:              config.TillerNamespace,
-		tillerUpgradeEnabled:         config.TillerUpgradeEnabled,
+		restConfig: config.RestConfig,
 	}
 
 	return c, nil

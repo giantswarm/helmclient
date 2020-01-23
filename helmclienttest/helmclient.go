@@ -50,14 +50,6 @@ func (c *Client) DeleteRelease(ctx context.Context, releaseName string, options 
 	return nil
 }
 
-func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
-	return nil
-}
-
-func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []string) error {
-	return nil
-}
-
 func (c *Client) GetReleaseContent(ctx context.Context, releaseName string) (*helmclient.ReleaseContent, error) {
 	if c.defaultError != nil {
 		return nil, c.defaultError
@@ -88,10 +80,6 @@ func (c *Client) LoadChart(ctx context.Context, chartPath string) (helmclient.Ch
 	}
 
 	return c.loadChartResponse, nil
-}
-
-func (c *Client) PingTiller(ctx context.Context) error {
-	return nil
 }
 
 func (c *Client) PullChartTarball(ctx context.Context, tarballURL string) (string, error) {
