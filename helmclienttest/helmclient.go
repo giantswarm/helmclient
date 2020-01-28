@@ -3,8 +3,6 @@ package helmclienttest
 import (
 	"context"
 
-	"k8s.io/helm/pkg/helm"
-
 	"github.com/giantswarm/helmclient"
 )
 
@@ -42,7 +40,7 @@ func New(config Config) helmclient.Interface {
 	return c
 }
 
-func (c *Client) DeleteRelease(ctx context.Context, releaseName string, options ...helm.DeleteOption) error {
+func (c *Client) DeleteRelease(ctx context.Context, releaseName string) error {
 	if c.defaultError != nil {
 		return c.defaultError
 	}
@@ -66,7 +64,7 @@ func (c *Client) GetReleaseHistory(ctx context.Context, releaseName string) (*he
 	return c.defaultReleaseHistory, nil
 }
 
-func (c *Client) InstallReleaseFromTarball(ctx context.Context, path, ns string, options ...helm.InstallOption) error {
+func (c *Client) InstallReleaseFromTarball(ctx context.Context, chartPath string, values map[string]interface{}, options helmclient.InstallOptions) error {
 	return nil
 }
 
@@ -90,10 +88,10 @@ func (c *Client) PullChartTarball(ctx context.Context, tarballURL string) (strin
 	return c.pullChartTarballPath, nil
 }
 
-func (c *Client) RunReleaseTest(ctx context.Context, releaseName string, options ...helm.ReleaseTestOption) error {
+func (c *Client) RunReleaseTest(ctx context.Context, releaseName string, options helmclient.ReleaseTestOptions) error {
 	return nil
 }
 
-func (c *Client) UpdateReleaseFromTarball(ctx context.Context, releaseName, path string, options ...helm.UpdateOption) error {
+func (c *Client) UpdateReleaseFromTarball(ctx context.Context, releaseName, chartPath string, values map[string]interface{}, options helmclient.UpdateOptions) error {
 	return nil
 }
