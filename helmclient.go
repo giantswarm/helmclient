@@ -140,13 +140,13 @@ func (c *Client) getReleaseHistory(ctx context.Context, releaseName string) (*Re
 }
 
 // InstallReleaseFromTarball installs a chart packaged in the given tarball.
-func (c *Client) InstallReleaseFromTarball(ctx context.Context, path, ns string, options InstallOptions) error {
+func (c *Client) InstallReleaseFromTarball(ctx context.Context, chartPath string, values map[string]interface{}, options InstallOptions) error {
 	eventName := "install_release_from_tarball"
 
 	t := prometheus.NewTimer(histogram.WithLabelValues(eventName))
 	defer t.ObserveDuration()
 
-	err := c.installReleaseFromTarball(ctx, path, ns, options)
+	err := c.installReleaseFromTarball(ctx, chartPath, values, options)
 	if err != nil {
 		errorGauge.WithLabelValues(eventName).Inc()
 		return microerror.Mask(err)
@@ -155,7 +155,7 @@ func (c *Client) InstallReleaseFromTarball(ctx context.Context, path, ns string,
 	return nil
 }
 
-func (c *Client) installReleaseFromTarball(ctx context.Context, path, ns string, options InstallOptions) error {
+func (c *Client) installReleaseFromTarball(ctx context.Context, chartPath string, values map[string]interface{}, options InstallOptions) error {
 	c.logger.LogCtx(ctx, "level", "debug", "message", "install release from tarball not yet implemented for helm 3")
 	return nil
 }
@@ -227,13 +227,13 @@ func (c *Client) runReleaseTest(ctx context.Context, releaseName string, options
 
 // UpdateReleaseFromTarball updates the given release using the chart packaged
 // in the tarball.
-func (c *Client) UpdateReleaseFromTarball(ctx context.Context, releaseName, path string, options UpdateOptions) error {
+func (c *Client) UpdateReleaseFromTarball(ctx context.Context, releaseName, chartPath string, values map[string]interface{}, options UpdateOptions) error {
 	eventName := "update_release_from_tarball"
 
 	t := prometheus.NewTimer(histogram.WithLabelValues(eventName))
 	defer t.ObserveDuration()
 
-	err := c.updateReleaseFromTarball(ctx, releaseName, path, options)
+	err := c.updateReleaseFromTarball(ctx, releaseName, chartPath, values, options)
 	if err != nil {
 		errorGauge.WithLabelValues(eventName).Inc()
 		return microerror.Mask(err)
@@ -242,7 +242,7 @@ func (c *Client) UpdateReleaseFromTarball(ctx context.Context, releaseName, path
 	return nil
 }
 
-func (c *Client) updateReleaseFromTarball(ctx context.Context, releaseName, path string, options UpdateOptions) error {
+func (c *Client) updateReleaseFromTarball(ctx context.Context, releaseName, chartPath string, values map[string]interface{}, options UpdateOptions) error {
 	c.logger.LogCtx(ctx, "level", "debug", "message", "update release from tarball not yet implemented for helm 3")
 	return nil
 }
