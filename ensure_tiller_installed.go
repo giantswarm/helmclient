@@ -36,7 +36,7 @@ func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
 func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []string) error {
 	// Check if Tiller is already present and return early if so.
 	{
-		ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+		ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 		defer cancel()
 
 		c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("finding if tiller is installed in namespace %#q", c.tillerNamespace))
@@ -54,6 +54,7 @@ func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []s
 			}
 		}
 		if errors.Is(ctx.Err(), context.DeadlineExceeded) {
+			c.logger.LogCtx(ctx, "level", "debug", "message", "timeout finding if tiller is installed")
 			return microerror.Maskf(tillerNotFoundError, ctx.Err().Error())
 		}
 	}
