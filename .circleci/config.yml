@@ -52,6 +52,18 @@ orbs:
               command: |
                 kind create cluster --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION
 
+      go-test:
+        steps:
+          - run:
+              # TODO remove this part after switch to Go modules.
+              name: "Move code to $GOPATH"
+              command: |
+                mkdir -p $GOPATH/src/github.com/${CIRCLE_PROJECT_USERNAME} && mv ~/project $GOPATH/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
+          - run:
+              name: "Run test"
+              command: |
+                cd $GOPATH/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME} && CGO_ENABLED=0 go test -v -tags k8srequired ${TEST_DIR}
+
       export-logs:
         steps:
           - run:
@@ -82,9 +94,12 @@ orbs:
             type: string
         executor: machine-executor
         steps:
-          - install-go
           - checkout
+          - attach_workspace:
+              at: .
+          - install-go
           - create-cluster
+          - go-test
           - export-logs
 
 workflows:
