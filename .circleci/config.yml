@@ -46,11 +46,11 @@ orbs:
           - run:
               name: "Install kind"
               command: |
-                CGO_ENABLED=0 GO111MODULE="on" go get sigs.k8s.io/kind@$(go env KIND_VERSION)
+                CGO_ENABLED=0 GO111MODULE="on" go get sigs.k8s.io/kind@$KIND_VERSION
           - run:
               name: "Create cluster"
               command: |
-                kind create cluster --image quay.io/giantswarm/kind-node:$(go env KUBERNETES_VERSION)
+                kind create cluster --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION
           - run:
               name: "Export cluster logs"
               command: |
