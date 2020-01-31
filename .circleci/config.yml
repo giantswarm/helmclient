@@ -41,6 +41,16 @@ orbs:
               command: |
                 go version
 
+      install-tools:
+        steps:
+          - run:
+              name: "Install kubectl"
+              command: |
+                curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBERNETES_VERSION}/bin/linux/amd64/kubectl
+                chmod +x ./kubectl
+                sudo mv ./kubectl /usr/local/bin/kubectl
+                kubectl version --client
+
       create-cluster:
         steps:
           - run:
@@ -75,7 +85,8 @@ orbs:
           - run:
               name: "Run test"
               command: |
-                cd $GOPATH/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME} && source .env && CGO_ENABLED=0 E2E_KUBECONFIG=$(kind get kubeconfig) go test -v -tags k8srequired << parameters.test-dir >>
+                kind get kubeconfig > ~/.kube/config
+                cd $GOPATH/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME} && source .env && CGO_ENABLED=0 E2E_KUBECONFIG=~/.kube/config go test -v -tags k8srequired << parameters.test-dir >>
 
       export-logs:
         steps:
@@ -111,6 +122,7 @@ orbs:
           - attach_workspace:
               at: .
           - install-go
+          - install-tools
           - create-cluster
           - go-test:
               env: << parameters.env >>
