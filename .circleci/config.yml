@@ -46,15 +46,19 @@ orbs:
           - run:
               name: "Install kind"
               command: |
-                CGO_ENABLED=0 GO111MODULE="on" go get sigs.k8s.io/kind@$KIND_VERSION
+                CGO_ENABLED=0 GO111MODULE="on" go get sigs.k8s.io/kind@v0.7.0
           - run:
               name: "Create cluster"
               command: |
                 kind create cluster --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION
+
+      export-logs:
+        steps:
           - run:
               name: "Export cluster logs"
               command: |
                 kind export logs ./kind/logs
+              when: always
           - store_artifacts:
               path: ./kind/logs
               destination: logs
@@ -63,7 +67,6 @@ orbs:
       empty-test:
         environment:
           GOPATH: /go
-          KIND_VERSION: v0.7.0
           KUBERNETES_VERSION: v1.16.3
         parameters:
           env:
@@ -81,6 +84,7 @@ orbs:
         steps:
           - install-go
           - create-cluster
+          - export-logs
 
 workflows:
   version: 2
