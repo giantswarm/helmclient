@@ -53,7 +53,20 @@ orbs:
                 kind create cluster --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION
 
       go-test:
+        parameters:
+          env:
+            type: string
+          test-dir:
+            type: string
         steps:
+          - run:
+              name: "Create .env file"
+              command: |
+                echo '<< parameters.env >>' | sed -e 's/^\(.\)/export \1/' > .env
+          - run:
+              name: "Display .env file"
+              command: |
+                cat .env
           - run:
               # TODO remove this part after switch to Go modules.
               name: "Move code to $GOPATH"
@@ -62,8 +75,7 @@ orbs:
           - run:
               name: "Run test"
               command: |
-                echo $TEST_DIR
-                cd $GOPATH/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME} && CGO_ENABLED=0 E2E_KUBECONFIG=$(kind get kubeconfig) go test -v -tags k8srequired $TEST_DIR
+                cd $GOPATH/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME} && source .env && CGO_ENABLED=0 E2E_KUBECONFIG=$(kind get kubeconfig) go test -v -tags k8srequired << parameters.test-dir >>
 
       export-logs:
         steps:
@@ -100,7 +112,9 @@ orbs:
               at: .
           - install-go
           - create-cluster
-          - go-test
+          - go-test:
+              env: << parameters.env >>
+              test-dir: << parameters.test-dir >>
           - export-logs
 
 workflows:
@@ -110,4 +124,5 @@ workflows:
       - integration-test/empty-test:
           env: |
             TEST_DIR="./integration/test/empty"
+            A=TEST
           test-dir: "./integration/test/empty"
