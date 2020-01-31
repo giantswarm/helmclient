@@ -15,15 +15,15 @@ orbs:
           - run:
               name: "Download Go"
               command: |
-                wget https://dl.google.com/go/go$(GO_VERSION).linux-amd64.tar.gz
+                wget https://dl.google.com/go/go1.13.4.linux-amd64.tar.gz
           - run:
               name: "Check downloaded Go checksum"
               command: |
-                [[ "$(sha256sum go$(GO_VERSION).linux-amd64.tar.gz | cut -d ' ' -f 1)" == "692d17071736f74be04a72a06dab9cac1cd759377bd85316e52b2227604c004c" ]]
+                [[ "$(sha256sum go1.13.4.linux-amd64.tar.gz | cut -d ' ' -f 1)" == "692d17071736f74be04a72a06dab9cac1cd759377bd85316e52b2227604c004c" ]]
           - run:
               name: "Install Go"
               command: |
-                sudo tar -C /usr/local -xzf go$(GO_VERSION).linux-amd64.tar.gz
+                sudo tar -C /usr/local -xzf go1.13.4.linux-amd64.tar.gz
           - run:
               name: "Set go environtment"
               command: |
@@ -35,7 +35,7 @@ orbs:
           - run:
               name: "Remove downloaded Go files"
               command: |
-                rm go$(GO_VERSION).linux-amd64.tar.gz
+                rm go1.13.4.linux-amd64.tar.gz
           - run: 
               name: "Check Go version"
               command: |
@@ -46,7 +46,7 @@ orbs:
           - run:
               name: "Install kind"
               command: |
-                CGO_ENABLED=0 GO111MODULE="on" go get sigs.k8s.io/kind@v$(KIND_VERSION)
+                CGO_ENABLED=0 GO111MODULE="on" go get sigs.k8s.io/kind@v0.7.0
           - run:
               name: "Create cluster"
               command: |
@@ -63,8 +63,6 @@ orbs:
       empty-test:
         environment:
           GOPATH: /go
-          GO_VERSION: 1.13.4
-          KIND_VERSION: 0.7.0
         parameters:
           env:
             default: ""
