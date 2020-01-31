@@ -62,7 +62,8 @@ orbs:
           - run:
               name: "Run test"
               command: |
-                cd $GOPATH/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME} && CGO_ENABLED=0 go test -v -tags k8srequired ${TEST_DIR}
+                echo $TEST_DIR
+                cd $GOPATH/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME} && CGO_ENABLED=0 E2E_KUBECONFIG=$(kind get kubeconfig) go test -v -tags k8srequired $TEST_DIR
 
       export-logs:
         steps:
