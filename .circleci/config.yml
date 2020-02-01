@@ -74,10 +74,6 @@ orbs:
               command: |
                 echo '<< parameters.env >>' | sed -e 's/^\(.\)/export \1/' > .env
           - run:
-              name: "Display .env file"
-              command: |
-                cat .env
-          - run:
               # TODO remove this part after switch to Go modules.
               name: "Move code to $GOPATH"
               command: |
