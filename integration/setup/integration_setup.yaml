@@ -2,10 +2,18 @@ commands:
 - kubectl annotate namespace default test=foo
 - kubectl label namespace default test=bar
 kind:
-  cluster:
+  clusters:
+  - name: control-plane
     config: |
-      kind: Cluster
-      apiVersion: kind.sigs.k8s.io/v1alpha3
-      nodes:
-      - role: control-plane
-      - role: worker
+    kind: Cluster
+    apiVersion: kind.sigs.k8s.io/v1alpha3
+    nodes:
+    - role: control-plane
+    - role: worker
+  - name: tenant
+    config: |
+    kind: Cluster
+    apiVersion: kind.sigs.k8s.io/v1alpha3
+    nodes:
+    - role: control-plane
+    - role: worker

@@ -60,11 +60,21 @@ orbs:
                 CGO_ENABLED=0 GO111MODULE="on" go get github.com/mikefarah/yq/v3@3.0.1
 
       create-cluster:
+        parameters:
+          setup-config:
+            type: string
         steps:
           - run:
               name: "Create cluster"
               command: |
-                kind create cluster --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION
+                IFS=$'\n'
+
+                cd ~/project
+
+                for name in $(yq r << parameters.setup-config >> "kind.clusters")
+                do
+                  kind create cluster --name $name --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION
+                done
 
       test-setup:
         parameters:
