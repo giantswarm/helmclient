@@ -74,8 +74,16 @@ orbs:
           - run:
               name: "Run test setup commands"
               command: |
-                cd ~/project/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/
-                cat << parameters.setup-config >> 
+                IFS=$'\n'
+
+                cd ~/project
+                yr r << parameters.setup-config >> 
+
+                for cmd in $(yq r ./integration/setup/integration_setup.yaml "commands.[*]")
+                do
+                  echo "Running: $cmd"
+                  eval "$cmd"
+                done
 
       go-test:
         parameters:
