@@ -44,23 +44,37 @@ orbs:
       install-tools:
         steps:
           - run:
+              name: "Install kind"
+              command: |
+                CGO_ENABLED=0 GO111MODULE="on" go get sigs.k8s.io/kind@v0.7.0
+          - run:
               name: "Install kubectl"
               command: |
                 curl -LO https://storage.googleapis.com/kubernetes-release/release/${KUBERNETES_VERSION}/bin/linux/amd64/kubectl
                 chmod +x ./kubectl
                 sudo mv ./kubectl /usr/local/bin/kubectl
                 kubectl version --client
+          - run:
+              name: "Install yq"
+              command: |
+                CGO_ENABLED=0 GO111MODULE="on" go get github.com/mikefarah/yq/v3@3.0.1
 
       create-cluster:
         steps:
           - run:
-              name: "Install kind"
-              command: |
-                CGO_ENABLED=0 GO111MODULE="on" go get sigs.k8s.io/kind@v0.7.0
-          - run:
               name: "Create cluster"
               command: |
-                kind create cluster --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION
+                kind create cluster --config  --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION
+
+      test-setup:
+        parameters:
+          test-setup:
+            type: string
+        steps:
+          - run:
+              name: "Run test setup commands"
+              command: |
+                echo << parameters.test-dir >> 
 
       go-test:
         parameters:
@@ -108,6 +122,9 @@ orbs:
                   VAR_A="VALUE_A"
                   VAR_B="VALUE_B"
             type: string
+          setup-config:
+            description: "Path to integration_setup.yaml."
+            type: string
           test-dir:
             description: "Tested package directory."
             type: string
@@ -119,6 +136,8 @@ orbs:
           - install-go
           - install-tools
           - create-cluster
+          - test-setup:
+              setup-config: << parameters.setup-config >>
           - go-test:
               env: << parameters.env >>
               test-dir: << parameters.test-dir >>
@@ -132,4 +151,5 @@ workflows:
           env: |
             TEST_DIR="./integration/test/empty"
             A=TEST
+          setup-config: "./integration/setup/integration_setup.yaml"
           test-dir: "./integration/test/empty"
