@@ -71,9 +71,9 @@ orbs:
 
                 cd ~/project
 
-                for name in $(yq r << parameters.setup-config >> "kind.clusters")
+                for name in $(yq r << parameters.setup-config >> "kind.clusters[*].name")
                 do
-                  kind create cluster --name $name --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION
+                  kind create cluster --name "$name" --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION
                 done
 
       test-setup:
