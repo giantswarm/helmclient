@@ -59,13 +59,13 @@ orbs:
               command: |
                 CGO_ENABLED=0 GO111MODULE="on" go get github.com/mikefarah/yq/v3@3.0.1
 
-      create-cluster:
+      create-clusters:
         parameters:
           setup-config:
             type: string
         steps:
           - run:
-              name: "Create cluster"
+              name: "Create clusters"
               command: |
                 IFS=$'\n'
 
@@ -153,7 +153,8 @@ orbs:
               at: .
           - install-go
           - install-tools
-          - create-cluster
+          - create-clusters:
+              setup-config: << parameters.setup-config >>
           - test-setup:
               setup-config: << parameters.setup-config >>
           - go-test:
