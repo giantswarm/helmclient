@@ -64,7 +64,7 @@ orbs:
           - run:
               name: "Create cluster"
               command: |
-                kind create cluster --config  --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION
+                kind create cluster --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION
 
       test-setup:
         parameters:
