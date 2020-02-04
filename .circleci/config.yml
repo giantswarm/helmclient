@@ -74,7 +74,8 @@ orbs:
           - run:
               name: "Run test setup commands"
               command: |
-                cat ~/project/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/<< parameters.setup-config >> 
+                cd ~/project/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/
+                cat << parameters.setup-config >> 
 
       go-test:
         parameters:
@@ -135,9 +136,9 @@ orbs:
               at: .
           - install-go
           - install-tools
-          - create-cluster
           - test-setup:
               setup-config: << parameters.setup-config >>
+          - create-cluster
           - go-test:
               env: << parameters.env >>
               test-dir: << parameters.test-dir >>

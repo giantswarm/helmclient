@@ -9,4 +9,3 @@ kind:
       nodes:
       - role: control-plane
       - role: worker
-      
