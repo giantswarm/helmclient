@@ -59,22 +59,24 @@ orbs:
               command: |
                 CGO_ENABLED=0 GO111MODULE="on" go get github.com/mikefarah/yq/v3@3.0.1
 
-      create-clusters:
+      create-cluster:
         parameters:
           setup-config:
             type: string
         steps:
           - run:
-              name: "Create clusters"
+              name: "Create cluster"
               command: |
-                IFS=$'\n'
-
                 cd ~/project
 
-                for name in $(yq r << parameters.setup-config >> "kind.clusters[*].name")
-                do
-                  kind create cluster --name "$name" --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION
-                done
+                config=$(yq r << parameters.setup-config >> "kind.cluster.config")
+
+                if [ -z "$config" ]; then
+                  kind create cluster --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION
+                else
+                  echo $config > kind-config.yaml
+                  kind create cluster --config kind-config.yaml --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION
+                fi
 
       test-setup:
         parameters:
@@ -153,7 +155,7 @@ orbs:
               at: .
           - install-go
           - install-tools
-          - create-clusters:
+          - create-cluster:
               setup-config: << parameters.setup-config >>
           - test-setup:
               setup-config: << parameters.setup-config >>
