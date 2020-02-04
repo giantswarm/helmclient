@@ -77,9 +77,8 @@ orbs:
                 IFS=$'\n'
 
                 cd ~/project
-                yr r << parameters.setup-config >> 
 
-                for cmd in $(yq r ./integration/setup/integration_setup.yaml "commands.[*]")
+                for cmd in $(yq r << parameters.setup-config >> "commands.[*]")
                 do
                   echo "Running: $cmd"
                   eval "$cmd"
