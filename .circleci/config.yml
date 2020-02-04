@@ -69,12 +69,10 @@ orbs:
               command: |
                 cd ~/project
 
-                config=$(yq r << parameters.setup-config >> "kind.cluster.config")
-
-                if [ -z "$config" ]; then
+                if [ -z "$(yq r << parameters.setup-config >> "kind.cluster.config")" ]; then
                   kind create cluster --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION
                 else
-                  echo $config > kind-config.yaml
+                  yq r << parameters.setup-config >> "kind.cluster.config" > kind-config.yaml
                   kind create cluster --config kind-config.yaml --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION
                 fi
 
