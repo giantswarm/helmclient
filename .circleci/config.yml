@@ -136,12 +136,12 @@ orbs:
               at: .
           - install-go
           - install-tools
+          #- create-cluster
           - test-setup:
               setup-config: << parameters.setup-config >>
-          - create-cluster
-          - go-test:
-              env: << parameters.env >>
-              test-dir: << parameters.test-dir >>
+          #- go-test:
+          #    env: << parameters.env >>
+          #    test-dir: << parameters.test-dir >>
           - export-logs
 
 workflows:
