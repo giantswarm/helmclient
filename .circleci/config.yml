@@ -68,13 +68,13 @@ orbs:
 
       test-setup:
         parameters:
-          test-setup:
+          setup-config:
             type: string
         steps:
           - run:
               name: "Run test setup commands"
               command: |
-                echo << parameters.test-dir >> 
+                echo << parameters.setup-config >> 
 
       go-test:
         parameters:
