@@ -74,7 +74,7 @@ orbs:
           - run:
               name: "Run test setup commands"
               command: |
-                echo << parameters.setup-config >> 
+                cat ~/project/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}/<< parameters.setup-config >> 
 
       go-test:
         parameters:
