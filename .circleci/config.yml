@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  integration-test:
+  inline-orb:
     executors:
       machine-executor:
         machine: true
@@ -69,16 +69,18 @@ orbs:
               command: |
                 cd ~/project
 
-                if [ -z "$(yq r << parameters.setup-config >> "kind.cluster.config")" ]; then
+                if [ -z "$(yq r << parameters.setup-config >> "kind.config")" ]; then
                   kind create cluster --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION
                 else
-                  yq r << parameters.setup-config >> "kind.cluster.config" > kind-config.yaml
+                  yq r << parameters.setup-config >> "kind.config" > kind-config.yaml
                   kind create cluster --config kind-config.yaml --image quay.io/giantswarm/kind-node:$KUBERNETES_VERSION
                 fi
 
       test-setup:
         parameters:
           setup-config:
+            type: string
+          test-dir:
             type: string
         steps:
           - run:
@@ -89,6 +91,20 @@ orbs:
                 cd ~/project
 
                 for cmd in $(yq r << parameters.setup-config >> "commands.[*]")
+                do
+                  echo "Running: $cmd"
+                  eval "$cmd"
+                done
+
+          - run:
+              name: "Run test commands"
+              command: |
+                IFS=$'\n'
+
+                cd ~/project
+                cd << parameters.test-dir >> 
+
+                for cmd in $(yq r ./integration_test.yaml "commands.[*]")
                 do
                   echo "Running: $cmd"
                   eval "$cmd"
@@ -129,7 +145,7 @@ orbs:
               destination: logs
 
     jobs:
-      empty-test:
+      integration-test:
         environment:
           GOPATH: /go
           KUBERNETES_VERSION: v1.16.3
@@ -159,6 +175,7 @@ orbs:
               setup-config: << parameters.setup-config >>
           - test-setup:
               setup-config: << parameters.setup-config >>
+              test-dir: << parameters.test-dir >>
           - go-test:
               env: << parameters.env >>
               test-dir: << parameters.test-dir >>
@@ -168,7 +185,8 @@ workflows:
   version: 2
   build_e2e:
     jobs:
-      - integration-test/empty-test:
+      - inline-orb/integration-test:
+          name: empty-test-integration-test
           env: |
             TEST_DIR="./integration/test/empty"
             A=TEST
