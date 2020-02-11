@@ -9,7 +9,6 @@ import (
 
 	"github.com/giantswarm/helmclient"
 	"github.com/giantswarm/helmclient/integration/charttarball"
-	"k8s.io/helm/pkg/helm"
 )
 
 func TestInstallRelease_IsReleaseAlreadyExists(t *testing.T) {
@@ -33,12 +32,13 @@ func TestInstallRelease_IsReleaseAlreadyExists(t *testing.T) {
 	//		executing "cnr-server-chart/templates/deployment.yaml" at <.Values.image.reposi...>: can't evaluate field repository in type interface {}
 	//	}
 	//
-	err = config.HelmClient.InstallReleaseFromTarball(ctx, tarballPath, "default", helm.ReleaseName(releaseName), helm.ValueOverrides([]byte("{}")))
+	values := map[string]interface{}{}
+	err = config.HelmClient.InstallReleaseFromTarball(ctx, tarballPath, values, InstallOptions{})
 	if err != nil {
 		t.Fatalf("failed to install release %#v", err)
 	}
 
-	err = config.HelmClient.InstallReleaseFromTarball(ctx, tarballPath, "default", helm.ReleaseName(releaseName), helm.ValueOverrides([]byte("{}")))
+	err = config.HelmClient.InstallReleaseFromTarball(ctx, tarballPath, values, InstallOptions{})
 	if helmclient.IsReleaseAlreadyExists(err) {
 		// This is error we want.
 	} else if err != nil {
@@ -64,7 +64,8 @@ func TestInstallRelease_IsTarballNotFound(t *testing.T) {
 	//		executing "cnr-server-chart/templates/deployment.yaml" at <.Values.image.reposi...>: can't evaluate field repository in type interface {}
 	//	}
 	//
-	err = config.HelmClient.InstallReleaseFromTarball(ctx, tarballPath, "default", helm.ReleaseName(releaseName), helm.ValueOverrides([]byte("{}")))
+	values := map[string]interface{}{}
+	err = config.HelmClient.InstallReleaseFromTarball(ctx, tarballPath, "default", values, InstallOptions{})
 	if helmclient.IsTarballNotFound(err) {
 		// This is error we want.
 	} else if err != nil {
