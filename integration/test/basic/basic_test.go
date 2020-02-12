@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/giantswarm/helmclient/integration/charttarball"
-	"k8s.io/helm/pkg/helm"
 )
 
 func TestBasic(t *testing.T) {
@@ -32,7 +31,7 @@ func TestBasic(t *testing.T) {
 	//      executing "cnr-server-chart/templates/deployment.yaml" at <.Values.image.reposi...>: can't evaluate field repository in type interface {}
 	//     }
 	//
-	err = config.HelmClient.InstallReleaseFromTarball(ctx, tarballPath, "default", helm.ReleaseName(releaseName), helm.ValueOverrides([]byte("{}")))
+	err = config.HelmClient.InstallReleaseFromTarball(ctx, tarballPath, map[string]interface{}{}, InstallOptions{})
 	if err != nil {
 		t.Fatalf("could not install chart %v", err)
 	}
