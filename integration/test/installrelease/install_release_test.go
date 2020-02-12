@@ -64,8 +64,7 @@ func TestInstallRelease_IsTarballNotFound(t *testing.T) {
 	//		executing "cnr-server-chart/templates/deployment.yaml" at <.Values.image.reposi...>: can't evaluate field repository in type interface {}
 	//	}
 	//
-	values := map[string]interface{}{}
-	err = config.HelmClient.InstallReleaseFromTarball(ctx, tarballPath, "default", values, InstallOptions{})
+	err = config.HelmClient.InstallReleaseFromTarball(ctx, tarballPath, map[string]interface{}{}, InstallOptions{})
 	if helmclient.IsTarballNotFound(err) {
 		// This is error we want.
 	} else if err != nil {

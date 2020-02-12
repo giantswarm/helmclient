@@ -31,8 +31,7 @@ func TestBasic(t *testing.T) {
 	//      executing "cnr-server-chart/templates/deployment.yaml" at <.Values.image.reposi...>: can't evaluate field repository in type interface {}
 	//     }
 	//
-	values := map[string]interface{}{}
-	err = config.HelmClient.InstallReleaseFromTarball(ctx, tarballPath, values, InstallOptions{})
+	err = config.HelmClient.InstallReleaseFromTarball(ctx, tarballPath, map[string]interface{}{}, InstallOptions{})
 	if err != nil {
 		t.Fatalf("could not install chart %v", err)
 	}
