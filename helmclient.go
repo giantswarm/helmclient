@@ -9,8 +9,18 @@ import (
 	"github.com/giantswarm/micrologger"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/afero"
+	"helm.sh/helm/v3/pkg/action"
+	"helm.sh/helm/v3/pkg/kube"
+	"helm.sh/helm/v3/pkg/storage"
+	"helm.sh/helm/v3/pkg/storage/driver"
+	"k8s.io/cli-runtime/pkg/genericclioptions"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
+	"k8s.io/kubectl/pkg/cmd/util"
+)
+
+const (
+	defaultReleaseNamespace = "giantswarm"
 )
 
 // Config represents the configuration used to create a helm client.
@@ -24,7 +34,8 @@ type Config struct {
 	K8sClient  kubernetes.Interface
 	Logger     micrologger.Logger
 
-	RestConfig *rest.Config
+	RESTConfig       *rest.Config
+	ReleaseNamespace string
 }
 
 // Client knows how to talk with a Helm Tiller server.
@@ -35,7 +46,8 @@ type Client struct {
 	k8sClient  kubernetes.Interface
 	logger     micrologger.Logger
 
-	restConfig *rest.Config
+	restConfig       *rest.Config
+	releaseNamespace string
 }
 
 // New creates a new configured Helm client.
@@ -50,8 +62,11 @@ func New(config Config) (*Client, error) {
 		return nil, microerror.Maskf(invalidConfigError, "%T.K8sClient must not be empty", config)
 	}
 
-	if config.RestConfig == nil {
-		return nil, microerror.Maskf(invalidConfigError, "%T.RestConfig must not be empty", config)
+	if config.ReleaseNamespace == "" {
+		config.ReleaseNamespace = defaultReleaseNamespace
+	}
+	if config.RESTConfig == nil {
+		return nil, microerror.Maskf(invalidConfigError, "%T.RESTConfig must not be empty", config)
 	}
 
 	// Set client timeout to prevent leakages.
@@ -66,7 +81,8 @@ func New(config Config) (*Client, error) {
 		k8sClient:  config.K8sClient,
 		logger:     config.Logger,
 
-		restConfig: config.RestConfig,
+		releaseNamespace: config.ReleaseNamespace,
+		restConfig:       config.RESTConfig,
 	}
 
 	return c, nil
@@ -91,29 +107,6 @@ func (c *Client) DeleteRelease(ctx context.Context, releaseName string) error {
 func (c *Client) deleteRelease(ctx context.Context, releaseName string) error {
 	c.logger.LogCtx(ctx, "level", "debug", "message", "delete release not yet implemented for helm 3")
 	return nil
-}
-
-// GetReleaseContent gets the current status of the Helm Release including any
-// values provided when the chart was installed. The releaseName is the name
-// of the Helm Release that is set when the Helm Chart is installed.
-func (c *Client) GetReleaseContent(ctx context.Context, releaseName string) (*ReleaseContent, error) {
-	eventName := "get_release_content"
-
-	t := prometheus.NewTimer(histogram.WithLabelValues(eventName))
-	defer t.ObserveDuration()
-
-	releaseContent, err := c.getReleaseContent(ctx, releaseName)
-	if err != nil {
-		errorGauge.WithLabelValues(eventName).Inc()
-		return nil, microerror.Mask(err)
-	}
-
-	return releaseContent, nil
-}
-
-func (c *Client) getReleaseContent(ctx context.Context, releaseName string) (*ReleaseContent, error) {
-	c.logger.LogCtx(ctx, "level", "debug", "message", "get release content not yet implemented for helm 3")
-	return nil, nil
 }
 
 // GetReleaseHistory gets the current installed version of the Helm Release.
@@ -245,4 +238,30 @@ func (c *Client) UpdateReleaseFromTarball(ctx context.Context, releaseName, char
 func (c *Client) updateReleaseFromTarball(ctx context.Context, releaseName, chartPath string, values map[string]interface{}, options UpdateOptions) error {
 	c.logger.LogCtx(ctx, "level", "debug", "message", "update release from tarball not yet implemented for helm 3")
 	return nil
+}
+
+func (c *Client) newActionConfig() (*action.Configuration, error) {
+	restClientGetter := newConfigFlags(c.restConfig, c.releaseNamespace)
+	kubeClient := &kube.Client{
+		Factory: util.NewFactory(restClientGetter),
+	}
+
+	s := driver.NewSecrets(c.k8sClient.CoreV1().Secrets(c.releaseNamespace))
+
+	store := storage.Init(s)
+
+	return &action.Configuration{
+		RESTClientGetter: restClientGetter,
+		Releases:         store,
+		KubeClient:       kubeClient,
+	}, nil
+}
+
+func newConfigFlags(config *rest.Config, namespace string) *genericclioptions.ConfigFlags {
+	return &genericclioptions.ConfigFlags{
+		Namespace:   &namespace,
+		APIServer:   &config.Host,
+		CAFile:      &config.CAFile,
+		BearerToken: &config.BearerToken,
+	}
 }
