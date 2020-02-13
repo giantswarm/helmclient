@@ -2,10 +2,12 @@ package helmclient
 
 import (
 	"context"
+	"errors"
 
 	"github.com/giantswarm/microerror"
 	"github.com/prometheus/client_golang/prometheus"
 	"helm.sh/helm/v3/pkg/action"
+	"helm.sh/helm/v3/pkg/storage/driver"
 )
 
 // GetReleaseContent gets the current status of the Helm Release including any
@@ -34,10 +36,17 @@ func (c *Client) getReleaseContent(ctx context.Context, releaseName string) (*Re
 
 	get := action.NewGet(cfg)
 
-	_, err = get.Run(releaseName)
-	if err != nil {
+	res, err := get.Run(releaseName)
+	if errors.Is(err, driver.ErrReleaseNotFound) {
+		// Fall through.
+		return nil, nil
+	} else if err != nil {
 		return nil, microerror.Mask(err)
 	}
 
-	return nil, nil
+	return &ReleaseContent{
+		Name:   res.Name,
+		Status: res.Info.Status.String(),
+		Values: res.Config,
+	}, nil
 }
