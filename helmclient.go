@@ -62,11 +62,11 @@ func New(config Config) (*Client, error) {
 		return nil, microerror.Maskf(invalidConfigError, "%T.K8sClient must not be empty", config)
 	}
 
-	if config.ReleaseNamespace == "" {
-		config.ReleaseNamespace = defaultReleaseNamespace
-	}
 	if config.RESTConfig == nil {
 		return nil, microerror.Maskf(invalidConfigError, "%T.RESTConfig must not be empty", config)
+	}
+	if config.ReleaseNamespace == "" {
+		config.ReleaseNamespace = defaultReleaseNamespace
 	}
 
 	// Set client timeout to prevent leakages.
@@ -246,6 +246,7 @@ func (c *Client) newActionConfig() (*action.Configuration, error) {
 		Factory: util.NewFactory(restClientGetter),
 	}
 
+	// Use secrets driver for release storage.
 	s := driver.NewSecrets(c.k8sClient.CoreV1().Secrets(c.releaseNamespace))
 
 	store := storage.Init(s)
