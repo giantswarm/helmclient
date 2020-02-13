@@ -50,7 +50,7 @@ func NewConfig() (Config, error) {
 			K8sClient: cpK8sClients.K8sClient(),
 			Logger:    logger,
 
-			RestConfig: cpK8sClients.RESTConfig(),
+			RESTConfig: cpK8sClients.RESTConfig(),
 		}
 
 		helmClient, err = helmclient.New(c)

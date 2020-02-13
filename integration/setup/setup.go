@@ -43,15 +43,16 @@ func setup(ctx context.Context, m *testing.M, config Config) (int, error) {
 	}
 
 	{
-		err = k8sSetup.EnsureNamespaceCreated(ctx, "giantswarm")
+		namespace := "giantswarm"
+		err = k8sSetup.EnsureNamespaceCreated(ctx, namespace)
 		if err != nil {
 			return 1, microerror.Mask(err)
 		}
 		if teardown {
 			defer func() {
-				err := k8sSetup.EnsureNamespaceDeleted(ctx, "giantswarm")
+				err := k8sSetup.EnsureNamespaceDeleted(ctx, namespace)
 				if err != nil {
-					config.Logger.LogCtx(ctx, "level", "error", "message", fmt.Sprintf("failed to delete namespace %#q", tillerNamespace), "stack", fmt.Sprintf("%#v", err))
+					config.Logger.LogCtx(ctx, "level", "error", "message", fmt.Sprintf("failed to delete namespace %#q", namespace), "stack", fmt.Sprintf("%#v", err))
 				}
 			}()
 		}
