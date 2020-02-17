@@ -40,7 +40,7 @@ func New(config Config) helmclient.Interface {
 	return c
 }
 
-func (c *Client) DeleteRelease(ctx context.Context, releaseName string) error {
+func (c *Client) DeleteRelease(ctx context.Context, releaseName, namespace string) error {
 	if c.defaultError != nil {
 		return c.defaultError
 	}

@@ -80,27 +80,6 @@ func New(config Config) (*Client, error) {
 	return c, nil
 }
 
-// DeleteRelease uninstalls a chart given its release name.
-func (c *Client) DeleteRelease(ctx context.Context, releaseName string) error {
-	eventName := "delete_release"
-
-	t := prometheus.NewTimer(histogram.WithLabelValues(eventName))
-	defer t.ObserveDuration()
-
-	err := c.deleteRelease(ctx, releaseName)
-	if err != nil {
-		errorGauge.WithLabelValues(eventName).Inc()
-		return microerror.Mask(err)
-	}
-
-	return nil
-}
-
-func (c *Client) deleteRelease(ctx context.Context, releaseName string) error {
-	c.logger.LogCtx(ctx, "level", "debug", "message", "delete release not yet implemented for helm 3")
-	return nil
-}
-
 // GetReleaseHistory gets the current installed version of the Helm Release.
 // The releaseName is the name of the Helm Release that is set when the Helm
 // Chart is installed.
