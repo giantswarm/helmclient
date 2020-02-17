@@ -1,11 +1,13 @@
 package helmclient
 
 import (
+	"errors"
 	"net"
 	"regexp"
 	"strings"
 
 	"github.com/giantswarm/microerror"
+	"helm.sh/helm/v3/pkg/storage/driver"
 )
 
 const (
@@ -237,11 +239,6 @@ func IsReleaseNotDeployed(err error) bool {
 	return false
 }
 
-const (
-	releaseNotFoundErrorPrefix = "No such release:"
-	releaseNotFoundErrorSuffix = "not found"
-)
-
 var releaseNotFoundError = &microerror.Error{
 	Kind: "releaseNotFoundError",
 }
@@ -254,10 +251,7 @@ func IsReleaseNotFound(err error) bool {
 
 	c := microerror.Cause(err)
 
-	if strings.HasPrefix(c.Error(), releaseNotFoundErrorPrefix) {
-		return true
-	}
-	if strings.HasSuffix(c.Error(), releaseNotFoundErrorSuffix) {
+	if errors.Is(err, driver.ErrReleaseNotFound) {
 		return true
 	}
 	if c == releaseNotFoundError {
