@@ -64,7 +64,7 @@ func (c *Client) GetReleaseHistory(ctx context.Context, releaseName, namespace s
 	return c.defaultReleaseHistory, nil
 }
 
-func (c *Client) InstallReleaseFromTarball(ctx context.Context, chartPath string, values map[string]interface{}, options helmclient.InstallOptions) error {
+func (c *Client) InstallReleaseFromTarball(ctx context.Context, chartPath, namespace string, values map[string]interface{}, options helmclient.InstallOptions) error {
 	return nil
 }
 

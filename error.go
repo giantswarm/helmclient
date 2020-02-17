@@ -157,10 +157,6 @@ func IsPullChartTimeout(err error) bool {
 	return netErr.Timeout()
 }
 
-var (
-	releaseAlreadyExistsRegexp = regexp.MustCompile(`release named \S+ already exists`)
-)
-
 var releaseAlreadyExistsError = &microerror.Error{
 	Kind: "releaseAlreadyExistsError",
 }
@@ -173,10 +169,10 @@ func IsReleaseAlreadyExists(err error) bool {
 
 	c := microerror.Cause(err)
 
-	if c == releaseAlreadyExistsError {
+	if errors.Is(err, driver.ErrReleaseExists) {
 		return true
 	}
-	if releaseAlreadyExistsRegexp.MatchString(c.Error()) {
+	if c == releaseAlreadyExistsError {
 		return true
 	}
 
