@@ -2,6 +2,7 @@ package helmclient
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -43,6 +44,9 @@ type Client struct {
 	k8sClient  k8sclient.Interface
 	logger     micrologger.Logger
 }
+
+// debugLogFunc allows us to pass log messages from helm to micrlogger.
+type debugLogFunc func(string, ...interface{})
 
 // restClientGetter gets a REST client for use by the Helm kube client.
 type restClientGetter struct {
@@ -167,6 +171,16 @@ func (c *Client) updateReleaseFromTarball(ctx context.Context, releaseName, char
 	return nil
 }
 
+// debugLogFunc allows us to pass micrologger to components that expect a
+// klog.Infof function. We downgrade the messages from info to debug to match
+// our usual approach.
+func (c *Client) debugLogFunc(ctx context.Context) debugLogFunc {
+	return func(format string, args ...interface{}) {
+		message := fmt.Sprintf(format, args...)
+		c.logger.LogCtx(ctx, "level", "debug", "message", message)
+	}
+}
+
 // newActionConfig creates a config for the Helm action package.
 func (c *Client) newActionConfig(ctx context.Context, namespace string) (*action.Configuration, error) {
 	restClient, err := newRESTClientGetter(ctx, c.k8sClient, namespace)
@@ -182,6 +196,7 @@ func (c *Client) newActionConfig(ctx context.Context, namespace string) (*action
 	store := storage.Init(s)
 
 	return &action.Configuration{
+		Log:              c.debugLogFunc(ctx),
 		KubeClient:       kubeClient,
 		Releases:         store,
 		RESTClientGetter: restClient,
