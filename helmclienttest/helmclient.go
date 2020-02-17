@@ -48,7 +48,7 @@ func (c *Client) DeleteRelease(ctx context.Context, releaseName, namespace strin
 	return nil
 }
 
-func (c *Client) GetReleaseContent(ctx context.Context, releaseName, namespace string) (*helmclient.ReleaseContent, error) {
+func (c *Client) GetReleaseContent(ctx context.Context, namespace, releaseName string) (*helmclient.ReleaseContent, error) {
 	if c.defaultError != nil {
 		return nil, c.defaultError
 	}
