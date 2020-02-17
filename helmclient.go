@@ -80,29 +80,6 @@ func New(config Config) (*Client, error) {
 	return c, nil
 }
 
-// GetReleaseHistory gets the current installed version of the Helm Release.
-// The releaseName is the name of the Helm Release that is set when the Helm
-// Chart is installed.
-func (c *Client) GetReleaseHistory(ctx context.Context, releaseName string) (*ReleaseHistory, error) {
-	eventName := "get_release_history"
-
-	t := prometheus.NewTimer(histogram.WithLabelValues(eventName))
-	defer t.ObserveDuration()
-
-	releaseContent, err := c.getReleaseHistory(ctx, releaseName)
-	if err != nil {
-		errorGauge.WithLabelValues(eventName).Inc()
-		return nil, microerror.Mask(err)
-	}
-
-	return releaseContent, nil
-}
-
-func (c *Client) getReleaseHistory(ctx context.Context, releaseName string) (*ReleaseHistory, error) {
-	c.logger.LogCtx(ctx, "level", "debug", "message", "get release history not yet implemented for helm 3")
-	return nil, nil
-}
-
 // InstallReleaseFromTarball installs a chart packaged in the given tarball.
 func (c *Client) InstallReleaseFromTarball(ctx context.Context, chartPath string, values map[string]interface{}, options InstallOptions) error {
 	eventName := "install_release_from_tarball"

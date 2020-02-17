@@ -30,7 +30,7 @@ type Interface interface {
 	// GetReleaseHistory gets the current installed version of the Helm Release.
 	// The releaseName is the name of the Helm Release that is set when the Helm
 	// Chart is installed.
-	GetReleaseHistory(ctx context.Context, releaseName string) (*ReleaseHistory, error)
+	GetReleaseHistory(ctx context.Context, releaseName, namespace string) (*ReleaseHistory, error)
 	// InstallReleaseFromTarball installs a Helm Chart packaged in the given tarball.
 	InstallReleaseFromTarball(ctx context.Context, chartPath string, values map[string]interface{}, options InstallOptions) error
 	// ListReleaseContents gets the current status of all Helm Releases.

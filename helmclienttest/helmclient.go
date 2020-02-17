@@ -56,7 +56,7 @@ func (c *Client) GetReleaseContent(ctx context.Context, releaseName, namespace s
 	return c.defaultReleaseContent, nil
 }
 
-func (c *Client) GetReleaseHistory(ctx context.Context, releaseName string) (*helmclient.ReleaseHistory, error) {
+func (c *Client) GetReleaseHistory(ctx context.Context, releaseName, namespace string) (*helmclient.ReleaseHistory, error) {
 	if c.defaultError != nil {
 		return nil, c.defaultError
 	}
