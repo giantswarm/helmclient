@@ -13,13 +13,13 @@ import (
 // GetReleaseHistory gets the current installed version of the Helm Release.
 // The releaseName is the name of the Helm Release that is set when the Helm
 // Chart is installed.
-func (c *Client) GetReleaseHistory(ctx context.Context, releaseName, namespace string) (*ReleaseHistory, error) {
+func (c *Client) GetReleaseHistory(ctx context.Context, namespace, releaseName string) (*ReleaseHistory, error) {
 	eventName := "get_release_history"
 
 	t := prometheus.NewTimer(histogram.WithLabelValues(eventName))
 	defer t.ObserveDuration()
 
-	releaseContent, err := c.getReleaseHistory(ctx, releaseName, namespace)
+	releaseContent, err := c.getReleaseHistory(ctx, namespace, releaseName)
 	if err != nil {
 		errorGauge.WithLabelValues(eventName).Inc()
 		return nil, microerror.Mask(err)
@@ -28,7 +28,7 @@ func (c *Client) GetReleaseHistory(ctx context.Context, releaseName, namespace s
 	return releaseContent, nil
 }
 
-func (c *Client) getReleaseHistory(ctx context.Context, releaseName, namespace string) (*ReleaseHistory, error) {
+func (c *Client) getReleaseHistory(ctx context.Context, namespace, releaseName string) (*ReleaseHistory, error) {
 	cfg, err := c.newActionConfig(ctx, namespace)
 	if err != nil {
 		return nil, microerror.Mask(err)
