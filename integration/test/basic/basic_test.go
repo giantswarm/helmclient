@@ -21,7 +21,7 @@ func TestBasic(t *testing.T) {
 	{
 		config.Logger.LogCtx(ctx, "level", "debug", "message", "checking release not found")
 
-		releaseContent, err := config.HelmClient.GetReleaseContent(ctx, "no-release-exists", metav1.NamespaceDefault)
+		releaseContent, err := config.HelmClient.GetReleaseContent(ctx, metav1.NamespaceDefault, "no-release-exists")
 		if err != nil && !helmclient.IsReleaseNotFound(err) {
 			t.Fatalf("expected release not found error got %v", err)
 		}
@@ -58,7 +58,7 @@ func TestBasic(t *testing.T) {
 	{
 		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("getting release content for %#q", releaseName))
 
-		releaseContent, err := config.HelmClient.GetReleaseContent(ctx, releaseName, metav1.NamespaceDefault)
+		releaseContent, err := config.HelmClient.GetReleaseContent(ctx, metav1.NamespaceDefault, releaseName)
 		if err != nil {
 			t.Fatalf("expected nil error got %v", err)
 		}

@@ -26,7 +26,7 @@ type Interface interface {
 	// GetReleaseContent gets the current status of the Helm Release. The
 	// releaseName is the name of the Helm Release that is set when the Chart
 	// is installed.
-	GetReleaseContent(ctx context.Context, releaseName, namespace string) (*ReleaseContent, error)
+	GetReleaseContent(ctx context.Context, namespace, releaseName string) (*ReleaseContent, error)
 	// GetReleaseHistory gets the current installed version of the Helm Release.
 	// The releaseName is the name of the Helm Release that is set when the Helm
 	// Chart is installed.
