@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/giantswarm/k8sclient"
+	"github.com/giantswarm/kubeconfig"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 	"github.com/prometheus/client_golang/prometheus"
@@ -13,14 +15,12 @@ import (
 	"helm.sh/helm/v3/pkg/kube"
 	"helm.sh/helm/v3/pkg/storage"
 	"helm.sh/helm/v3/pkg/storage/driver"
-	"k8s.io/cli-runtime/pkg/genericclioptions"
-	"k8s.io/client-go/kubernetes"
+	"k8s.io/apimachinery/pkg/api/meta"
+	"k8s.io/client-go/discovery"
+	"k8s.io/client-go/discovery/cached/memory"
 	"k8s.io/client-go/rest"
-	"k8s.io/kubectl/pkg/cmd/util"
-)
-
-const (
-	defaultReleaseNamespace = "giantswarm"
+	"k8s.io/client-go/tools/clientcmd"
+	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
 )
 
 // Config represents the configuration used to create a helm client.
@@ -31,23 +31,25 @@ type Config struct {
 	// helm client here manually might only be sufficient for testing or
 	// whenever you know what you do.
 	HelmClient Interface
-	K8sClient  kubernetes.Interface
+	K8sClient  k8sclient.Interface
 	Logger     micrologger.Logger
-
-	RESTConfig       *rest.Config
-	ReleaseNamespace string
 }
 
-// Client knows how to talk with a Helm Tiller server.
+// Client knows how to talk with Helm.
 type Client struct {
 	fs         afero.Fs
 	helmClient Interface
 	httpClient *http.Client
-	k8sClient  kubernetes.Interface
+	k8sClient  k8sclient.Interface
 	logger     micrologger.Logger
+}
 
-	restConfig       *rest.Config
-	releaseNamespace string
+// restClientGetter gets a REST client for use by the Helm kube client.
+type restClientGetter struct {
+	discoveryClient     discovery.CachedDiscoveryInterface
+	rawKubeConfigLoader clientcmd.ClientConfig
+	restConfig          *rest.Config
+	restMapper          meta.RESTMapper
 }
 
 // New creates a new configured Helm client.
@@ -62,13 +64,6 @@ func New(config Config) (*Client, error) {
 		return nil, microerror.Maskf(invalidConfigError, "%T.K8sClient must not be empty", config)
 	}
 
-	if config.RESTConfig == nil {
-		return nil, microerror.Maskf(invalidConfigError, "%T.RESTConfig must not be empty", config)
-	}
-	if config.ReleaseNamespace == "" {
-		config.ReleaseNamespace = defaultReleaseNamespace
-	}
-
 	// Set client timeout to prevent leakages.
 	httpClient := &http.Client{
 		Timeout: time.Second * httpClientTimeout,
@@ -80,9 +75,6 @@ func New(config Config) (*Client, error) {
 		httpClient: httpClient,
 		k8sClient:  config.K8sClient,
 		logger:     config.Logger,
-
-		releaseNamespace: config.ReleaseNamespace,
-		restConfig:       config.RESTConfig,
 	}
 
 	return c, nil
@@ -240,29 +232,76 @@ func (c *Client) updateReleaseFromTarball(ctx context.Context, releaseName, char
 	return nil
 }
 
-func (c *Client) newActionConfig() (*action.Configuration, error) {
-	restClientGetter := newConfigFlags(c.restConfig, c.releaseNamespace)
-	kubeClient := &kube.Client{
-		Factory: util.NewFactory(restClientGetter),
+// newActionConfig creates a config for the Helm action package.
+func (c *Client) newActionConfig(ctx context.Context, namespace string) (*action.Configuration, error) {
+	restClient, err := newRESTClientGetter(ctx, c.k8sClient, namespace)
+	if err != nil {
+		return nil, microerror.Mask(err)
 	}
 
-	// Use secrets driver for release storage.
-	s := driver.NewSecrets(c.k8sClient.CoreV1().Secrets(c.releaseNamespace))
+	// Create a Helm kube client.
+	kubeClient := kube.New(restClient)
 
+	// Use secrets driver for release storage.
+	s := driver.NewSecrets(c.k8sClient.K8sClient().CoreV1().Secrets(namespace))
 	store := storage.Init(s)
 
 	return &action.Configuration{
-		RESTClientGetter: restClientGetter,
-		Releases:         store,
 		KubeClient:       kubeClient,
+		Releases:         store,
+		RESTClientGetter: restClient,
 	}, nil
 }
 
-func newConfigFlags(config *rest.Config, namespace string) *genericclioptions.ConfigFlags {
-	return &genericclioptions.ConfigFlags{
-		Namespace:   &namespace,
-		APIServer:   &config.Host,
-		CAFile:      &config.CAFile,
-		BearerToken: &config.BearerToken,
+func newRESTClientGetter(ctx context.Context, k8sClient k8sclient.Interface, namespace string) (*restClientGetter, error) {
+	if k8sClient == nil {
+		return nil, microerror.Maskf(invalidConfigError, "k8sClient must not be empty")
 	}
+
+	if namespace == "" {
+		return nil, microerror.Maskf(invalidConfigError, "namespace must not be empty")
+	}
+
+	// Create a discovery client using the in memory cache.
+	discoveryClient := discovery.NewDiscoveryClient(k8sClient.RESTClient())
+	cachedDiscoveryClient := memory.NewMemCacheClient(discoveryClient)
+
+	restMapper, err := apiutil.NewDynamicRESTMapper(rest.CopyConfig(k8sClient.RESTConfig()))
+	if err != nil {
+		return nil, microerror.Mask(err)
+	}
+
+	// Convert REST config back to a kubeconfig for the raw kubeconfig loader.
+	bytes, err := kubeconfig.NewKubeConfigForRESTConfig(ctx, k8sClient.RESTConfig(), "helmclient", namespace)
+	if err != nil {
+		return nil, microerror.Mask(err)
+	}
+
+	rawKubeConfigLoader, err := clientcmd.NewClientConfigFromBytes(bytes)
+	if err != nil {
+		return nil, microerror.Mask(err)
+	}
+
+	return &restClientGetter{
+		discoveryClient:     cachedDiscoveryClient,
+		rawKubeConfigLoader: rawKubeConfigLoader,
+		restConfig:          k8sClient.RESTConfig(),
+		restMapper:          restMapper,
+	}, nil
+}
+
+func (r *restClientGetter) ToDiscoveryClient() (discovery.CachedDiscoveryInterface, error) {
+	return r.discoveryClient, nil
+}
+
+func (r *restClientGetter) ToRawKubeConfigLoader() clientcmd.ClientConfig {
+	return r.rawKubeConfigLoader
+}
+
+func (r *restClientGetter) ToRESTConfig() (*rest.Config, error) {
+	return r.restConfig, nil
+}
+
+func (r *restClientGetter) ToRESTMapper() (meta.RESTMapper, error) {
+	return r.restMapper, nil
 }

@@ -2,6 +2,11 @@ package helmclient
 
 import (
 	"context"
+
+	"k8s.io/apimachinery/pkg/api/meta"
+	"k8s.io/client-go/discovery"
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
 )
 
 const (
@@ -21,7 +26,7 @@ type Interface interface {
 	// GetReleaseContent gets the current status of the Helm Release. The
 	// releaseName is the name of the Helm Release that is set when the Chart
 	// is installed.
-	GetReleaseContent(ctx context.Context, releaseName string) (*ReleaseContent, error)
+	GetReleaseContent(ctx context.Context, releaseName, namespace string) (*ReleaseContent, error)
 	// GetReleaseHistory gets the current installed version of the Helm Release.
 	// The releaseName is the name of the Helm Release that is set when the Helm
 	// Chart is installed.
@@ -41,6 +46,17 @@ type Interface interface {
 	// UpdateReleaseFromTarball updates the given release using the chart packaged
 	// in the tarball.
 	UpdateReleaseFromTarball(ctx context.Context, releaseName, chartPath string, values map[string]interface{}, options UpdateOptions) error
+}
+
+type RESTClientGetter interface {
+	// ToDiscoveryClient returns discovery client
+	ToDiscoveryClient() (discovery.CachedDiscoveryInterface, error)
+	// ToRawKubeConfigLoader return kubeconfig loader as-is
+	ToRawKubeConfigLoader() clientcmd.ClientConfig
+	// ToRESTConfig returns restconfig
+	ToRESTConfig() (*rest.Config, error)
+	// ToRESTMapper returns a restmapper
+	ToRESTMapper() (meta.RESTMapper, error)
 }
 
 // InstallOptions is the subset of supported options when installing helm

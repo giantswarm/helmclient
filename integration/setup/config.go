@@ -13,7 +13,7 @@ import (
 
 type Config struct {
 	CPK8sClients *k8sclient.Clients
-	HelmClient   *helmclient.Client
+	HelmClient   helmclient.Interface
 	Logger       micrologger.Logger
 }
 
@@ -47,10 +47,8 @@ func NewConfig() (Config, error) {
 	var helmClient *helmclient.Client
 	{
 		c := helmclient.Config{
-			K8sClient: cpK8sClients.K8sClient(),
+			K8sClient: cpK8sClients,
 			Logger:    logger,
-
-			RESTConfig: cpK8sClients.RESTConfig(),
 		}
 
 		helmClient, err = helmclient.New(c)
