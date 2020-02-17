@@ -45,7 +45,7 @@ type Client struct {
 	logger     micrologger.Logger
 }
 
-// debugLogFunc allows us to pass log messages from helm to micrlogger.
+// debugLogFunc allows us to pass log messages from helm to micrologger.
 type debugLogFunc func(string, ...interface{})
 
 // restClientGetter gets a REST client for use by the Helm kube client.
