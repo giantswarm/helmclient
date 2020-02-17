@@ -15,7 +15,7 @@ func (c *Client) DeleteRelease(ctx context.Context, namespace, releaseName strin
 	t := prometheus.NewTimer(histogram.WithLabelValues(eventName))
 	defer t.ObserveDuration()
 
-	err := c.deleteRelease(ctx, releaseName, namespace)
+	err := c.deleteRelease(ctx, namespace, releaseName)
 	if err != nil {
 		errorGauge.WithLabelValues(eventName).Inc()
 		return microerror.Mask(err)
