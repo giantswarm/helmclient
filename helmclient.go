@@ -2,6 +2,7 @@ package helmclient
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -44,6 +45,9 @@ type Client struct {
 	logger     micrologger.Logger
 }
 
+// debugLogFunc allows us to pass log messages from helm to micrologger.
+type debugLogFunc func(string, ...interface{})
+
 // restClientGetter gets a REST client for use by the Helm kube client.
 type restClientGetter struct {
 	discoveryClient     discovery.CachedDiscoveryInterface
@@ -78,50 +82,6 @@ func New(config Config) (*Client, error) {
 	}
 
 	return c, nil
-}
-
-// DeleteRelease uninstalls a chart given its release name.
-func (c *Client) DeleteRelease(ctx context.Context, releaseName string) error {
-	eventName := "delete_release"
-
-	t := prometheus.NewTimer(histogram.WithLabelValues(eventName))
-	defer t.ObserveDuration()
-
-	err := c.deleteRelease(ctx, releaseName)
-	if err != nil {
-		errorGauge.WithLabelValues(eventName).Inc()
-		return microerror.Mask(err)
-	}
-
-	return nil
-}
-
-func (c *Client) deleteRelease(ctx context.Context, releaseName string) error {
-	c.logger.LogCtx(ctx, "level", "debug", "message", "delete release not yet implemented for helm 3")
-	return nil
-}
-
-// GetReleaseHistory gets the current installed version of the Helm Release.
-// The releaseName is the name of the Helm Release that is set when the Helm
-// Chart is installed.
-func (c *Client) GetReleaseHistory(ctx context.Context, releaseName string) (*ReleaseHistory, error) {
-	eventName := "get_release_history"
-
-	t := prometheus.NewTimer(histogram.WithLabelValues(eventName))
-	defer t.ObserveDuration()
-
-	releaseContent, err := c.getReleaseHistory(ctx, releaseName)
-	if err != nil {
-		errorGauge.WithLabelValues(eventName).Inc()
-		return nil, microerror.Mask(err)
-	}
-
-	return releaseContent, nil
-}
-
-func (c *Client) getReleaseHistory(ctx context.Context, releaseName string) (*ReleaseHistory, error) {
-	c.logger.LogCtx(ctx, "level", "debug", "message", "get release history not yet implemented for helm 3")
-	return nil, nil
 }
 
 // ListReleaseContents gets the current status of all Helm Releases.
@@ -211,6 +171,16 @@ func (c *Client) updateReleaseFromTarball(ctx context.Context, releaseName, char
 	return nil
 }
 
+// debugLogFunc allows us to pass micrologger to components that expect a
+// klog.Infof function. We downgrade the messages from info to debug to match
+// our usual approach.
+func (c *Client) debugLogFunc(ctx context.Context) debugLogFunc {
+	return func(format string, args ...interface{}) {
+		message := fmt.Sprintf(format, args...)
+		c.logger.LogCtx(ctx, "level", "debug", "message", message)
+	}
+}
+
 // newActionConfig creates a config for the Helm action package.
 func (c *Client) newActionConfig(ctx context.Context, namespace string) (*action.Configuration, error) {
 	restClient, err := newRESTClientGetter(ctx, c.k8sClient, namespace)
@@ -226,6 +196,7 @@ func (c *Client) newActionConfig(ctx context.Context, namespace string) (*action
 	store := storage.Init(s)
 
 	return &action.Configuration{
+		Log:              c.debugLogFunc(ctx),
 		KubeClient:       kubeClient,
 		Releases:         store,
 		RESTClientGetter: restClient,

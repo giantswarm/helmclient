@@ -40,7 +40,7 @@ func New(config Config) helmclient.Interface {
 	return c
 }
 
-func (c *Client) DeleteRelease(ctx context.Context, releaseName string) error {
+func (c *Client) DeleteRelease(ctx context.Context, namespace, releaseName string) error {
 	if c.defaultError != nil {
 		return c.defaultError
 	}
@@ -56,7 +56,7 @@ func (c *Client) GetReleaseContent(ctx context.Context, namespace, releaseName s
 	return c.defaultReleaseContent, nil
 }
 
-func (c *Client) GetReleaseHistory(ctx context.Context, releaseName string) (*helmclient.ReleaseHistory, error) {
+func (c *Client) GetReleaseHistory(ctx context.Context, namespace, releaseName string) (*helmclient.ReleaseHistory, error) {
 	if c.defaultError != nil {
 		return nil, c.defaultError
 	}

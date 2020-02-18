@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/google/go-cmp/cmp"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -72,5 +73,43 @@ func TestBasic(t *testing.T) {
 		}
 
 		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("got release content for %#q", releaseName))
+	}
+
+	{
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("getting release history for %#q", releaseName))
+
+		releaseHistory, err := config.HelmClient.GetReleaseHistory(ctx, metav1.NamespaceDefault, releaseName)
+		if err != nil {
+			t.Fatalf("expected nil error got %v", err)
+		}
+
+		if releaseHistory.LastDeployed.IsZero() {
+			t.Fatalf("expected non zero last deployed got %v", releaseHistory.LastDeployed)
+		}
+		// Reset to zero for comparison.
+		releaseHistory.LastDeployed = time.Time{}
+
+		expectedHistory := &helmclient.ReleaseHistory{
+			AppVersion:  "1.2.3",
+			Description: "Install complete",
+			Name:        releaseName,
+			Version:     "3.2.1",
+		}
+		if !cmp.Equal(releaseHistory, expectedHistory) {
+			t.Fatalf("want matching ReleaseHistory \n %s", cmp.Diff(releaseHistory, expectedHistory))
+		}
+
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("got release history for %#q", releaseName))
+	}
+
+	{
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("deleting release %#q", releaseName))
+
+		err := config.HelmClient.DeleteRelease(ctx, metav1.NamespaceDefault, releaseName)
+		if err != nil {
+			t.Fatalf("expected nil error got %v", err)
+		}
+
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("deleted release %#q", releaseName))
 	}
 }

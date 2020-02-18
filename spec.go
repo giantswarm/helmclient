@@ -22,7 +22,7 @@ const (
 // Interface describes the methods provided by the helm client.
 type Interface interface {
 	// DeleteRelease uninstalls a chart given its release name.
-	DeleteRelease(ctx context.Context, releaseName string) error
+	DeleteRelease(ctx context.Context, namespace, releaseName string) error
 	// GetReleaseContent gets the current status of the Helm Release. The
 	// releaseName is the name of the Helm Release that is set when the Chart
 	// is installed.
@@ -30,7 +30,7 @@ type Interface interface {
 	// GetReleaseHistory gets the current installed version of the Helm Release.
 	// The releaseName is the name of the Helm Release that is set when the Helm
 	// Chart is installed.
-	GetReleaseHistory(ctx context.Context, releaseName string) (*ReleaseHistory, error)
+	GetReleaseHistory(ctx context.Context, namespace, releaseName string) (*ReleaseHistory, error)
 	// InstallReleaseFromTarball installs a Helm Chart packaged in the given tarball.
 	InstallReleaseFromTarball(ctx context.Context, chartPath, namespace string, values map[string]interface{}, options InstallOptions) error
 	// ListReleaseContents gets the current status of all Helm Releases.
