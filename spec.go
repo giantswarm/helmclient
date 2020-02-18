@@ -45,7 +45,7 @@ type Interface interface {
 	RunReleaseTest(ctx context.Context, releaseName string, options ReleaseTestOptions) error
 	// UpdateReleaseFromTarball updates the given release using the chart packaged
 	// in the tarball.
-	UpdateReleaseFromTarball(ctx context.Context, releaseName, chartPath string, values map[string]interface{}, options UpdateOptions) error
+	UpdateReleaseFromTarball(ctx context.Context, chartPath, namespace, releaseName string, values map[string]interface{}, options UpdateOptions) error
 }
 
 type RESTClientGetter interface {
@@ -75,7 +75,6 @@ type ReleaseTestOptions struct {
 
 // UpdateOptions is the subset of supported options when updating helm releases.
 type UpdateOptions struct {
-	Force     bool
-	Namespace string
-	Wait      bool
+	Force bool
+	Wait  bool
 }
