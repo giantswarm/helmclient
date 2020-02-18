@@ -68,7 +68,7 @@ func (c *Client) InstallReleaseFromTarball(ctx context.Context, chartPath, names
 	return nil
 }
 
-func (c *Client) ListReleaseContents(ctx context.Context) ([]*helmclient.ReleaseContent, error) {
+func (c *Client) ListReleaseContents(ctx context.Context, namespace string) ([]*helmclient.ReleaseContent, error) {
 	return nil, nil
 }
 

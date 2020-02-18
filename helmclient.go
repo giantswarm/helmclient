@@ -14,6 +14,7 @@ import (
 	"github.com/spf13/afero"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/kube"
+	"helm.sh/helm/v3/pkg/release"
 	"helm.sh/helm/v3/pkg/storage"
 	"helm.sh/helm/v3/pkg/storage/driver"
 	"k8s.io/apimachinery/pkg/api/meta"
@@ -82,48 +83,6 @@ func New(config Config) (*Client, error) {
 	}
 
 	return c, nil
-}
-
-// ListReleaseContents gets the current status of all Helm Releases.
-func (c *Client) ListReleaseContents(ctx context.Context) ([]*ReleaseContent, error) {
-	eventName := "list_release_contents"
-
-	t := prometheus.NewTimer(histogram.WithLabelValues(eventName))
-	defer t.ObserveDuration()
-
-	releaseContent, err := c.listReleaseContents(ctx)
-	if err != nil {
-		errorGauge.WithLabelValues(eventName).Inc()
-		return nil, microerror.Mask(err)
-	}
-
-	return releaseContent, nil
-}
-
-func (c *Client) listReleaseContents(ctx context.Context) ([]*ReleaseContent, error) {
-	c.logger.LogCtx(ctx, "level", "debug", "message", "list release contents not yet implemented for helm 3")
-	return nil, nil
-}
-
-// LoadChart loads a Helm Chart and returns relevant parts of its structure.
-func (c *Client) LoadChart(ctx context.Context, chartPath string) (Chart, error) {
-	eventName := "load_chart"
-
-	t := prometheus.NewTimer(histogram.WithLabelValues(eventName))
-	defer t.ObserveDuration()
-
-	chart, err := c.loadChart(ctx, chartPath)
-	if err != nil {
-		errorGauge.WithLabelValues(eventName).Inc()
-		return Chart{}, microerror.Mask(err)
-	}
-
-	return chart, nil
-}
-
-func (c *Client) loadChart(ctx context.Context, chartPath string) (Chart, error) {
-	c.logger.LogCtx(ctx, "level", "debug", "message", "load chart not yet implemented for helm 3")
-	return Chart{}, nil
 }
 
 // RunReleaseTest runs the tests for a Helm Release. The releaseName is the
@@ -232,4 +191,12 @@ func (r *restClientGetter) ToRESTConfig() (*rest.Config, error) {
 
 func (r *restClientGetter) ToRESTMapper() (meta.RESTMapper, error) {
 	return r.restMapper, nil
+}
+
+func releaseToReleaseContent(res *release.Release) *ReleaseContent {
+	return &ReleaseContent{
+		Name:   res.Name,
+		Status: res.Info.Status.String(),
+		Values: res.Config,
+	}
 }
