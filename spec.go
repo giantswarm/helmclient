@@ -34,7 +34,7 @@ type Interface interface {
 	// InstallReleaseFromTarball installs a Helm Chart packaged in the given tarball.
 	InstallReleaseFromTarball(ctx context.Context, chartPath, namespace string, values map[string]interface{}, options InstallOptions) error
 	// ListReleaseContents gets the current status of all Helm Releases.
-	ListReleaseContents(ctx context.Context) ([]*ReleaseContent, error)
+	ListReleaseContents(ctx context.Context, namespace string) ([]*ReleaseContent, error)
 	// LoadChart loads a Helm Chart and returns its structure.
 	LoadChart(ctx context.Context, chartPath string) (Chart, error)
 	// PullChartTarball downloads a tarball from the provided tarball URL,
