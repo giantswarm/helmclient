@@ -19,6 +19,9 @@ import (
 func TestBasic(t *testing.T) {
 	ctx := context.Background()
 
+	var err error
+	var releaseName string = "test-chart"
+
 	{
 		config.Logger.LogCtx(ctx, "level", "debug", "message", "checking release not found")
 
@@ -33,27 +36,71 @@ func TestBasic(t *testing.T) {
 		config.Logger.LogCtx(ctx, "level", "debug", "message", "checked release not found")
 	}
 
-	var releaseName string = "test-chart"
+	var chartPath string
 
 	{
-		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("installing %#q", releaseName))
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating tarball for %#q", releaseName))
 
-		tarballPath, err := charttarball.Create("test-chart")
+		chartPath, err = charttarball.Create(releaseName)
 		if err != nil {
 			t.Fatalf("could not create chart archive %#v", err)
 		}
-		defer os.Remove(tarballPath)
+		defer os.Remove(chartPath)
+
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("created tarball for %#q", releaseName))
+	}
+
+	{
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("loading chart tarball %#q", chartPath))
+
+		chart, err := config.HelmClient.LoadChart(ctx, chartPath)
+		if err != nil {
+			t.Fatalf("could not load chart %v", err)
+		}
+
+		expectedChart := helmclient.Chart{
+			Version: "3.2.1",
+		}
+		if !cmp.Equal(chart, expectedChart) {
+			t.Fatalf("want matching Chart \n %s", cmp.Diff(chart, expectedChart))
+		}
+
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("loaded chart tarball %#q", chartPath))
+	}
+
+	{
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("installing %#q", releaseName))
 
 		installOptions := helmclient.InstallOptions{
 			ReleaseName: releaseName,
 			Wait:        true,
 		}
-		err = config.HelmClient.InstallReleaseFromTarball(ctx, tarballPath, metav1.NamespaceDefault, map[string]interface{}{}, installOptions)
+		err = config.HelmClient.InstallReleaseFromTarball(ctx, chartPath, metav1.NamespaceDefault, map[string]interface{}{}, installOptions)
 		if err != nil {
 			t.Fatalf("could not install chart %v", err)
 		}
 
 		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("installed %#q", releaseName))
+	}
+
+	{
+		config.Logger.LogCtx(ctx, "level", "debug", "message", "listing releases")
+
+		expectedReleases := []*helmclient.ReleaseContent{
+			{
+				Name:   "test-chart",
+				Status: "deployed",
+			},
+		}
+		releases, err := config.HelmClient.ListReleaseContents(ctx, metav1.NamespaceDefault)
+		if err != nil {
+			t.Fatalf("could not list releases %v", err)
+		}
+		if !cmp.Equal(releases, expectedReleases) {
+			t.Fatalf("want matching Releases \n %s", cmp.Diff(releases, expectedReleases))
+		}
+
+		config.Logger.LogCtx(ctx, "level", "debug", "message", "listed releases")
 	}
 
 	{
