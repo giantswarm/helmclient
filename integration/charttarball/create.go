@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	fixturesDir = "/Users/rossf7/.gvm/pkgsets/go1.13.1/global/src/github.com/giantswarm/helmclient/integration/test/basic/fixtures"
+	fixturesDir = "/e2e/fixtures"
 )
 
 // Create creates a tar.gz archive for a directory name relative to
