@@ -42,7 +42,7 @@ type Interface interface {
 	PullChartTarball(ctx context.Context, tarballURL string) (string, error)
 	// RunReleaseTest runs the tests for a Helm Release. This is the same
 	// action as running the helm test command.
-	RunReleaseTest(ctx context.Context, releaseName string, options ReleaseTestOptions) error
+	RunReleaseTest(ctx context.Context, namespace, releaseName string) error
 	// UpdateReleaseFromTarball updates the given release using the chart packaged
 	// in the tarball.
 	UpdateReleaseFromTarball(ctx context.Context, chartPath, namespace, releaseName string, values map[string]interface{}, options UpdateOptions) error
@@ -65,12 +65,6 @@ type InstallOptions struct {
 	Namespace   string
 	ReleaseName string
 	Wait        bool
-}
-
-// ReleaseTestOptions is the subset of supported options when running helm
-// release tests.
-type ReleaseTestOptions struct {
-	Namespace string
 }
 
 // UpdateOptions is the subset of supported options when updating helm releases.
