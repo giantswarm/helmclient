@@ -22,7 +22,7 @@ const (
 // preferably with `defer os.Remove(path)`.
 func Create(chartDirName string) (string, error) {
 	chartDirPath := filepath.Join(fixturesDir, chartDirName)
-	tarballPath := filepath.Join(fixturesDir, "tmp", chartDirName+".tar.gz")
+	tarballPath := filepath.Join(fixturesDir, "tmp", chartDirName+".tgz")
 
 	{
 		info, err := os.Stat(chartDirPath)
