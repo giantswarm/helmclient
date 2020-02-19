@@ -88,7 +88,7 @@ func (c *Client) PullChartTarball(ctx context.Context, tarballURL string) (strin
 	return c.pullChartTarballPath, nil
 }
 
-func (c *Client) RunReleaseTest(ctx context.Context, releaseName string, options helmclient.ReleaseTestOptions) error {
+func (c *Client) RunReleaseTest(ctx context.Context, namespace, releaseName string) error {
 	return nil
 }
 
