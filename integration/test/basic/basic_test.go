@@ -149,6 +149,44 @@ func TestBasic(t *testing.T) {
 		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("got release history for %#q", releaseName))
 	}
 
+	values := map[string]interface{}{
+		"test": "value",
+	}
+
+	{
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("updating %#q", releaseName))
+
+		updateOptions := helmclient.UpdateOptions{
+			Wait: true,
+		}
+		err = config.HelmClient.UpdateReleaseFromTarball(ctx, chartPath, metav1.NamespaceDefault, releaseName, values, updateOptions)
+		if err != nil {
+			t.Fatalf("could not update chart %v", err)
+		}
+
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("updated %#q", releaseName))
+	}
+
+	{
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("getting release content for %#q", releaseName))
+
+		releaseContent, err := config.HelmClient.GetReleaseContent(ctx, metav1.NamespaceDefault, releaseName)
+		if err != nil {
+			t.Fatalf("expected nil error got %v", err)
+		}
+
+		expectedContent := &helmclient.ReleaseContent{
+			Name:   releaseName,
+			Status: "deployed",
+			Values: values,
+		}
+		if !cmp.Equal(releaseContent, expectedContent) {
+			t.Fatalf("want matching ReleaseContent \n %s", cmp.Diff(releaseContent, expectedContent))
+		}
+
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("got release content for %#q", releaseName))
+	}
+
 	{
 		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("deleting release %#q", releaseName))
 

@@ -92,6 +92,6 @@ func (c *Client) RunReleaseTest(ctx context.Context, releaseName string, options
 	return nil
 }
 
-func (c *Client) UpdateReleaseFromTarball(ctx context.Context, releaseName, chartPath string, values map[string]interface{}, options helmclient.UpdateOptions) error {
+func (c *Client) UpdateReleaseFromTarball(ctx context.Context, chartPath, namespace, releaseName string, values map[string]interface{}, options helmclient.UpdateOptions) error {
 	return nil
 }

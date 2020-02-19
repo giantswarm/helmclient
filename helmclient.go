@@ -108,28 +108,6 @@ func (c *Client) runReleaseTest(ctx context.Context, releaseName string, options
 	return nil
 }
 
-// UpdateReleaseFromTarball updates the given release using the chart packaged
-// in the tarball.
-func (c *Client) UpdateReleaseFromTarball(ctx context.Context, releaseName, chartPath string, values map[string]interface{}, options UpdateOptions) error {
-	eventName := "update_release_from_tarball"
-
-	t := prometheus.NewTimer(histogram.WithLabelValues(eventName))
-	defer t.ObserveDuration()
-
-	err := c.updateReleaseFromTarball(ctx, releaseName, chartPath, values, options)
-	if err != nil {
-		errorGauge.WithLabelValues(eventName).Inc()
-		return microerror.Mask(err)
-	}
-
-	return nil
-}
-
-func (c *Client) updateReleaseFromTarball(ctx context.Context, releaseName, chartPath string, values map[string]interface{}, options UpdateOptions) error {
-	c.logger.LogCtx(ctx, "level", "debug", "message", "update release from tarball not yet implemented for helm 3")
-	return nil
-}
-
 // debugLogFunc allows us to pass micrologger to components that expect a
 // klog.Infof function. We downgrade the messages from info to debug to match
 // our usual approach.
