@@ -93,6 +93,11 @@ jobs:
       E2E_TEST_DIR: "integration/test/basic"
     <<: *e2eTest
 
+  e2eTestReleaseTesting:
+    environment:
+      E2E_TEST_DIR: "integration/test/releasetesting"
+    <<: *e2eTest
+
 # Disable integration tests. They will be re-enabled as Helm 3 logic is added.
 #
 #  e2eTestInstallRelease:
@@ -113,6 +118,9 @@ workflows:
     jobs:
       - build
       - e2eTestBasic:
+          requires:
+          - build
+      - e2eTestReleaseTesting:
           requires:
           - build
 
