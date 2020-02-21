@@ -10,7 +10,6 @@ import (
 	"github.com/giantswarm/kubeconfig"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
-	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/afero"
 	"helm.sh/helm/v3/pkg/action"
 	"helm.sh/helm/v3/pkg/kube"
@@ -83,29 +82,6 @@ func New(config Config) (*Client, error) {
 	}
 
 	return c, nil
-}
-
-// RunReleaseTest runs the tests for a Helm Release. The releaseName is the
-// name of the Helm Release that is set when the Helm Chart is installed. This
-// is the same action as running the helm test command.
-func (c *Client) RunReleaseTest(ctx context.Context, releaseName string, options ReleaseTestOptions) error {
-	eventName := "run_release_test"
-
-	t := prometheus.NewTimer(histogram.WithLabelValues(eventName))
-	defer t.ObserveDuration()
-
-	err := c.runReleaseTest(ctx, releaseName, options)
-	if err != nil {
-		errorGauge.WithLabelValues(eventName).Inc()
-		return microerror.Mask(err)
-	}
-
-	return nil
-}
-
-func (c *Client) runReleaseTest(ctx context.Context, releaseName string, options ReleaseTestOptions) error {
-	c.logger.LogCtx(ctx, "level", "debug", "message", "run release test not yet implemented for helm 3")
-	return nil
 }
 
 // debugLogFunc allows us to pass micrologger to components that expect a
