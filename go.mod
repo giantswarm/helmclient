@@ -7,12 +7,13 @@ require (
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/frankban/quicktest v1.7.2 // indirect
-	github.com/giantswarm/apiextensions v0.0.0-20200208202837-856d5ad2e680 // indirect
+	github.com/ghodss/yaml v1.0.1-0.20190212211648-25d852aebe32 // indirect
+	github.com/giantswarm/apiextensions v0.1.0 // indirect
 	github.com/giantswarm/backoff v0.0.0-20200209120535-b7cb1852522d
 	github.com/giantswarm/k8sclient v0.0.0-20200120104955-1542917096d6
 	github.com/giantswarm/kubeconfig v0.0.0-20191209121754-c5784ae65a49
 	github.com/giantswarm/microerror v0.2.0
-	github.com/giantswarm/micrologger v0.0.0-20200205144836-079154bcae45
+	github.com/giantswarm/micrologger v0.2.0
 	github.com/go-logfmt/logfmt v0.5.0 // indirect
 	github.com/golang/protobuf v1.3.3 // indirect
 	github.com/golang/snappy v0.0.1 // indirect
@@ -37,9 +38,9 @@ require (
 	golang.org/x/time v0.0.0-20191024005414-555d28b269f0 // indirect
 	google.golang.org/appengine v1.6.5 // indirect
 	gopkg.in/yaml.v2 v2.2.8
-	helm.sh/helm/v3 v3.1.0
-	k8s.io/apimachinery v0.17.2
-	k8s.io/client-go v0.17.2
+	helm.sh/helm/v3 v3.1.1
+	k8s.io/apimachinery v0.17.3
+	k8s.io/client-go v0.17.3
 	rsc.io/letsencrypt v0.0.3 // indirect
 	sigs.k8s.io/controller-runtime v0.4.0
 )
