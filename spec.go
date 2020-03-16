@@ -25,10 +25,6 @@ const (
 	StatusSuperseded = "superseded"
 	// StatusFailed indicates that the release was not successfully deployed.
 	StatusFailed = "failed"
-	// StatusNotInstalled indicates that an error occurred and Helm could not
-	// create a release. NOTE: This status is Giant Swarm specific and DOES
-	// NOT map to a Helm status.
-	StatusNotInstalled = "not installed"
 	// StatusUninstalling indicates that a uninstall operation is underway.
 	StatusUninstalling = "uninstalling"
 	// StatusPendingInstall indicates that an install operation is underway.
