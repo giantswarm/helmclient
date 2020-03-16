@@ -9,6 +9,32 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
+// Describes the status of a release. This needs to be kept in sync with
+// upstream but it allows us to have constants without importing Helm
+// packages.
+//
+// See: https://github.com/helm/helm/blob/master/pkg/release/status.go
+const (
+	// StatusUnknown indicates that a release is in an uncertain state.
+	StatusUnknown = "unknown"
+	// StatusDeployed indicates that the release has been pushed to Kubernetes.
+	StatusDeployed = "deployed"
+	// StatusUninstalled indicates that a release has been uninstalled from Kubernetes.
+	StatusUninstalled = "uninstalled"
+	// StatusSuperseded indicates that this release object is outdated and a newer one exists.
+	StatusSuperseded = "superseded"
+	// StatusFailed indicates that the release was not successfully deployed.
+	StatusFailed = "failed"
+	// StatusUninstalling indicates that a uninstall operation is underway.
+	StatusUninstalling = "uninstalling"
+	// StatusPendingInstall indicates that an install operation is underway.
+	StatusPendingInstall = "pending-install"
+	// StatusPendingUpgrade indicates that an upgrade operation is underway.
+	StatusPendingUpgrade = "pending-upgrade"
+	// StatusPendingRollback indicates that an rollback operation is underway.
+	StatusPendingRollback = "pending-rollback"
+)
+
 const (
 	// defaultMaxHistory is the maximum number of release versions stored per
 	// release by default.
