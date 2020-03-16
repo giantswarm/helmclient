@@ -35,6 +35,17 @@ const (
 	StatusPendingRollback = "pending-rollback"
 )
 
+var (
+	// ReleaseTransitionStatuses is used to determine if the Helm Release is
+	// currently being updated.
+	ReleaseTransitionStatuses = map[string]bool{
+		StatusUninstalled:     true,
+		StatusPendingInstall:  true,
+		StatusPendingUpgrade:  true,
+		StatusPendingRollback: true,
+	}
+)
+
 const (
 	// defaultMaxHistory is the maximum number of release versions stored per
 	// release by default.
