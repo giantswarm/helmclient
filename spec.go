@@ -56,7 +56,7 @@ const (
 	runReleaseTestTimout = 300
 )
 
-// Interface describes the methods provided by the helm client.
+// Interface describes the methods provided by the Helm client.
 type Interface interface {
 	// DeleteRelease uninstalls a chart given its release name.
 	DeleteRelease(ctx context.Context, namespace, releaseName string) error
@@ -85,6 +85,8 @@ type Interface interface {
 	UpdateReleaseFromTarball(ctx context.Context, chartPath, namespace, releaseName string, values map[string]interface{}, options UpdateOptions) error
 }
 
+// RESTClientGetter is used to configure the action package which is the Helm
+// Go client.
 type RESTClientGetter interface {
 	// ToDiscoveryClient returns discovery client
 	ToDiscoveryClient() (discovery.CachedDiscoveryInterface, error)
@@ -96,7 +98,7 @@ type RESTClientGetter interface {
 	ToRESTMapper() (meta.RESTMapper, error)
 }
 
-// InstallOptions is the subset of supported options when installing helm
+// InstallOptions is the subset of supported options when installing Helm
 // releases.
 type InstallOptions struct {
 	Namespace   string
@@ -104,7 +106,7 @@ type InstallOptions struct {
 	Wait        bool
 }
 
-// UpdateOptions is the subset of supported options when updating helm releases.
+// UpdateOptions is the subset of supported options when updating Helm releases.
 type UpdateOptions struct {
 	Force bool
 	Wait  bool
