@@ -109,7 +109,7 @@ func TestBasic(t *testing.T) {
 			AppVersion:  "v1.8.0",
 			Description: "Install complete",
 			Name:        releaseName,
-			Status:      "deployed",
+			Status:      StatusDeployed,
 			Version:     "0.1.1",
 		}
 
@@ -178,6 +178,20 @@ func TestBasic(t *testing.T) {
 		if err != nil {
 			t.Fatalf("expected nil error got %v", err)
 		}
+
+		expectedContent := &helmclient.ReleaseContent{
+			AppVersion:  "v1.8.0",
+			Description: "Upgrade complete",
+			Name:        releaseName,
+			Status:      StatusDeployed,
+			Version:     "0.1.1",
+		}
+
+		if releaseContent.LastDeployed.IsZero() {
+			t.Fatalf("expected non zero last deployed got %v", releaseContent.LastDeployed)
+		}
+		// Reset to zero for comparison.
+		releaseContent.LastDeployed = time.Time{}
 
 		expectedContent := &helmclient.ReleaseContent{
 			Name:   releaseName,
