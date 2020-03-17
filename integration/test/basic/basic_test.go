@@ -13,7 +13,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/giantswarm/helmclient"
-	"github.com/giantswarm/helmclient/integration/charttarball"
 )
 
 func TestBasic(t *testing.T) {
@@ -39,15 +38,16 @@ func TestBasic(t *testing.T) {
 	var chartPath string
 
 	{
-		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating tarball for %#q", releaseName))
+		tarballURL := "https://giantswarm.github.io/default-catalog/test-app-0.1.1.tgz"
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("pulling tarball %#q", tarballURL))
 
-		chartPath, err = charttarball.Create(releaseName)
+		chartPath, err = config.HelmClient.PullChartTarball(ctx, tarballURL)
 		if err != nil {
-			t.Fatalf("could not create chart archive %#v", err)
+			t.Fatalf("could not pull tarball %#v", err)
 		}
 		defer os.Remove(chartPath)
 
-		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("created tarball for %#q", releaseName))
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("pulled tarball %#q", tarballURL))
 	}
 
 	{
@@ -59,7 +59,7 @@ func TestBasic(t *testing.T) {
 		}
 
 		expectedChart := helmclient.Chart{
-			Version: "3.2.1",
+			Version: "0.1.1",
 		}
 		if !cmp.Equal(chart, expectedChart) {
 			t.Fatalf("want matching Chart \n %s", cmp.Diff(chart, expectedChart))
@@ -86,18 +86,12 @@ func TestBasic(t *testing.T) {
 	{
 		config.Logger.LogCtx(ctx, "level", "debug", "message", "listing releases")
 
-		expectedReleases := []*helmclient.ReleaseContent{
-			{
-				Name:   "test-chart",
-				Status: "deployed",
-			},
-		}
 		releases, err := config.HelmClient.ListReleaseContents(ctx, metav1.NamespaceDefault)
 		if err != nil {
 			t.Fatalf("could not list releases %v", err)
 		}
-		if !cmp.Equal(releases, expectedReleases) {
-			t.Fatalf("want matching Releases \n %s", cmp.Diff(releases, expectedReleases))
+		if len(releases) != 1 {
+			t.Fatalf("expected 1 Releases got \n %d", len(releases))
 		}
 
 		config.Logger.LogCtx(ctx, "level", "debug", "message", "listed releases")
@@ -112,9 +106,19 @@ func TestBasic(t *testing.T) {
 		}
 
 		expectedContent := &helmclient.ReleaseContent{
-			Name:   releaseName,
-			Status: "deployed",
+			AppVersion:  "v1.8.0",
+			Description: "Install complete",
+			Name:        releaseName,
+			Status:      helmclient.StatusDeployed,
+			Version:     "0.1.1",
 		}
+
+		if releaseContent.LastDeployed.IsZero() {
+			t.Fatalf("expected non zero last deployed got %v", releaseContent.LastDeployed)
+		}
+		// Reset to zero for comparison.
+		releaseContent.LastDeployed = time.Time{}
+
 		if !cmp.Equal(releaseContent, expectedContent) {
 			t.Fatalf("want matching ReleaseContent \n %s", cmp.Diff(releaseContent, expectedContent))
 		}
@@ -137,10 +141,10 @@ func TestBasic(t *testing.T) {
 		releaseHistory.LastDeployed = time.Time{}
 
 		expectedHistory := &helmclient.ReleaseHistory{
-			AppVersion:  "1.2.3",
+			AppVersion:  "v1.8.0",
 			Description: "Install complete",
 			Name:        releaseName,
-			Version:     "3.2.1",
+			Version:     "0.1.1",
 		}
 		if !cmp.Equal(releaseHistory, expectedHistory) {
 			t.Fatalf("want matching ReleaseHistory \n %s", cmp.Diff(releaseHistory, expectedHistory))
@@ -150,7 +154,7 @@ func TestBasic(t *testing.T) {
 	}
 
 	values := map[string]interface{}{
-		"test": "value",
+		"another": "value",
 	}
 
 	{
@@ -176,10 +180,22 @@ func TestBasic(t *testing.T) {
 		}
 
 		expectedContent := &helmclient.ReleaseContent{
-			Name:   releaseName,
-			Status: "deployed",
-			Values: values,
+			AppVersion:  "v1.8.0",
+			Description: "Upgrade complete",
+			Name:        releaseName,
+			Status:      helmclient.StatusDeployed,
+			Values: map[string]interface{}{
+				"another": "value",
+			},
+			Version: "0.1.1",
 		}
+
+		if releaseContent.LastDeployed.IsZero() {
+			t.Fatalf("expected non zero last deployed got %v", releaseContent.LastDeployed)
+		}
+		// Reset to zero for comparison.
+		releaseContent.LastDeployed = time.Time{}
+
 		if !cmp.Equal(releaseContent, expectedContent) {
 			t.Fatalf("want matching ReleaseContent \n %s", cmp.Diff(releaseContent, expectedContent))
 		}
