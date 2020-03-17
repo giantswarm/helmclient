@@ -154,7 +154,7 @@ func TestBasic(t *testing.T) {
 	}
 
 	values := map[string]interface{}{
-		"test": "value",
+		"another": "value",
 	}
 
 	{
