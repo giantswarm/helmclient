@@ -13,7 +13,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/giantswarm/helmclient"
-	"github.com/giantswarm/helmclient/integration/charttarball"
 )
 
 func TestBasic(t *testing.T) {
@@ -39,15 +38,16 @@ func TestBasic(t *testing.T) {
 	var chartPath string
 
 	{
-		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating tarball for %#q", releaseName))
+		tarballURL := "https://giantswarm.github.io/default-catalog/test-app-0.1.1.tgz"
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("pulling tarball %#q", tarballURL))
 
-		chartPath, err = charttarball.Create(releaseName)
+		chartPath, err = config.HelmClient.PullChartTarball(ctx, tarballURL)
 		if err != nil {
-			t.Fatalf("could not create chart archive %#v", err)
+			t.Fatalf("could not pull tarball %#v", err)
 		}
 		defer os.Remove(chartPath)
 
-		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("created tarball for %#q", releaseName))
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("pulled tarball %#q", tarballURL))
 	}
 
 	{
