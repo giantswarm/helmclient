@@ -59,7 +59,7 @@ func TestBasic(t *testing.T) {
 		}
 
 		expectedChart := helmclient.Chart{
-			Version: "3.2.1",
+			Version: "0.1.1",
 		}
 		if !cmp.Equal(chart, expectedChart) {
 			t.Fatalf("want matching Chart \n %s", cmp.Diff(chart, expectedChart))
@@ -112,11 +112,11 @@ func TestBasic(t *testing.T) {
 		}
 
 		expectedContent := &helmclient.ReleaseContent{
-			AppVersion:  "1.2.3",
+			AppVersion:  "v1.8.0",
 			Description: "Install complete",
 			Name:        releaseName,
 			Status:      "deployed",
-			Version:     "3.2.1",
+			Version:     "0.1.1",
 		}
 
 		if releaseContent.LastDeployed.IsZero() {
@@ -147,10 +147,10 @@ func TestBasic(t *testing.T) {
 		releaseHistory.LastDeployed = time.Time{}
 
 		expectedHistory := &helmclient.ReleaseHistory{
-			AppVersion:  "1.2.3",
+			AppVersion:  "v1.8.0",
 			Description: "Install complete",
 			Name:        releaseName,
-			Version:     "3.2.1",
+			Version:     "0.1.1",
 		}
 		if !cmp.Equal(releaseHistory, expectedHistory) {
 			t.Fatalf("want matching ReleaseHistory \n %s", cmp.Diff(releaseHistory, expectedHistory))
