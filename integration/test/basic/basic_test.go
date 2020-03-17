@@ -112,9 +112,19 @@ func TestBasic(t *testing.T) {
 		}
 
 		expectedContent := &helmclient.ReleaseContent{
-			Name:   releaseName,
-			Status: "deployed",
+			AppVersion:  "1.2.3",
+			Description: "Install complete",
+			Name:        releaseName,
+			Status:      "deployed",
+			Version:     "3.2.1",
 		}
+
+		if releaseContent.LastDeployed.IsZero() {
+			t.Fatalf("expected non zero last deployed got %v", releaseContent.LastDeployed)
+		}
+		// Reset to zero for comparison.
+		releaseContent.LastDeployed = time.Time{}
+
 		if !cmp.Equal(releaseContent, expectedContent) {
 			t.Fatalf("want matching ReleaseContent \n %s", cmp.Diff(releaseContent, expectedContent))
 		}
