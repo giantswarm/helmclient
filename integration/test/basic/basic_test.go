@@ -184,7 +184,10 @@ func TestBasic(t *testing.T) {
 			Description: "Upgrade complete",
 			Name:        releaseName,
 			Status:      helmclient.StatusDeployed,
-			Version:     "0.1.1",
+			Values: map[string]interface{}{
+				"another": "value",
+			},
+			Version: "0.1.1",
 		}
 
 		if releaseContent.LastDeployed.IsZero() {
