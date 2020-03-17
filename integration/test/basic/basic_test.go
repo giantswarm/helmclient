@@ -109,7 +109,7 @@ func TestBasic(t *testing.T) {
 			AppVersion:  "v1.8.0",
 			Description: "Install complete",
 			Name:        releaseName,
-			Status:      StatusDeployed,
+			Status:      helmclient.StatusDeployed,
 			Version:     "0.1.1",
 		}
 
@@ -183,7 +183,7 @@ func TestBasic(t *testing.T) {
 			AppVersion:  "v1.8.0",
 			Description: "Upgrade complete",
 			Name:        releaseName,
-			Status:      StatusDeployed,
+			Status:      helmclient.StatusDeployed,
 			Version:     "0.1.1",
 		}
 
@@ -193,11 +193,6 @@ func TestBasic(t *testing.T) {
 		// Reset to zero for comparison.
 		releaseContent.LastDeployed = time.Time{}
 
-		expectedContent := &helmclient.ReleaseContent{
-			Name:   releaseName,
-			Status: "deployed",
-			Values: values,
-		}
 		if !cmp.Equal(releaseContent, expectedContent) {
 			t.Fatalf("want matching ReleaseContent \n %s", cmp.Diff(releaseContent, expectedContent))
 		}
