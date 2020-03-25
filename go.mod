@@ -19,14 +19,13 @@ require (
 	github.com/huandu/xstrings v1.3.0 // indirect
 	github.com/jmoiron/sqlx v1.2.0 // indirect
 	github.com/lib/pq v1.3.0 // indirect
-	github.com/mholt/archiver v3.1.1+incompatible
+	github.com/mholt/archiver v2.1.0+incompatible
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/nwaples/rardecode v1.1.0 // indirect
 	github.com/prometheus/client_golang v1.3.0
 	github.com/rubenv/sql-migrate v0.0.0-20200212082348-64f95ea68aa3 // indirect
 	github.com/spf13/afero v1.2.2
 	github.com/ulikunitz/xz v0.5.7 // indirect
-	github.com/xi2/xz v0.0.0-20171230120015-48954b6210f8 // indirect
 	gopkg.in/yaml.v2 v2.2.8
 	k8s.io/api v0.16.6
 	k8s.io/apimachinery v0.16.6
