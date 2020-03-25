@@ -482,7 +482,7 @@ func (c *Client) LoadChart(ctx context.Context, chartPath string) (Chart, error)
 	return chart, nil
 }
 
-func (c *Client) loadChart(ctx context.Context, chartPath string) (Chart, error) {
+func (c *Client) loadChart(_ context.Context, chartPath string) (Chart, error) {
 	helmChart, err := chartutil.Load(chartPath)
 	if err != nil {
 		return Chart{}, microerror.Mask(err)
@@ -545,7 +545,7 @@ func (c *Client) RunReleaseTest(ctx context.Context, releaseName string, options
 	return nil
 }
 
-func (c *Client) runReleaseTest(ctx context.Context, releaseName string, options ...helmclient.ReleaseTestOption) error {
+func (c *Client) runReleaseTest(ctx context.Context, releaseName string, _ ...helmclient.ReleaseTestOption) error {
 	c.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("running tests for release %#q", releaseName))
 
 	t, err := c.newTunnel()
