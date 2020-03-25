@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	fixturesDir = "/e2e/fixtures"
+	fixturesDir = "fixtures"
 )
 
 // Create creates a tar.gz archive for a directory name relative to
