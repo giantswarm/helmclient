@@ -8,9 +8,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/giantswarm/helmclient/integration/env"
 	"github.com/giantswarm/k8sclient"
 	"github.com/giantswarm/microerror"
+
+	"github.com/giantswarm/helmclient/integration/env"
 )
 
 func Setup(m *testing.M, config Config) {

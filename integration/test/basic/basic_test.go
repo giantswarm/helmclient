@@ -7,8 +7,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/giantswarm/helmclient/integration/charttarball"
 	"k8s.io/helm/pkg/helm"
+
+	"github.com/giantswarm/helmclient/integration/charttarball"
 )
 
 func TestBasic(t *testing.T) {
