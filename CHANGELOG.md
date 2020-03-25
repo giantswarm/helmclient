@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] 2020-03-25
+
 ### Changed
 
 - Switch from dep to go modules.
@@ -18,5 +20,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First release.
 
-[Unreleased]: https://github.com/giantswarm/helmclient/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/giantswarm/helmclient/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/giantswarm/helmclient/releases/tag/v0.2.0
 [0.1.0]: https://github.com/giantswarm/helmclient/releases/tag/v0.1.0
