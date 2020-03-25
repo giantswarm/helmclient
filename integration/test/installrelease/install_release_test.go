@@ -7,9 +7,10 @@ import (
 	"os"
 	"testing"
 
+	"k8s.io/helm/pkg/helm"
+
 	"github.com/giantswarm/helmclient"
 	"github.com/giantswarm/helmclient/integration/charttarball"
-	"k8s.io/helm/pkg/helm"
 )
 
 func TestInstallRelease_IsReleaseAlreadyExists(t *testing.T) {
