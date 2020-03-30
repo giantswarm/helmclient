@@ -22,7 +22,7 @@ require (
 	github.com/mholt/archiver v2.1.0+incompatible
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/nwaples/rardecode v1.1.0 // indirect
-	github.com/prometheus/client_golang v1.3.0
+	github.com/prometheus/client_golang v1.5.1
 	github.com/rubenv/sql-migrate v0.0.0-20200212082348-64f95ea68aa3 // indirect
 	github.com/spf13/afero v1.2.2
 	github.com/ulikunitz/xz v0.5.7 // indirect
