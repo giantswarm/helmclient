@@ -47,13 +47,8 @@ var (
 )
 
 const (
-	// defaultMaxHistory is the maximum number of release versions stored per
-	// release by default.
-	defaultMaxHistory = 10
 	// httpClientTimeout is the timeout when pulling tarballs.
 	httpClientTimeout = 5
-	// runReleaseTestTimeout is the timeout in seconds when running tests.
-	runReleaseTestTimout = 300
 )
 
 // Interface describes the methods provided by the Helm client.
