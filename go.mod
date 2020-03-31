@@ -28,7 +28,7 @@ require (
 	github.com/ulikunitz/xz v0.5.7 // indirect
 	gopkg.in/yaml.v2 v2.2.8
 	k8s.io/api v0.16.6
-	k8s.io/apimachinery v0.16.6
+	k8s.io/apimachinery v0.18.0
 	k8s.io/client-go v0.16.6
 	k8s.io/helm v2.16.4+incompatible
 	k8s.io/kubernetes v1.16.6 // indirect
