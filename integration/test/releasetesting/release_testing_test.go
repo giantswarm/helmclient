@@ -8,11 +8,11 @@ import (
 	"os"
 	"testing"
 
+	"github.com/giantswarm/microerror"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/giantswarm/helmclient"
 	"github.com/giantswarm/helmclient/integration/charttarball"
-	"github.com/giantswarm/microerror"
 )
 
 func TestBasic(t *testing.T) {
