@@ -9,10 +9,16 @@ import (
 	"testing"
 	"time"
 
+<<<<<<< HEAD
 	"github.com/google/go-cmp/cmp"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"github.com/giantswarm/helmclient"
+=======
+	"k8s.io/helm/pkg/helm"
+
+	"github.com/giantswarm/helmclient/integration/charttarball"
+>>>>>>> master
 )
 
 func TestBasic(t *testing.T) {

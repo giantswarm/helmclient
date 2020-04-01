@@ -25,7 +25,7 @@ workflows:
           requires:
             - go-test
 
-      # Disable integration tests. They will be re-enabled as Helm 3 logic is added.
+# Disable integration tests. They will be re-enabled as Helm 3 logic is added.
 #      - architect/integration-test:
 #          name: delete-release-test
 #          test-dir: "integration/test/deleterelease"
