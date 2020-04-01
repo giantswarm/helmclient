@@ -15,10 +15,10 @@ require (
 	github.com/prometheus/client_golang v1.3.0
 	github.com/spf13/afero v1.2.2
 	github.com/ulikunitz/xz v0.5.7 // indirect
+	gopkg.in/yaml.v2 v2.2.8
 	helm.sh/helm/v3 v3.1.2
 	k8s.io/apimachinery v0.17.2
 	k8s.io/client-go v0.17.2
 	rsc.io/letsencrypt v0.0.3 // indirect
 	sigs.k8s.io/controller-runtime v0.4.0
-	sigs.k8s.io/yaml v1.1.0
 )
