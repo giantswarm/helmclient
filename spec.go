@@ -16,7 +16,7 @@ const (
 	// release by default.
 	defaultMaxHistory = 10
 	// httpClientTimeout is the timeout when pulling tarballs.
-	httpClientTimeout = 5
+	httpClientTimeout = 30
 	// runReleaseTestTimeout is the timeout in seconds when running tests.
 	runReleaseTestTimout = 300
 
