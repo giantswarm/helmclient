@@ -9,12 +9,12 @@ require (
 	github.com/Masterminds/sprig v2.22.0+incompatible // indirect
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/giantswarm/backoff v0.2.0
-	github.com/giantswarm/errors v0.2.0
+	github.com/giantswarm/errors v0.2.2
 	github.com/giantswarm/k8sclient v0.2.0
 	github.com/giantswarm/k8sportforward v0.2.0
 	github.com/giantswarm/microerror v0.2.0
 	github.com/giantswarm/micrologger v0.3.1
-	github.com/golang/protobuf v1.3.2
+	github.com/golang/protobuf v1.3.5
 	github.com/google/go-cmp v0.4.0
 	github.com/huandu/xstrings v1.3.0 // indirect
 	github.com/jmoiron/sqlx v1.2.0 // indirect
@@ -22,7 +22,7 @@ require (
 	github.com/mholt/archiver v2.1.0+incompatible
 	github.com/mitchellh/copystructure v1.0.0 // indirect
 	github.com/nwaples/rardecode v1.1.0 // indirect
-	github.com/prometheus/client_golang v1.3.0
+	github.com/prometheus/client_golang v1.5.1
 	github.com/rubenv/sql-migrate v0.0.0-20200212082348-64f95ea68aa3 // indirect
 	github.com/spf13/afero v1.2.2
 	github.com/ulikunitz/xz v0.5.7 // indirect
