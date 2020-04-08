@@ -54,6 +54,7 @@ type Config struct {
 	Logger     micrologger.Logger
 
 	EnsureTillerInstalledMaxWait time.Duration
+	HTTPClientTimeout            time.Duration
 	RestConfig                   *rest.Config
 	TillerImageName              string
 	TillerImageRegistry          string
@@ -91,6 +92,9 @@ func New(config Config) (*Client, error) {
 	if config.EnsureTillerInstalledMaxWait == 0 {
 		config.EnsureTillerInstalledMaxWait = defaultEnsureTillerInstalledMaxWait
 	}
+	if config.HTTPClientTimeout == 0 {
+		config.HTTPClientTimeout = defaultHTTPClientTimeout
+	}
 	if config.RestConfig == nil {
 		return nil, microerror.Maskf(invalidConfigError, "%T.RestConfig must not be empty", config)
 	}
@@ -106,7 +110,7 @@ func New(config Config) (*Client, error) {
 
 	// Set client timeout to prevent leakages.
 	httpClient := &http.Client{
-		Timeout: time.Second * httpClientTimeout,
+		Timeout: time.Second * time.Duration(config.HTTPClientTimeout),
 	}
 
 	// Registry is configurable for AWS China.

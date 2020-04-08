@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Handle 503 errors when pulling chart tarballs fails.
+- Make HTTP client timeout for pulling chart tarballs configurable.
 
 ## [0.2.0] 2020-03-25
 
