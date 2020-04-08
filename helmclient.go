@@ -323,6 +323,7 @@ func (c *Client) getReleaseHistory(ctx context.Context, releaseName string) (*Re
 			Description:  release.Info.Description,
 			LastDeployed: lastDeployed,
 			Name:         release.Name,
+			Revision:     int(release.Version),
 			Version:      version,
 		}
 	}

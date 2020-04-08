@@ -187,6 +187,7 @@ func Test_GetReleaseHistory(t *testing.T) {
 							Version:    "0.1.0",
 						},
 					},
+					Version: 1,
 				}),
 			},
 			expectedHistory: &ReleaseHistory{
@@ -195,6 +196,7 @@ func Test_GetReleaseHistory(t *testing.T) {
 				Name:        "chart-operator",
 				// LastDeployed is hardcoded in the fake Helm Client.
 				LastDeployed: time.Unix(242085845, 0).UTC(),
+				Revision:     1,
 				Version:      "0.1.0",
 			},
 			errorMatcher: nil,
@@ -212,6 +214,7 @@ func Test_GetReleaseHistory(t *testing.T) {
 							Version:    "1.0.0-rc1",
 						},
 					},
+					Version: 1,
 				}),
 			},
 			expectedHistory: &ReleaseHistory{
@@ -220,6 +223,7 @@ func Test_GetReleaseHistory(t *testing.T) {
 				Name:        "chart-operator",
 				// LastDeployed is hardcoded in the fake Helm Client.
 				LastDeployed: time.Unix(242085845, 0).UTC(),
+				Revision:     1,
 				Version:      "1.0.0-rc1",
 			},
 			errorMatcher: nil,
