@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Add Helm revision number to GetReleaseHistory.
+
 ## [0.2.1] 2020-04-08
 
 ### Changed
