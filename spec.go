@@ -47,8 +47,8 @@ var (
 )
 
 const (
-	// httpClientTimeout is the timeout when pulling tarballs.
-	httpClientTimeout = 5
+	// defaultHTTPClientTimeout is the timeout when pulling tarballs.
+	defaultHTTPClientTimeout = 5
 )
 
 // Interface describes the methods provided by the Helm client.
