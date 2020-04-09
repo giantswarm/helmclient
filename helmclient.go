@@ -171,9 +171,10 @@ func (r *restClientGetter) ToRESTMapper() (meta.RESTMapper, error) {
 
 func releaseToReleaseContent(res *release.Release) *ReleaseContent {
 	release := &ReleaseContent{
-		Name:   res.Name,
-		Status: res.Info.Status.String(),
-		Values: res.Config,
+		Name:     res.Name,
+		Revision: res.Version,
+		Status:   res.Info.Status.String(),
+		Values:   res.Config,
 	}
 
 	if res.Chart != nil && res.Chart.Metadata != nil {
