@@ -34,6 +34,8 @@ type Config struct {
 	HelmClient Interface
 	K8sClient  k8sclient.Interface
 	Logger     micrologger.Logger
+
+	HTTPClientTimeout time.Duration
 }
 
 // Client knows how to talk with Helm.
@@ -68,9 +70,13 @@ func New(config Config) (*Client, error) {
 		return nil, microerror.Maskf(invalidConfigError, "%T.K8sClient must not be empty", config)
 	}
 
+	if config.HTTPClientTimeout == 0 {
+		config.HTTPClientTimeout = defaultHTTPClientTimeout
+	}
+
 	// Set client timeout to prevent leakages.
 	httpClient := &http.Client{
-		Timeout: time.Second * httpClientTimeout,
+		Timeout: time.Second * time.Duration(config.HTTPClientTimeout),
 	}
 
 	c := &Client{
