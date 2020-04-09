@@ -18,6 +18,8 @@ type ReleaseContent struct {
 	LastDeployed time.Time
 	// Name is the name of the Helm Release.
 	Name string
+	// Revision is the revision number of the Helm Release.
+	Revision int
 	// Status is the Helm status code of the Release.
 	Status string
 	// Values are the values provided when installing the Helm Release.
