@@ -109,6 +109,7 @@ func TestBasic(t *testing.T) {
 			AppVersion:  "v1.8.0",
 			Description: "Install complete",
 			Name:        releaseName,
+			Revision:    1,
 			Status:      helmclient.StatusDeployed,
 			Version:     "0.1.1",
 		}
@@ -183,6 +184,7 @@ func TestBasic(t *testing.T) {
 			AppVersion:  "v1.8.0",
 			Description: "Upgrade complete",
 			Name:        releaseName,
+			Revision:    2,
 			Status:      helmclient.StatusDeployed,
 			Values: map[string]interface{}{
 				"another": "value",
