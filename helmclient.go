@@ -76,7 +76,7 @@ func New(config Config) (*Client, error) {
 
 	// Set client timeout to prevent leakages.
 	httpClient := &http.Client{
-		Timeout: config.HTTPClientTimeout,
+		Timeout: time.Second * time.Duration(config.HTTPClientTimeout),
 	}
 
 	c := &Client{
