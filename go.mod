@@ -14,7 +14,7 @@ require (
 	github.com/giantswarm/k8sportforward v0.2.0
 	github.com/giantswarm/microerror v0.2.0
 	github.com/giantswarm/micrologger v0.3.1
-	github.com/golang/protobuf v1.3.5
+	github.com/golang/protobuf v1.4.0
 	github.com/google/go-cmp v0.4.0
 	github.com/huandu/xstrings v1.3.0 // indirect
 	github.com/jmoiron/sqlx v1.2.0 // indirect
