@@ -9,7 +9,7 @@ require (
 	github.com/Masterminds/sprig v2.22.0+incompatible // indirect
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/giantswarm/backoff v0.2.0
-	github.com/giantswarm/errors v0.2.2
+	github.com/giantswarm/errors v0.2.3
 	github.com/giantswarm/k8sclient v0.2.0
 	github.com/giantswarm/k8sportforward v0.2.0
 	github.com/giantswarm/microerror v0.2.0
