@@ -5,7 +5,7 @@ metadata:
   namespace: {{ .Values.namespace }}
   annotations:
     "helm.sh/hook": test
-    "helm.sh/hook-delete-policy": hook-failed
+    "helm.sh/hook-delete-policy": hook-succeeded
 spec:
   initContainers:
   # Bash automated testing system

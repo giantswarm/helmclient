@@ -5,7 +5,7 @@ metadata:
   namespace: {{ .Values.namespace }}
 data:
   run.sh: |-
-    @test "Testing nginx is reachable" {
+    @test "Testing nginx is reachable - should fail" {
       response=$(curl -I {{ .Values.service.name }}.{{ .Values.namespace }} 2> /dev/null | head -n 1 | cut -d$' ' -f2)
-      [ "$response" -eq 200 ]
+      [ "$response" -eq 404 ]
     }

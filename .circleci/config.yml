@@ -20,19 +20,7 @@ workflows:
             - go-test
 
       - architect/integration-test:
-          name: delete-release-test
-          test-dir: "integration/test/deleterelease"
-          requires:
-            - go-test
-
-      - architect/integration-test:
-          name: install-release-test
-          test-dir: "integration/test/installrelease"
-          requires:
-            - go-test
-
-      - architect/integration-test:
-          name: upgrade-tiller-test
-          test-dir: "integration/test/upgradetiller"
+          name: release-test
+          test-dir: "integration/test/releasetesting"
           requires:
             - go-test

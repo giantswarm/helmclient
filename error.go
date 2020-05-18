@@ -1,11 +1,13 @@
 package helmclient
 
 import (
+	"errors"
 	"net"
 	"regexp"
 	"strings"
 
 	"github.com/giantswarm/microerror"
+	"helm.sh/helm/v3/pkg/storage/driver"
 )
 
 const (
@@ -155,10 +157,6 @@ func IsPullChartTimeout(err error) bool {
 	return netErr.Timeout()
 }
 
-var (
-	releaseAlreadyExistsRegexp = regexp.MustCompile(`release named \S+ already exists`)
-)
-
 var releaseAlreadyExistsError = &microerror.Error{
 	Kind: "releaseAlreadyExistsError",
 }
@@ -171,10 +169,10 @@ func IsReleaseAlreadyExists(err error) bool {
 
 	c := microerror.Cause(err)
 
-	if c == releaseAlreadyExistsError {
+	if errors.Is(err, driver.ErrReleaseExists) {
 		return true
 	}
-	if releaseAlreadyExistsRegexp.MatchString(c.Error()) {
+	if c == releaseAlreadyExistsError {
 		return true
 	}
 
@@ -237,11 +235,6 @@ func IsReleaseNotDeployed(err error) bool {
 	return false
 }
 
-const (
-	releaseNotFoundErrorPrefix = "No such release:"
-	releaseNotFoundErrorSuffix = "not found"
-)
-
 var releaseNotFoundError = &microerror.Error{
 	Kind: "releaseNotFoundError",
 }
@@ -254,10 +247,7 @@ func IsReleaseNotFound(err error) bool {
 
 	c := microerror.Cause(err)
 
-	if strings.HasPrefix(c.Error(), releaseNotFoundErrorPrefix) {
-		return true
-	}
-	if strings.HasSuffix(c.Error(), releaseNotFoundErrorSuffix) {
+	if errors.Is(err, driver.ErrReleaseNotFound) {
 		return true
 	}
 	if c == releaseNotFoundError {
@@ -309,42 +299,6 @@ var testReleaseTimeoutError = &microerror.Error{
 // IsTestReleaseTimeout asserts testReleaseTimeoutError.
 func IsTestReleaseTimeout(err error) bool {
 	return microerror.Cause(err) == testReleaseTimeoutError
-}
-
-var tillerNotRunningError = &microerror.Error{
-	Kind: "tillerNotRunningError",
-}
-
-// IsTillerNotRunningError asserts tillerNotRunningError.
-func IsTillerNotRunningError(err error) bool {
-	return microerror.Cause(err) == tillerNotRunningError
-}
-
-var tillerNotFoundError = &microerror.Error{
-	Kind: "tillerNotFoundError",
-}
-
-// IsTillerNotFound asserts tillerNotFoundError.
-func IsTillerNotFound(err error) bool {
-	return microerror.Cause(err) == tillerNotFoundError
-}
-
-var tillerInvalidVersionError = &microerror.Error{
-	Kind: "tillerInvalidVersionError",
-}
-
-// IsTillerInvalidVersion asserts tillerInvalidVersionError.
-func IsTillerInvalidVersion(err error) bool {
-	return microerror.Cause(err) == tillerInvalidVersionError
-}
-
-var tillerOutdatedError = &microerror.Error{
-	Kind: "tillerOutdatedError",
-}
-
-// IsTillerOutdated asserts tillerOutdatedError.
-func IsTillerOutdated(err error) bool {
-	return microerror.Cause(err) == tillerOutdatedError
 }
 
 var tooManyResultsError = &microerror.Error{

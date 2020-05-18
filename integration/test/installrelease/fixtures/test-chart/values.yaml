@@ -5,12 +5,12 @@
 namespace: default
 
 pod:
-  name: nginx
+  name: failing-nginx
   image:
     repository: nginx
 
 service:
-  name: nginx
+  name: failing-nginx
 
 test:
   image:
