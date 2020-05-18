@@ -11,13 +11,9 @@ import (
 	"github.com/giantswarm/helmclient/integration/env"
 )
 
-const (
-	tillerNamespace = "giantswarm"
-)
-
 type Config struct {
 	CPK8sClients *k8sclient.Clients
-	HelmClient   *helmclient.Client
+	HelmClient   helmclient.Interface
 	Logger       micrologger.Logger
 }
 
@@ -51,12 +47,8 @@ func NewConfig() (Config, error) {
 	var helmClient *helmclient.Client
 	{
 		c := helmclient.Config{
-			K8sClient: cpK8sClients.K8sClient(),
+			K8sClient: cpK8sClients,
 			Logger:    logger,
-
-			RestConfig:           cpK8sClients.RESTConfig(),
-			TillerNamespace:      tillerNamespace,
-			TillerUpgradeEnabled: true,
 		}
 
 		helmClient, err = helmclient.New(c)

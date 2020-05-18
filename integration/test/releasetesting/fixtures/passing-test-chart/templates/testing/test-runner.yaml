@@ -4,7 +4,8 @@ metadata:
   name: {{ .Values.pod.name }}-test
   namespace: {{ .Values.namespace }}
   annotations:
-    "helm.sh/hook": test-success
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": hook-succeeded
 spec:
   initContainers:
   # Bash automated testing system

@@ -3,8 +3,6 @@ package helmclienttest
 import (
 	"context"
 
-	"k8s.io/helm/pkg/helm"
-
 	"github.com/giantswarm/helmclient"
 )
 
@@ -42,7 +40,7 @@ func New(config Config) helmclient.Interface {
 	return c
 }
 
-func (c *Client) DeleteRelease(ctx context.Context, releaseName string, options ...helm.DeleteOption) error {
+func (c *Client) DeleteRelease(ctx context.Context, namespace, releaseName string) error {
 	if c.defaultError != nil {
 		return c.defaultError
 	}
@@ -50,15 +48,7 @@ func (c *Client) DeleteRelease(ctx context.Context, releaseName string, options 
 	return nil
 }
 
-func (c *Client) EnsureTillerInstalled(ctx context.Context) error {
-	return nil
-}
-
-func (c *Client) EnsureTillerInstalledWithValues(ctx context.Context, values []string) error {
-	return nil
-}
-
-func (c *Client) GetReleaseContent(ctx context.Context, releaseName string) (*helmclient.ReleaseContent, error) {
+func (c *Client) GetReleaseContent(ctx context.Context, namespace, releaseName string) (*helmclient.ReleaseContent, error) {
 	if c.defaultError != nil {
 		return nil, c.defaultError
 	}
@@ -66,7 +56,7 @@ func (c *Client) GetReleaseContent(ctx context.Context, releaseName string) (*he
 	return c.defaultReleaseContent, nil
 }
 
-func (c *Client) GetReleaseHistory(ctx context.Context, releaseName string) (*helmclient.ReleaseHistory, error) {
+func (c *Client) GetReleaseHistory(ctx context.Context, namespace, releaseName string) (*helmclient.ReleaseHistory, error) {
 	if c.defaultError != nil {
 		return nil, c.defaultError
 	}
@@ -74,11 +64,11 @@ func (c *Client) GetReleaseHistory(ctx context.Context, releaseName string) (*he
 	return c.defaultReleaseHistory, nil
 }
 
-func (c *Client) InstallReleaseFromTarball(ctx context.Context, path, ns string, options ...helm.InstallOption) error {
+func (c *Client) InstallReleaseFromTarball(ctx context.Context, chartPath, namespace string, values map[string]interface{}, options helmclient.InstallOptions) error {
 	return nil
 }
 
-func (c *Client) ListReleaseContents(ctx context.Context) ([]*helmclient.ReleaseContent, error) {
+func (c *Client) ListReleaseContents(ctx context.Context, namespace string) ([]*helmclient.ReleaseContent, error) {
 	return nil, nil
 }
 
@@ -90,10 +80,6 @@ func (c *Client) LoadChart(ctx context.Context, chartPath string) (helmclient.Ch
 	return c.loadChartResponse, nil
 }
 
-func (c *Client) PingTiller(ctx context.Context) error {
-	return nil
-}
-
 func (c *Client) PullChartTarball(ctx context.Context, tarballURL string) (string, error) {
 	if c.pullChartTarballError != nil {
 		return "", c.pullChartTarballError
@@ -102,10 +88,10 @@ func (c *Client) PullChartTarball(ctx context.Context, tarballURL string) (strin
 	return c.pullChartTarballPath, nil
 }
 
-func (c *Client) RunReleaseTest(ctx context.Context, releaseName string, options ...helm.ReleaseTestOption) error {
+func (c *Client) RunReleaseTest(ctx context.Context, namespace, releaseName string) error {
 	return nil
 }
 
-func (c *Client) UpdateReleaseFromTarball(ctx context.Context, releaseName, path string, options ...helm.UpdateOption) error {
+func (c *Client) UpdateReleaseFromTarball(ctx context.Context, chartPath, namespace, releaseName string, values map[string]interface{}, options helmclient.UpdateOptions) error {
 	return nil
 }

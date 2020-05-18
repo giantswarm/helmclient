@@ -12,5 +12,4 @@ spec:
     image: {{ .Values.pod.image.repository }}
     ports:
     - name: http
-      port: 80
       containerPort: 80
