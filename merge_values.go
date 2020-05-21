@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/giantswarm/microerror"
-	yaml "gopkg.in/yaml.v2"
+	"sigs.k8s.io/yaml"
 )
 
 // MergeValues merges config values so they can be used when installing or
