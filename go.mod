@@ -1,6 +1,6 @@
 module github.com/giantswarm/helmclient
 
-go 1.13
+go 1.14
 
 require (
 	github.com/dsnet/compress v0.0.1 // indirect
@@ -9,14 +9,14 @@ require (
 	github.com/giantswarm/kubeconfig v0.2.0
 	github.com/giantswarm/microerror v0.2.0
 	github.com/giantswarm/micrologger v0.3.1
-	github.com/golang/protobuf v1.3.5 // indirect
-	github.com/google/go-cmp v0.4.0
+	github.com/golang/protobuf v1.4.2 // indirect
+	github.com/google/go-cmp v0.4.1
 	github.com/mholt/archiver v2.1.0+incompatible
 	github.com/nwaples/rardecode v1.1.0 // indirect
 	github.com/prometheus/client_golang v1.5.1
 	github.com/spf13/afero v1.2.2
 	github.com/ulikunitz/xz v0.5.7 // indirect
-	gopkg.in/yaml.v2 v2.2.8
+	gopkg.in/yaml.v2 v2.3.0
 	helm.sh/helm/v3 v3.1.2
 	k8s.io/apimachinery v0.17.2
 	k8s.io/client-go v0.17.2
