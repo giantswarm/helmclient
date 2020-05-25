@@ -52,6 +52,10 @@ func (c *Client) installReleaseFromTarball(ctx context.Context, chartPath, names
 }
 
 func (options InstallOptions) configure(action *action.Install, namespace string) {
+	// Disabling OpenAPI Validation which introduced from Helm 3,
+	// since this feature restricted the chart upgrade that we had it from Helm 2.
+	action.DisableOpenAPIValidation = true
+
 	action.Namespace = namespace
 	action.ReleaseName = options.ReleaseName
 	action.Wait = options.Wait
