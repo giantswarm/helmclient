@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added manifest validation error.
 
+### Security
+
+- Updated Helm to [v3.1.3](https://github.com/helm/helm/releases/tag/v3.1.3) for security fix.
+
 ## [1.0.0] 2020-05-18
 
 ### Changed
