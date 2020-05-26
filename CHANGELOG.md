@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-- Including helm upstream security fix with [v3.1.3](https://github.com/helm/helm/releases/tag/v3.1.3).
+- Updated Helm to [v3.1.3](https://github.com/helm/helm/releases/tag/v3.1.3) for security fix.
 
 ## [1.0.0] 2020-05-18
 
