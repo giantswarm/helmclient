@@ -106,6 +106,32 @@ func IsInvalidGZipHeader(err error) bool {
 	return false
 }
 
+const (
+	invalidManifestPrefix = "unable to build kubernetes objects from release manifest"
+)
+
+var invalidManifestError = &microerror.Error{
+	Kind: "invalidManifestError",
+}
+
+// IsInvalidManifest asserts invalidManifestError.
+func IsInvalidManifest(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	c := microerror.Cause(err)
+
+	if strings.HasPrefix(c.Error(), invalidManifestPrefix) {
+		return true
+	}
+	if c == invalidManifestError {
+		return true
+	}
+
+	return false
+}
+
 var notFoundError = &microerror.Error{
 	Kind: "notFoundError",
 }
