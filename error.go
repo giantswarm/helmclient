@@ -361,3 +361,29 @@ func IsYamlConversionFailed(err error) bool {
 
 	return false
 }
+
+var (
+	validationFailedErrorText = "error validating data"
+)
+
+var validationFailedError = &microerror.Error{
+	Kind: "validationFailedError",
+}
+
+// IsValidationFailedError asserts validationFailedError.
+func IsValidationFailedError(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	c := microerror.Cause(err)
+
+	if c == validationFailedError {
+		return true
+	}
+	if strings.Contains(c.Error(), validationFailedErrorText) {
+		return true
+	}
+
+	return false
+}

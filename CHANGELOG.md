@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Added new validation error for both upgrade/install cases.
+
 ## [1.0.1] 2020-05-26
 
 ### Added
