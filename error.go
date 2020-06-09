@@ -113,6 +113,24 @@ func IsNotFound(err error) bool {
 	return microerror.Cause(err) == notFoundError
 }
 
+var parsingDestFailedError = &microerror.Error{
+	Kind: "parsingDestFailedError",
+}
+
+// IsParsingDestFailedError asserts parsingDestFailedError.
+func IsParsingDestFailedError(err error) bool {
+	return microerror.Cause(err) == parsingDestFailedError
+}
+
+var parsingSrcFailedError = &microerror.Error{
+	Kind: "parsingSrcFailedError",
+}
+
+// IsparsingSrcFailedError asserts parsingSrcFailedError.
+func IsParsingSrcFailedError(err error) bool {
+	return microerror.Cause(err) == parsingSrcFailedError
+}
+
 var pullChartFailedError = &microerror.Error{
 	Kind: "pullChartFailedError",
 }
