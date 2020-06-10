@@ -62,6 +62,12 @@ nested: null`
 const nullValuedYaml = `
 null`
 
+const wrongYaml = `
+nested:
+    values: "nested"
+    - data: 
+"`
+
 func Test_MergeValues(t *testing.T) {
 	testCases := []struct {
 		name           string
@@ -142,7 +148,7 @@ func Test_MergeValues(t *testing.T) {
 				"another": []byte("test: val"),
 				"test":    []byte("test: val"),
 			},
-			errorMatcher: IsExecutionFailed,
+			errorMatcher: IsParsingSrcFailedError,
 		},
 		{
 			name: "case 6: dest map with multiple keys returns error",
@@ -153,7 +159,7 @@ func Test_MergeValues(t *testing.T) {
 			srcMap: map[string][]byte{
 				"test": []byte("test: val"),
 			},
-			errorMatcher: IsExecutionFailed,
+			errorMatcher: IsParsingDestFailedError,
 		},
 		{
 			name: "case 7: null-valued key in src overrides/removes intersecting tree in dest",
@@ -177,6 +183,16 @@ func Test_MergeValues(t *testing.T) {
 				"override": []byte(nullValuedYaml),
 			},
 			expectedValues: map[string]interface{}{},
+		},
+		{
+			name: "case 10: wrong dest yaml returns error",
+			destMap: map[string][]byte{
+				"test": []byte(wrongYaml),
+			},
+			srcMap: map[string][]byte{
+				"test": []byte("test: val"),
+			},
+			errorMatcher: IsParsingDestFailedError,
 		},
 	}
 
