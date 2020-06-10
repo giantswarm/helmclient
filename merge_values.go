@@ -24,12 +24,12 @@ func MergeValues(destMap, srcMap map[string][]byte) (map[string]interface{}, err
 
 	destVals, err := processYAML(destMap)
 	if err != nil {
-		return nil, microerror.Mask(err)
+		return nil, microerror.Maskf(parsingDestFailedError, err.Error())
 	}
 
 	srcVals, err := processYAML(srcMap)
 	if err != nil {
-		return nil, microerror.Mask(err)
+		return nil, microerror.Maskf(parsingSrcFailedError, err.Error())
 	}
 
 	result = mergeValues(destVals, srcVals)
