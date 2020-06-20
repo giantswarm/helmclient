@@ -12,6 +12,8 @@ type Chart struct {
 type ReleaseContent struct {
 	// Name is the name of the Helm Release.
 	Name string
+	// Namespace is the namespace of the Helm Release.
+	Namespace string
 	// Status is the Helm status code of the Release.
 	Status string
 	// Values are the values provided when installing the Helm Release.
@@ -28,6 +30,8 @@ type ReleaseHistory struct {
 	LastDeployed time.Time
 	// Name is the name of the Helm Release.
 	Name string
+	// Namespace is the namespace of the Helm Release.
+	Namespace string
 	// Revision is the revision number of the Helm Release.
 	Revision int
 	// Version is the version of the Helm Chart that has been deployed.
