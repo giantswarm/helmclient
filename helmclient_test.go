@@ -95,8 +95,9 @@ func Test_GetReleaseContent(t *testing.T) {
 				}),
 			},
 			expectedContent: &ReleaseContent{
-				Name:   "chart-operator",
-				Status: "DEPLOYED",
+				Name:      "chart-operator",
+				Namespace: "default",
+				Status:    "DEPLOYED",
 				Values: map[string]interface{}{
 					// Note: Values cannot be configured via the Helm mock client.
 					"name": "value",
@@ -115,8 +116,9 @@ func Test_GetReleaseContent(t *testing.T) {
 				}),
 			},
 			expectedContent: &ReleaseContent{
-				Name:   "chart-operator",
-				Status: "FAILED",
+				Name:      "chart-operator",
+				Namespace: "default",
+				Status:    "FAILED",
 				Values: map[string]interface{}{
 					"name": "value",
 				},
@@ -194,6 +196,7 @@ func Test_GetReleaseHistory(t *testing.T) {
 				AppVersion:  "1.0.0",
 				Description: "Release mock",
 				Name:        "chart-operator",
+				Namespace:   "default",
 				// LastDeployed is hardcoded in the fake Helm Client.
 				LastDeployed: time.Unix(242085845, 0).UTC(),
 				Revision:     1,
@@ -221,6 +224,7 @@ func Test_GetReleaseHistory(t *testing.T) {
 				AppVersion:  "2.0.0",
 				Description: "Release mock",
 				Name:        "chart-operator",
+				Namespace:   "default",
 				// LastDeployed is hardcoded in the fake Helm Client.
 				LastDeployed: time.Unix(242085845, 0).UTC(),
 				Revision:     1,
@@ -371,8 +375,9 @@ func Test_Client_ListReleaseContents(t *testing.T) {
 			},
 			expectedContents: []*ReleaseContent{
 				{
-					Name:   "foobar",
-					Status: "DEPLOYED",
+					Name:      "foobar",
+					Namespace: "default",
+					Status:    "DEPLOYED",
 					Values: map[string]interface{}{
 						"name": "value",
 					},
@@ -394,15 +399,17 @@ func Test_Client_ListReleaseContents(t *testing.T) {
 			},
 			expectedContents: []*ReleaseContent{
 				{
-					Name:   "foobar",
-					Status: "DEPLOYED",
+					Name:      "foobar",
+					Namespace: "default",
+					Status:    "DEPLOYED",
 					Values: map[string]interface{}{
 						"name": "value",
 					},
 				},
 				{
-					Name:   "jabberwocky",
-					Status: "DEPLOYED",
+					Name:      "jabberwocky",
+					Namespace: "not-default",
+					Status:    "DEPLOYED",
 					Values: map[string]interface{}{
 						"name": "value",
 					},
@@ -426,15 +433,17 @@ func Test_Client_ListReleaseContents(t *testing.T) {
 			},
 			expectedContents: []*ReleaseContent{
 				{
-					Name:   "foobar",
-					Status: "DEPLOYED",
+					Name:      "foobar",
+					Namespace: "default",
+					Status:    "DEPLOYED",
 					Values: map[string]interface{}{
 						"name": "value",
 					},
 				},
 				{
-					Name:   "jabberwocky",
-					Status: "FAILED",
+					Name:      "jabberwocky",
+					Namespace: "default",
+					Status:    "FAILED",
 					Values: map[string]interface{}{
 						"name": "value",
 					},
@@ -460,8 +469,9 @@ func Test_Client_ListReleaseContents(t *testing.T) {
 			},
 			expectedContents: []*ReleaseContent{
 				{
-					Name:   "foobar",
-					Status: "DEPLOYED",
+					Name:      "foobar",
+					Namespace: "default",
+					Status:    "DEPLOYED",
 					Values: map[string]interface{}{
 						"name": "value",
 					},
