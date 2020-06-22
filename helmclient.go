@@ -323,6 +323,7 @@ func (c *Client) getReleaseHistory(ctx context.Context, releaseName string) (*Re
 			Description:  release.Info.Description,
 			LastDeployed: lastDeployed,
 			Name:         release.Name,
+			Namespace:    release.Namespace,
 			Revision:     int(release.Version),
 			Version:      version,
 		}
@@ -865,9 +866,10 @@ func releaseToReleaseContent(release *hapirelease.Release) (*ReleaseContent, err
 	}
 
 	content := &ReleaseContent{
-		Name:   release.Name,
-		Status: release.Info.Status.Code.String(),
-		Values: values.AsMap(),
+		Name:      release.Name,
+		Namespace: release.Namespace,
+		Status:    release.Info.Status.Code.String(),
+		Values:    values.AsMap(),
 	}
 
 	return content, nil
