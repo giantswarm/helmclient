@@ -55,12 +55,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - First release.
 
-[Unreleased]: https://github.com/giantswarm/helmclient/compare/v1.0.2...HEAD
-[1.0.2]: https://github.com/giantswarm/helmclient/compare/v1.0.1..v1.0.2
-[1.0.1]: https://github.com/giantswarm/helmclient/compare/v1.0.0..v1.0.1
-[1.0.0]: https://github.com/giantswarm/helmclient/compare/v0.2.2..v1.0.0
-[0.2.2]: https://github.com/giantswarm/helmclient/compare/v0.2.1..v0.2.2
-[0.2.1]: https://github.com/giantswarm/helmclient/compare/v0.2.0..v0.2.1
-[0.2.0]: https://github.com/giantswarm/helmclient/compare/v0.1.0..v0.2.0
+[Unreleased]: https://github.com/giantswarm/helmclient/compare/v1.0.2....HEAD
+[1.0.2]: https://github.com/giantswarm/helmclient/compare/v1.0.1...v1.0.2
+[1.0.1]: https://github.com/giantswarm/helmclient/compare/v1.0.0...v1.0.1
+[1.0.0]: https://github.com/giantswarm/helmclient/compare/v0.2.2...v1.0.0
+[0.2.2]: https://github.com/giantswarm/helmclient/compare/v0.2.1...v0.2.2
+[0.2.1]: https://github.com/giantswarm/helmclient/compare/v0.2.0...v0.2.1
+[0.2.0]: https://github.com/giantswarm/helmclient/compare/v0.1.0...v0.2.0
 
 [0.1.0]: https://github.com/giantswarm/helmclient/releases/tag/v0.1.0
