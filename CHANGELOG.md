@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 - Add new yaml parsing errors.
+- Upgrade k8sclient to v3.1.1.
 
 ## [1.0.2] 2020-05-29
 
