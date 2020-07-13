@@ -9,8 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.4] - 2020-07-13
 
-- Add new yaml parsing errors.
 - Upgrade k8sclient to v3.1.1.
+
+## [1.0.3] 2020-06-15
+
+- Add new yaml parsing errors.
 
 ## [1.0.2] 2020-05-29
 
@@ -59,7 +62,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - First release.
 
 [Unreleased]: https://github.com/giantswarm/helmclient/compare/v1.0.4...HEAD
-[1.0.4]: https://github.com/giantswarm/helmclient/compare/v1.0.2...v1.0.4
+[1.0.4]: https://github.com/giantswarm/helmclient/compare/v1.0.3...v1.0.4
+[1.0.3]: https://github.com/giantswarm/helmclient/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/giantswarm/helmclient/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/giantswarm/helmclient/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/giantswarm/helmclient/compare/v0.2.2...v1.0.0
