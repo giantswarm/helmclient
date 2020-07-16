@@ -53,7 +53,7 @@ const (
 
 	// defaultK8sClientTimeout is the timeout when installing or upgrading
 	// helm releases.
-	defaultK8sClientTimeout = 30
+	defaultK8sClientTimeout = 300
 )
 
 // Interface describes the methods provided by the Helm client.
