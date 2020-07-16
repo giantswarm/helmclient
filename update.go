@@ -57,5 +57,6 @@ func (options UpdateOptions) configure(action *action.Upgrade, namespace string)
 	// Explicitly set MaxHistory to 10 which is also the default for Helm 3.
 	action.MaxHistory = 10
 	action.Namespace = namespace
+	action.Timeout = options.Timeout
 	action.Wait = options.Wait
 }

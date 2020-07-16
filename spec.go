@@ -2,6 +2,7 @@ package helmclient
 
 import (
 	"context"
+	"time"
 
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/client-go/discovery"
@@ -98,11 +99,13 @@ type RESTClientGetter interface {
 type InstallOptions struct {
 	Namespace   string
 	ReleaseName string
+	Timeout     time.Duration
 	Wait        bool
 }
 
 // UpdateOptions is the subset of supported options when updating Helm releases.
 type UpdateOptions struct {
-	Force bool
-	Wait  bool
+	Force   bool
+	Timeout time.Duration
+	Wait    bool
 }

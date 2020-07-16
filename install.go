@@ -54,5 +54,6 @@ func (c *Client) installReleaseFromTarball(ctx context.Context, chartPath, names
 func (options InstallOptions) configure(action *action.Install, namespace string) {
 	action.Namespace = namespace
 	action.ReleaseName = options.ReleaseName
+	action.Timeout = options.Timeout
 	action.Wait = options.Wait
 }
