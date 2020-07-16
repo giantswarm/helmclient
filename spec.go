@@ -50,6 +50,10 @@ var (
 const (
 	// defaultHTTPClientTimeout is the timeout when pulling tarballs.
 	defaultHTTPClientTimeout = 5
+
+	// defaultK8sClientTimeout is the timeout when installing or upgrading
+	// helm releases.
+	defaultK8sClientTimeout = 30
 )
 
 // Interface describes the methods provided by the Helm client.

@@ -2,6 +2,7 @@ package helmclient
 
 import (
 	"context"
+	"time"
 
 	"github.com/giantswarm/microerror"
 	"github.com/prometheus/client_golang/prometheus"
@@ -52,6 +53,10 @@ func (c *Client) installReleaseFromTarball(ctx context.Context, chartPath, names
 }
 
 func (options InstallOptions) configure(action *action.Install, namespace string) {
+	if options.Timeout == 0 {
+		options.Timeout = time.Second * defaultK8sClientTimeout
+	}
+
 	action.Namespace = namespace
 	action.ReleaseName = options.ReleaseName
 	action.Timeout = options.Timeout
