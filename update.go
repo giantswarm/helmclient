@@ -2,6 +2,7 @@ package helmclient
 
 import (
 	"context"
+	"time"
 
 	"github.com/giantswarm/microerror"
 	"github.com/prometheus/client_golang/prometheus"
@@ -53,9 +54,14 @@ func (c *Client) updateReleaseFromTarball(ctx context.Context, chartPath, namesp
 }
 
 func (options UpdateOptions) configure(action *action.Upgrade, namespace string) {
+	if options.Timeout == 0 {
+		options.Timeout = time.Second * defaultK8sClientTimeout
+	}
+
 	action.Force = options.Force
 	// Explicitly set MaxHistory to 10 which is also the default for Helm 3.
 	action.MaxHistory = 10
 	action.Namespace = namespace
+	action.Timeout = options.Timeout
 	action.Wait = options.Wait
 }

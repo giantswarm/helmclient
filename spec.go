@@ -2,6 +2,7 @@ package helmclient
 
 import (
 	"context"
+	"time"
 
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/client-go/discovery"
@@ -49,6 +50,10 @@ var (
 const (
 	// defaultHTTPClientTimeout is the timeout when pulling tarballs.
 	defaultHTTPClientTimeout = 5
+
+	// defaultK8sClientTimeout is the timeout when installing or upgrading
+	// helm releases.
+	defaultK8sClientTimeout = 300
 )
 
 // Interface describes the methods provided by the Helm client.
@@ -98,11 +103,13 @@ type RESTClientGetter interface {
 type InstallOptions struct {
 	Namespace   string
 	ReleaseName string
+	Timeout     time.Duration
 	Wait        bool
 }
 
 // UpdateOptions is the subset of supported options when updating Helm releases.
 type UpdateOptions struct {
-	Force bool
-	Wait  bool
+	Force   bool
+	Timeout time.Duration
+	Wait    bool
 }
