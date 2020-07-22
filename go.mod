@@ -9,7 +9,7 @@ require (
 	github.com/giantswarm/kubeconfig v0.2.1
 	github.com/giantswarm/microerror v0.2.0
 	github.com/giantswarm/micrologger v0.3.1
-	github.com/google/go-cmp v0.5.0
+	github.com/google/go-cmp v0.5.1
 	github.com/mholt/archiver v2.1.0+incompatible
 	github.com/nwaples/rardecode v1.1.0 // indirect
 	github.com/prometheus/client_golang v1.7.1
