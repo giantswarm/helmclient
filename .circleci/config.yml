@@ -1,8 +1,7 @@
 version: 2.1
 
 orbs:
-  architect: giantswarm/architect@dev:install-kind-binary
-
+  architect: giantswarm/architect@0.10.1
 
 workflows:
   test:
