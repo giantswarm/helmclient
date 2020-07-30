@@ -159,6 +159,21 @@ func TestBasic(t *testing.T) {
 		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("got release history for %#q", releaseName))
 	}
 
+	var updatedChartPath string
+
+	{
+		tarballURL := "https://giantswarm.github.io/default-catalog/test-app-0.1.2.tgz"
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("pulling tarball %#q", tarballURL))
+
+		updatedChartPath, err = config.HelmClient.PullChartTarball(ctx, tarballURL)
+		if err != nil {
+			t.Fatalf("could not pull tarball %#v", err)
+		}
+		defer os.Remove(chartPath)
+
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("pulled tarball %#q", tarballURL))
+	}
+
 	updatedValues := map[string]interface{}{
 		"another": "value",
 		"my":      "value",
@@ -170,7 +185,7 @@ func TestBasic(t *testing.T) {
 		updateOptions := helmclient.UpdateOptions{
 			Wait: true,
 		}
-		err = config.HelmClient.UpdateReleaseFromTarball(ctx, chartPath, metav1.NamespaceDefault, releaseName, updatedValues, updateOptions)
+		err = config.HelmClient.UpdateReleaseFromTarball(ctx, updatedChartPath, metav1.NamespaceDefault, releaseName, updatedValues, updateOptions)
 		if err != nil {
 			t.Fatalf("could not update chart %v", err)
 		}
@@ -193,7 +208,7 @@ func TestBasic(t *testing.T) {
 			Revision:    2,
 			Status:      helmclient.StatusDeployed,
 			Values:      updatedValues,
-			Version:     "0.1.1",
+			Version:     "0.1.2",
 		}
 
 		if releaseContent.LastDeployed.IsZero() {
