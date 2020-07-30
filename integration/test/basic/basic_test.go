@@ -68,6 +68,10 @@ func TestBasic(t *testing.T) {
 		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("loaded chart tarball %#q", chartPath))
 	}
 
+	values := map[string]interface{}{
+		"my": "value",
+	}
+
 	{
 		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("installing %#q", releaseName))
 
@@ -75,7 +79,7 @@ func TestBasic(t *testing.T) {
 			ReleaseName: releaseName,
 			Wait:        true,
 		}
-		err = config.HelmClient.InstallReleaseFromTarball(ctx, chartPath, metav1.NamespaceDefault, map[string]interface{}{}, installOptions)
+		err = config.HelmClient.InstallReleaseFromTarball(ctx, chartPath, metav1.NamespaceDefault, values, installOptions)
 		if err != nil {
 			t.Fatalf("could not install chart %v", err)
 		}
@@ -111,6 +115,7 @@ func TestBasic(t *testing.T) {
 			Name:        releaseName,
 			Revision:    1,
 			Status:      helmclient.StatusDeployed,
+			Values:      values,
 			Version:     "0.1.1",
 		}
 
@@ -154,8 +159,9 @@ func TestBasic(t *testing.T) {
 		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("got release history for %#q", releaseName))
 	}
 
-	values := map[string]interface{}{
+	updatedValues := map[string]interface{}{
 		"another": "value",
+		"my":      "value",
 	}
 
 	{
@@ -164,7 +170,7 @@ func TestBasic(t *testing.T) {
 		updateOptions := helmclient.UpdateOptions{
 			Wait: true,
 		}
-		err = config.HelmClient.UpdateReleaseFromTarball(ctx, chartPath, metav1.NamespaceDefault, releaseName, values, updateOptions)
+		err = config.HelmClient.UpdateReleaseFromTarball(ctx, chartPath, metav1.NamespaceDefault, releaseName, updatedValues, updateOptions)
 		if err != nil {
 			t.Fatalf("could not update chart %v", err)
 		}
@@ -186,10 +192,8 @@ func TestBasic(t *testing.T) {
 			Name:        releaseName,
 			Revision:    2,
 			Status:      helmclient.StatusDeployed,
-			Values: map[string]interface{}{
-				"another": "value",
-			},
-			Version: "0.1.1",
+			Values:      updatedValues,
+			Version:     "0.1.1",
 		}
 
 		if releaseContent.LastDeployed.IsZero() {
@@ -230,10 +234,11 @@ func TestBasic(t *testing.T) {
 
 		expectedContent := &helmclient.ReleaseContent{
 			AppVersion:  "v1.8.0",
-			Description: "Install complete",
+			Description: "Rollback to 1",
 			Name:        releaseName,
-			Revision:    1,
+			Revision:    3,
 			Status:      helmclient.StatusDeployed,
+			Values:      values,
 			Version:     "0.1.1",
 		}
 
