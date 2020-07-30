@@ -88,6 +88,10 @@ func (c *Client) PullChartTarball(ctx context.Context, tarballURL string) (strin
 	return c.pullChartTarballPath, nil
 }
 
+func (c *Client) Rollback(ctx context.Context, namespace, releaseName string, revision int, options helmclient.RollbackOptions) error {
+	return nil
+}
+
 func (c *Client) RunReleaseTest(ctx context.Context, namespace, releaseName string) error {
 	return nil
 }

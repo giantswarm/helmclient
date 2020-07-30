@@ -206,6 +206,51 @@ func TestBasic(t *testing.T) {
 	}
 
 	{
+		revision := 1
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("rolling back %#q to revision %d", releaseName, revision))
+
+		rollbackOptions := helmclient.RollbackOptions{
+			Wait: true,
+		}
+		err = config.HelmClient.Rollback(ctx, metav1.NamespaceDefault, releaseName, revision, rollbackOptions)
+		if err != nil {
+			t.Fatalf("could not rollback %v", err)
+		}
+
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("rolled back %#q", releaseName))
+	}
+
+	{
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("getting release content for %#q", releaseName))
+
+		releaseContent, err := config.HelmClient.GetReleaseContent(ctx, metav1.NamespaceDefault, releaseName)
+		if err != nil {
+			t.Fatalf("expected nil error got %v", err)
+		}
+
+		expectedContent := &helmclient.ReleaseContent{
+			AppVersion:  "v1.8.0",
+			Description: "Install complete",
+			Name:        releaseName,
+			Revision:    1,
+			Status:      helmclient.StatusDeployed,
+			Version:     "0.1.1",
+		}
+
+		if releaseContent.LastDeployed.IsZero() {
+			t.Fatalf("expected non zero last deployed got %v", releaseContent.LastDeployed)
+		}
+		// Reset to zero for comparison.
+		releaseContent.LastDeployed = time.Time{}
+
+		if !cmp.Equal(releaseContent, expectedContent) {
+			t.Fatalf("want matching ReleaseContent \n %s", cmp.Diff(releaseContent, expectedContent))
+		}
+
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("got release content for %#q", releaseName))
+	}
+
+	{
 		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("deleting release %#q", releaseName))
 
 		err := config.HelmClient.DeleteRelease(ctx, metav1.NamespaceDefault, releaseName)
