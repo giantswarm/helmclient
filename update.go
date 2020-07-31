@@ -58,6 +58,9 @@ func (options UpdateOptions) configure(action *action.Upgrade, namespace string)
 		options.Timeout = time.Second * defaultK8sClientTimeout
 	}
 
+	// Disable OpenAPI validation as some charts we need to deploy will contain
+	// validation errors.
+	action.DisableOpenAPIValidation = true
 	action.Force = options.Force
 	// Explicitly set MaxHistory to 10 which is also the default for Helm 3.
 	action.MaxHistory = 10
