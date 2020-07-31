@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add rollback support.
+
 ## [1.0.5] - 2020-07-17
 
 ### Added
