@@ -68,6 +68,10 @@ func TestBasic(t *testing.T) {
 		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("loaded chart tarball %#q", chartPath))
 	}
 
+	values := map[string]interface{}{
+		"my": "value",
+	}
+
 	{
 		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("installing %#q", releaseName))
 
@@ -75,7 +79,7 @@ func TestBasic(t *testing.T) {
 			ReleaseName: releaseName,
 			Wait:        true,
 		}
-		err = config.HelmClient.InstallReleaseFromTarball(ctx, chartPath, metav1.NamespaceDefault, map[string]interface{}{}, installOptions)
+		err = config.HelmClient.InstallReleaseFromTarball(ctx, chartPath, metav1.NamespaceDefault, values, installOptions)
 		if err != nil {
 			t.Fatalf("could not install chart %v", err)
 		}
@@ -111,6 +115,7 @@ func TestBasic(t *testing.T) {
 			Name:        releaseName,
 			Revision:    1,
 			Status:      helmclient.StatusDeployed,
+			Values:      values,
 			Version:     "0.1.1",
 		}
 
@@ -154,8 +159,24 @@ func TestBasic(t *testing.T) {
 		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("got release history for %#q", releaseName))
 	}
 
-	values := map[string]interface{}{
+	var updatedChartPath string
+
+	{
+		tarballURL := "https://giantswarm.github.io/default-catalog/test-app-0.1.2.tgz"
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("pulling tarball %#q", tarballURL))
+
+		updatedChartPath, err = config.HelmClient.PullChartTarball(ctx, tarballURL)
+		if err != nil {
+			t.Fatalf("could not pull tarball %#v", err)
+		}
+		defer os.Remove(chartPath)
+
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("pulled tarball %#q", tarballURL))
+	}
+
+	updatedValues := map[string]interface{}{
 		"another": "value",
+		"my":      "value",
 	}
 
 	{
@@ -164,7 +185,7 @@ func TestBasic(t *testing.T) {
 		updateOptions := helmclient.UpdateOptions{
 			Wait: true,
 		}
-		err = config.HelmClient.UpdateReleaseFromTarball(ctx, chartPath, metav1.NamespaceDefault, releaseName, values, updateOptions)
+		err = config.HelmClient.UpdateReleaseFromTarball(ctx, updatedChartPath, metav1.NamespaceDefault, releaseName, updatedValues, updateOptions)
 		if err != nil {
 			t.Fatalf("could not update chart %v", err)
 		}
@@ -186,10 +207,54 @@ func TestBasic(t *testing.T) {
 			Name:        releaseName,
 			Revision:    2,
 			Status:      helmclient.StatusDeployed,
-			Values: map[string]interface{}{
-				"another": "value",
-			},
-			Version: "0.1.1",
+			Values:      updatedValues,
+			Version:     "0.1.2",
+		}
+
+		if releaseContent.LastDeployed.IsZero() {
+			t.Fatalf("expected non zero last deployed got %v", releaseContent.LastDeployed)
+		}
+		// Reset to zero for comparison.
+		releaseContent.LastDeployed = time.Time{}
+
+		if !cmp.Equal(releaseContent, expectedContent) {
+			t.Fatalf("want matching ReleaseContent \n %s", cmp.Diff(releaseContent, expectedContent))
+		}
+
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("got release content for %#q", releaseName))
+	}
+
+	{
+		revision := 1
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("rolling back %#q to revision %d", releaseName, revision))
+
+		rollbackOptions := helmclient.RollbackOptions{
+			Wait: true,
+		}
+		err = config.HelmClient.Rollback(ctx, metav1.NamespaceDefault, releaseName, revision, rollbackOptions)
+		if err != nil {
+			t.Fatalf("could not rollback %v", err)
+		}
+
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("rolled back %#q", releaseName))
+	}
+
+	{
+		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("getting release content for %#q", releaseName))
+
+		releaseContent, err := config.HelmClient.GetReleaseContent(ctx, metav1.NamespaceDefault, releaseName)
+		if err != nil {
+			t.Fatalf("expected nil error got %v", err)
+		}
+
+		expectedContent := &helmclient.ReleaseContent{
+			AppVersion:  "v1.8.0",
+			Description: "Rollback to 1",
+			Name:        releaseName,
+			Revision:    3,
+			Status:      helmclient.StatusDeployed,
+			Values:      values,
+			Version:     "0.1.1",
 		}
 
 		if releaseContent.LastDeployed.IsZero() {

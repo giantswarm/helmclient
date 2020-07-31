@@ -77,6 +77,8 @@ type Interface interface {
 	// PullChartTarball downloads a tarball from the provided tarball URL,
 	// returning the file path.
 	PullChartTarball(ctx context.Context, tarballURL string) (string, error)
+	// Rollback executes a rollback to a previous revision of a Helm release.
+	Rollback(ctx context.Context, namespace, releaseName string, revision int, options RollbackOptions) error
 	// RunReleaseTest runs the tests for a Helm Release. This is the same
 	// action as running the helm test command.
 	RunReleaseTest(ctx context.Context, namespace, releaseName string) error
@@ -105,6 +107,14 @@ type InstallOptions struct {
 	ReleaseName string
 	Timeout     time.Duration
 	Wait        bool
+}
+
+// RollbackOptions is the subset of supported options when rollback back Helm releases.
+type RollbackOptions struct {
+	Force   bool
+	Timeout time.Duration
+	Version int
+	Wait    bool
 }
 
 // UpdateOptions is the subset of supported options when updating Helm releases.
