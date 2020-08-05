@@ -17,8 +17,8 @@ require (
 	github.com/ulikunitz/xz v0.5.7 // indirect
 	gopkg.in/yaml.v2 v2.3.0
 	helm.sh/helm/v3 v3.1.3
-	k8s.io/apimachinery v0.17.2
-	k8s.io/client-go v0.17.2
+	k8s.io/apimachinery v0.18.6
+	k8s.io/client-go v0.18.6
 	rsc.io/letsencrypt v0.0.3 // indirect
-	sigs.k8s.io/controller-runtime v0.4.0
+	sigs.k8s.io/controller-runtime v0.6.2
 )
