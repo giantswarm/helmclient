@@ -12,7 +12,7 @@ import (
 	"github.com/google/go-cmp/cmp"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/giantswarm/helmclient"
+	"github.com/giantswarm/helmclient/v2"
 )
 
 func TestBasic(t *testing.T) {

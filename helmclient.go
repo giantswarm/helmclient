@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/giantswarm/k8sclient/v3/pkg/k8sclient"
-	"github.com/giantswarm/kubeconfig"
+	"github.com/giantswarm/k8sclient/v4/pkg/k8sclient"
+	"github.com/giantswarm/kubeconfig/v2"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 	"github.com/spf13/afero"

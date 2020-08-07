@@ -11,8 +11,8 @@ import (
 	"github.com/giantswarm/microerror"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
-	"github.com/giantswarm/helmclient"
-	"github.com/giantswarm/helmclient/integration/charttarball"
+	"github.com/giantswarm/helmclient/v2"
+	"github.com/giantswarm/helmclient/v2/integration/charttarball"
 )
 
 func TestBasic(t *testing.T) {

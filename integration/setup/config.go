@@ -3,12 +3,12 @@
 package setup
 
 import (
-	"github.com/giantswarm/k8sclient/v3/pkg/k8sclient"
+	"github.com/giantswarm/k8sclient/v4/pkg/k8sclient"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 
-	"github.com/giantswarm/helmclient"
-	"github.com/giantswarm/helmclient/integration/env"
+	"github.com/giantswarm/helmclient/v2"
+	"github.com/giantswarm/helmclient/v2/integration/env"
 )
 
 type Config struct {

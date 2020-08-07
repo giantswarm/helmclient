@@ -3,7 +3,7 @@ package helmclienttest
 import (
 	"context"
 
-	"github.com/giantswarm/helmclient"
+	"github.com/giantswarm/helmclient/v2"
 )
 
 type Config struct {
