@@ -1,13 +1,13 @@
-module github.com/giantswarm/helmclient
+module github.com/giantswarm/helmclient/v2
 
 go 1.14
 
 require (
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/giantswarm/backoff v0.2.0
-	github.com/giantswarm/k8sclient/v3 v3.1.3-0.20200724085258-345602646ea8
-	github.com/giantswarm/kubeconfig v0.2.2-0.20200724082502-5a2c86aaf684
-	github.com/giantswarm/microerror v0.2.0
+	github.com/giantswarm/k8sclient/v4 v4.0.0-20200806115259-2d3b230ace59
+	github.com/giantswarm/kubeconfig/v2 v2.0.0-20200806114529-9ef53912cf03
+	github.com/giantswarm/microerror v0.2.1
 	github.com/giantswarm/micrologger v0.3.1
 	github.com/google/go-cmp v0.5.1
 	github.com/mholt/archiver v2.1.0+incompatible
