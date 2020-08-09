@@ -223,7 +223,6 @@ github.com/giantswarm/k8sclient/v4 v4.0.0-20200806115259-2d3b230ace59 h1:1coxk7f
 github.com/giantswarm/k8sclient/v4 v4.0.0-20200806115259-2d3b230ace59/go.mod h1:rz3zvIDi304gTDHSludo/0x7xyTi3cV5nYIXg0kW8HA=
 github.com/giantswarm/kubeconfig/v2 v2.0.0-20200806114529-9ef53912cf03 h1:jWGr10DtK8Xq1QNXDxZrVKYXSMuPDLYnV7D+ylHjwdM=
 github.com/giantswarm/kubeconfig/v2 v2.0.0-20200806114529-9ef53912cf03/go.mod h1:E+vBeEjNMa92d5PVPjXKVb7bOBbWzwlKOr2UcDZkGIE=
-github.com/giantswarm/microerror v0.2.0 h1:SaE7S34mp/wEiQkgtPiq8wQbNUTCj1gjiCWPjO3wgJo=
 github.com/giantswarm/microerror v0.2.0/go.mod h1:1YtJq/m7Vlq1Y6NP7B+SODOKCGlG7e5wctV2OoE9n34=
 github.com/giantswarm/microerror v0.2.1 h1:4y88WstqZ4OSSq6T/TvTJaefRe/JbrbuwoWQNVxOOyU=
 github.com/giantswarm/microerror v0.2.1/go.mod h1:1YtJq/m7Vlq1Y6NP7B+SODOKCGlG7e5wctV2OoE9n34=

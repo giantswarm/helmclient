@@ -7,8 +7,8 @@ import (
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 
-	"github.com/giantswarm/helmclient/v2"
 	"github.com/giantswarm/helmclient/v2/integration/env"
+	"github.com/giantswarm/helmclient/v2/pkg/helmclient"
 )
 
 type Config struct {
