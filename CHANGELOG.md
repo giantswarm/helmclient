@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2020-08-10
+
 ### Changed
 
 - Updated Kubernetes dependencies to v1.18.5.
@@ -84,7 +86,8 @@ validation errors.
 
 - First release.
 
-[Unreleased]: https://github.com/giantswarm/helmclient/compare/v1.0.6...HEAD
+[Unreleased]: https://github.com/giantswarm/helmclient/compare/v2.0.0...HEAD
+[2.0.0]: https://github.com/giantswarm/helmclient/compare/v1.0.6...v2.0.0
 [1.0.6]: https://github.com/giantswarm/helmclient/compare/v1.0.5...v1.0.6
 [1.0.5]: https://github.com/giantswarm/helmclient/compare/v1.0.4...v1.0.5
 [1.0.4]: https://github.com/giantswarm/helmclient/compare/v1.0.3...v1.0.4
