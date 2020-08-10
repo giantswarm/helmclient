@@ -13,7 +13,7 @@ require (
 	github.com/mholt/archiver v2.1.0+incompatible
 	github.com/nwaples/rardecode v1.1.0 // indirect
 	github.com/prometheus/client_golang v1.7.1
-	github.com/spf13/afero v1.3.3
+	github.com/spf13/afero v1.3.4
 	github.com/ulikunitz/xz v0.5.7 // indirect
 	gopkg.in/yaml.v2 v2.3.0
 	helm.sh/helm/v3 v3.2.4
