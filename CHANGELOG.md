@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Disable OpenAPI validation as some charts we need to deploy will contain
+validation errors.
+
 ## [1.0.6] - 2020-08-05
 
 ### Added
