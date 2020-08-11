@@ -213,11 +213,7 @@ func IsRedirectionError(err error) bool {
 
 	c := microerror.Cause(err)
 
-	if c == redirectionError {
-		return true
-	}
-
-	return false
+	return c == redirectionError
 }
 
 var releaseAlreadyExistsError = &microerror.Error{
