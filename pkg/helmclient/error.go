@@ -201,6 +201,25 @@ func IsPullChartTimeout(err error) bool {
 	return netErr.Timeout()
 }
 
+var redirectionError = &microerror.Error{
+	Kind: "redirectionError",
+}
+
+// IsRedirectionError asserts redirectionError.
+func IsRedirectionError(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	c := microerror.Cause(err)
+
+	if c == redirectionError {
+		return true
+	}
+
+	return false
+}
+
 var releaseAlreadyExistsError = &microerror.Error{
 	Kind: "releaseAlreadyExistsError",
 }

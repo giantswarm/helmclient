@@ -77,6 +77,16 @@ func (c *Client) doFile(ctx context.Context, req *http.Request) (string, error) 
 				return microerror.Mask(err)
 			}
 
+			// Github Pages 307 returns location headers with address for redirection.
+			if resp.StatusCode == http.StatusMovedPermanently {
+				req.URL, err = resp.Location()
+				if err != nil {
+					return backoff.Permanent(microerror.Mask(err))
+				}
+				c.logger.LogCtx(ctx, "level", "debug", "message", "triggered")
+				return microerror.Mask(redirectionError)
+			}
+
 			// Github Pages 404 produces full HTML page which obscures the logs.
 			if resp.StatusCode == http.StatusNotFound {
 				return backoff.Permanent(microerror.Maskf(pullChartNotFoundError, fmt.Sprintf("got StatusCode %d for url %#q", resp.StatusCode, req.URL.String())))
