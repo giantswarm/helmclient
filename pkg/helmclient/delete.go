@@ -21,6 +21,8 @@ func (c *Client) DeleteRelease(ctx context.Context, namespace, releaseName strin
 		return microerror.Mask(err)
 	}
 
+	eventCounter.WithLabelValues(eventName).Inc()
+
 	return nil
 }
 

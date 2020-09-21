@@ -23,6 +23,8 @@ func (c *Client) InstallReleaseFromTarball(ctx context.Context, chartPath, names
 		return microerror.Mask(err)
 	}
 
+	eventCounter.WithLabelValues(eventName).Inc()
+
 	return nil
 }
 

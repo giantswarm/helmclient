@@ -24,6 +24,8 @@ func (c *Client) UpdateReleaseFromTarball(ctx context.Context, chartPath, namesp
 		return microerror.Mask(err)
 	}
 
+	eventCounter.WithLabelValues(eventName).Inc()
+
 	return nil
 }
 

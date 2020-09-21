@@ -22,6 +22,8 @@ func (c *Client) Rollback(ctx context.Context, namespace, releaseName string, re
 		return microerror.Mask(err)
 	}
 
+	eventCounter.WithLabelValues(eventName).Inc()
+
 	return nil
 }
 
