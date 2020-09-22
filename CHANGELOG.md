@@ -7,9 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added event count metrics for delete, install, rollback and update of Helm releases.
+
 ### Changed
 
 - Fix structs merging error.
+
 
 ## [2.1.1] - 2020-09-21
 
