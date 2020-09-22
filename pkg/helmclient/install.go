@@ -15,15 +15,16 @@ func (c *Client) InstallReleaseFromTarball(ctx context.Context, chartPath, names
 	eventName := "install_release_from_tarball"
 
 	t := prometheus.NewTimer(histogram.WithLabelValues(eventName))
-	defer t.ObserveDuration()
+	defer func() {
+		eventCounter.WithLabelValues(eventName).Inc()
+		t.ObserveDuration()
+	}()
 
 	err := c.installReleaseFromTarball(ctx, chartPath, namespace, values, options)
 	if err != nil {
 		errorGauge.WithLabelValues(eventName).Inc()
 		return microerror.Mask(err)
 	}
-
-	eventCounter.WithLabelValues(eventName).Inc()
 
 	return nil
 }
