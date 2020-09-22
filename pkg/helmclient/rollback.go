@@ -14,15 +14,16 @@ func (c *Client) Rollback(ctx context.Context, namespace, releaseName string, re
 	eventName := "rollback"
 
 	t := prometheus.NewTimer(histogram.WithLabelValues(eventName))
-	defer t.ObserveDuration()
+	defer func() {
+		eventCounter.WithLabelValues(eventName).Inc()
+		t.ObserveDuration()
+	}()
 
 	err := c.rollback(ctx, namespace, releaseName, revision, options)
 	if err != nil {
 		errorGauge.WithLabelValues(eventName).Inc()
 		return microerror.Mask(err)
 	}
-
-	eventCounter.WithLabelValues(eventName).Inc()
 
 	return nil
 }
