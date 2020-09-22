@@ -16,7 +16,7 @@ func (c *Client) DeleteRelease(ctx context.Context, namespace, releaseName strin
 	defer func() {
 		eventCounter.WithLabelValues(eventName).Inc()
 		t.ObserveDuration()
-	}(
+	}()
 
 	err := c.deleteRelease(ctx, namespace, releaseName)
 	if err != nil {
