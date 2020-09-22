@@ -10,6 +10,8 @@ require (
 	github.com/giantswarm/microerror v0.2.1
 	github.com/giantswarm/micrologger v0.3.1
 	github.com/google/go-cmp v0.5.2
+	// Use mergo 0.3.11 due to bug in 0.3.9 merging Go structs.
+	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/mholt/archiver v2.1.0+incompatible
 	github.com/nwaples/rardecode v1.1.0 // indirect
 	github.com/prometheus/client_golang v1.7.1
