@@ -19,6 +19,15 @@ var (
 		},
 		[]string{"event"},
 	)
+	eventCounter = prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Namespace: PrometheusNamespace,
+			Subsystem: PrometheusSubsystem,
+			Name:      "event_total",
+			Help:      "Number of helmclient events.",
+		},
+		[]string{"event"},
+	)
 	histogram = prometheus.NewHistogramVec(
 		prometheus.HistogramOpts{
 			Namespace: PrometheusNamespace,
@@ -32,5 +41,6 @@ var (
 
 func init() {
 	prometheus.MustRegister(errorGauge)
+	prometheus.MustRegister(eventCounter)
 	prometheus.MustRegister(histogram)
 }
