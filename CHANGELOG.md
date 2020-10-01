@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added release name as a label into the event count metrics.
+
 ## [2.1.3] - 2020-09-24
 
 ### Security
