@@ -15,7 +15,7 @@ func (c *Client) Rollback(ctx context.Context, namespace, releaseName string, re
 
 	t := prometheus.NewTimer(histogram.WithLabelValues(eventName))
 	defer func() {
-		eventCounter.WithLabelValues(eventName).Inc()
+		eventCounter.WithLabelValues(eventName, releaseName).Inc()
 		t.ObserveDuration()
 	}()
 

@@ -16,7 +16,7 @@ func (c *Client) InstallReleaseFromTarball(ctx context.Context, chartPath, names
 
 	t := prometheus.NewTimer(histogram.WithLabelValues(eventName))
 	defer func() {
-		eventCounter.WithLabelValues(eventName).Inc()
+		eventCounter.WithLabelValues(eventName, options.ReleaseName).Inc()
 		t.ObserveDuration()
 	}()
 
