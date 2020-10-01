@@ -14,7 +14,7 @@ func (c *Client) DeleteRelease(ctx context.Context, namespace, releaseName strin
 
 	t := prometheus.NewTimer(histogram.WithLabelValues(eventName))
 	defer func() {
-		eventCounter.WithLabelValues(eventName).Inc()
+		eventCounter.WithLabelValues(eventName, releaseName).Inc()
 		t.ObserveDuration()
 	}()
 

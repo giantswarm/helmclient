@@ -26,7 +26,7 @@ var (
 			Name:      "event_total",
 			Help:      "Number of helmclient events.",
 		},
-		[]string{"event"},
+		[]string{"event", "release"},
 	)
 	histogram = prometheus.NewHistogramVec(
 		prometheus.HistogramOpts{
