@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.0.0] - 2020-10-27
+
 ### Changed
 
 - Updated k8sclient to v5.
@@ -127,7 +129,8 @@ validation errors.
 
 - First release.
 
-[Unreleased]: https://github.com/giantswarm/helmclient/compare/v2.1.4...HEAD
+[Unreleased]: https://github.com/giantswarm/helmclient/compare/v3.0.0...HEAD
+[3.0.0]: https://github.com/giantswarm/helmclient/compare/v2.1.4...v3.0.0
 [2.1.4]: https://github.com/giantswarm/helmclient/compare/v2.1.3...v2.1.4
 [2.1.3]: https://github.com/giantswarm/helmclient/compare/v2.1.2...v2.1.3
 [2.1.2]: https://github.com/giantswarm/helmclient/compare/v2.1.1...v2.1.2
