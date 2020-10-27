@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/giantswarm/helmclient/v2/integration/setup"
+	"github.com/giantswarm/helmclient/v3/integration/setup"
 )
 
 var (
