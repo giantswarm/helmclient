@@ -17,9 +17,9 @@ require (
 	github.com/spf13/afero v1.4.1
 	github.com/ulikunitz/xz v0.5.7 // indirect
 	gopkg.in/yaml.v2 v2.3.0
-	helm.sh/helm/v3 v3.3.4
-	k8s.io/apimachinery v0.18.9
-	k8s.io/client-go v0.18.9
+	helm.sh/helm/v3 v3.4.0
+	k8s.io/apimachinery v0.19.2
+	k8s.io/client-go v0.19.2
 	rsc.io/letsencrypt v0.0.3 // indirect
 	sigs.k8s.io/controller-runtime v0.6.3
 )
