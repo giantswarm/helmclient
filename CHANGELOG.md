@@ -7,7 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Validate the cache to prevent pulling stale cache objects ([giantswarm/giantswarm/9747](https://github.com/giantswarm/giantswarm/issues/9747))
+### Added
+
+- Validate the cache to prevent pulling stale cache objects.
+
+### Fixed
+
+- Add replace for moby v20.10.0-beta1 to fix build issue on darwin.
 
 ## [3.0.0] - 2020-10-27
 
