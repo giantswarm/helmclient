@@ -126,6 +126,7 @@ func (c *Client) newRequest(method, url string) (*http.Request, error) {
 	}
 
 	req.Header.Set("Accept", "application/json")
+	req.Header.Set("Cache-Control", "no-cache")
 
 	return req, nil
 }

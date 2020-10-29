@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Validate the cache to prevent pulling stale cache objects ([giantswarm/giantswarm/9747](https://github.com/giantswarm/giantswarm/issues/9747))
+
 ## [3.0.0] - 2020-10-27
 
 ### Changed
