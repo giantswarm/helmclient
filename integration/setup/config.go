@@ -3,16 +3,17 @@
 package setup
 
 import (
-	"github.com/giantswarm/k8sclient/v5/pkg/k8sclient"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/tools/clientcmd"
 
 	"github.com/giantswarm/helmclient/v3/integration/env"
 	"github.com/giantswarm/helmclient/v3/pkg/helmclient"
 )
 
 type Config struct {
-	CPK8sClients *k8sclient.Clients
+	CPK8sClients kubernetes.Interface
 	HelmClient   helmclient.Interface
 	Logger       micrologger.Logger
 }
@@ -30,25 +31,23 @@ func NewConfig() (Config, error) {
 		}
 	}
 
-	var cpK8sClients *k8sclient.Clients
-	{
-		c := k8sclient.ClientsConfig{
-			Logger: logger,
+	config, err := clientcmd.BuildConfigFromFlags("", env.KubeConfigPath())
+	if err != nil {
+		return Config{}, microerror.Mask(err)
+	}
 
-			KubeConfigPath: env.KubeConfigPath(),
-		}
-
-		cpK8sClients, err = k8sclient.NewClients(c)
-		if err != nil {
-			return Config{}, microerror.Mask(err)
-		}
+	k8sClient, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		return Config{}, microerror.Mask(err)
 	}
 
 	var helmClient *helmclient.Client
 	{
 		c := helmclient.Config{
-			K8sClient: cpK8sClients,
-			Logger:    logger,
+			K8sClient:  k8sClient,
+			Logger:     logger,
+			RestClient: k8sClient.RESTClient(),
+			RestConfig: config,
 		}
 
 		helmClient, err = helmclient.New(c)
@@ -58,7 +57,7 @@ func NewConfig() (Config, error) {
 	}
 
 	c := Config{
-		CPK8sClients: cpK8sClients,
+		CPK8sClients: k8sClient,
 		HelmClient:   helmClient,
 		Logger:       logger,
 	}

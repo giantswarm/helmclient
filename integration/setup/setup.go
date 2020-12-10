@@ -8,10 +8,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/giantswarm/k8sclient/v5/pkg/k8sclient"
 	"github.com/giantswarm/microerror"
-
-	"github.com/giantswarm/helmclient/v3/integration/env"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 func Setup(m *testing.M, config Config) {
@@ -28,34 +27,17 @@ func Setup(m *testing.M, config Config) {
 
 func setup(ctx context.Context, m *testing.M, config Config) (int, error) {
 	var err error
-	teardown := !env.CircleCI() && !env.KeepResources()
-
-	var k8sSetup *k8sclient.Setup
-	{
-		c := k8sclient.SetupConfig{
-			Clients: config.CPK8sClients,
-			Logger:  config.Logger,
-		}
-
-		k8sSetup, err = k8sclient.NewSetup(c)
-		if err != nil {
-			return 1, microerror.Mask(err)
-		}
-	}
-
 	{
 		namespace := "giantswarm"
-		err = k8sSetup.EnsureNamespaceCreated(ctx, namespace)
+		ns := &corev1.Namespace{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: namespace,
+			},
+		}
+
+		_, err = config.CPK8sClients.CoreV1().Namespaces().Create(ctx, ns, metav1.CreateOptions{})
 		if err != nil {
 			return 1, microerror.Mask(err)
-		}
-		if teardown {
-			defer func() {
-				err := k8sSetup.EnsureNamespaceDeleted(ctx, namespace)
-				if err != nil {
-					config.Logger.LogCtx(ctx, "level", "error", "message", fmt.Sprintf("failed to delete namespace %#q", namespace), "stack", fmt.Sprintf("%#v", err))
-				}
-			}()
 		}
 	}
 
