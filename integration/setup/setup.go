@@ -10,6 +10,7 @@ import (
 
 	"github.com/giantswarm/microerror"
 	corev1 "k8s.io/api/core/v1"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -36,7 +37,9 @@ func setup(ctx context.Context, m *testing.M, config Config) (int, error) {
 		}
 
 		_, err = config.CPK8sClients.CoreV1().Namespaces().Create(ctx, ns, metav1.CreateOptions{})
-		if err != nil {
+		if apierrors.IsAlreadyExists(err) {
+			// no-op
+		} else if err != nil {
 			return 1, microerror.Mask(err)
 		}
 	}

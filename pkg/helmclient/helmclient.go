@@ -95,6 +95,8 @@ func New(config Config) (*Client, error) {
 		httpClient: httpClient,
 		k8sClient:  config.K8sClient,
 		logger:     config.Logger,
+		restClient: config.RestClient,
+		restConfig: config.RestConfig,
 	}
 
 	return c, nil
