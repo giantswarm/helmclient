@@ -17,7 +17,7 @@ require (
 	github.com/prometheus/client_golang v1.8.0
 	github.com/spf13/afero v1.4.1
 	github.com/ulikunitz/xz v0.5.7 // indirect
-	gopkg.in/yaml.v2 v2.4.0
+	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gotest.tools/v3 v3.0.3 // indirect
 	helm.sh/helm/v3 v3.3.4
 	k8s.io/apimachinery v0.18.9
