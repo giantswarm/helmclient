@@ -5,21 +5,18 @@ go 1.14
 require (
 	github.com/dsnet/compress v0.0.1 // indirect
 	github.com/giantswarm/backoff v0.2.0
-	github.com/giantswarm/k8sclient/v5 v5.0.0
 	github.com/giantswarm/kubeconfig/v3 v3.0.0
 	github.com/giantswarm/microerror v0.3.0
 	github.com/giantswarm/micrologger v0.4.0
 	github.com/google/go-cmp v0.5.4
-	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/mholt/archiver v2.1.0+incompatible
-	github.com/moby/term v0.0.0-20200915141129-7f0af18e79f2 // indirect
+	github.com/moby/term v0.0.0-20201110203204-bea5bbe245bf // indirect
 	github.com/nwaples/rardecode v1.1.0 // indirect
 	github.com/prometheus/client_golang v1.8.0
 	github.com/spf13/afero v1.4.1
-	github.com/ulikunitz/xz v0.5.7 // indirect
-	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gotest.tools/v3 v3.0.3 // indirect
 	helm.sh/helm/v3 v3.3.4
+	k8s.io/api v0.18.9
 	k8s.io/apimachinery v0.18.9
 	k8s.io/client-go v0.18.9
 	rsc.io/letsencrypt v0.0.3 // indirect
