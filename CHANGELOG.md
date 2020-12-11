@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Get `k8sClient`, `restClient` and `restConfig` from generator.
+
 ### Removed
 
 - Delete `MergeValue` function.

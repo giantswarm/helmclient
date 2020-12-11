@@ -6,8 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/giantswarm/k8sclient/v5/pkg/k8sclient"
-	"github.com/giantswarm/kubeconfig/v3"
+	"github.com/giantswarm/kubeconfig/v4"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 	"github.com/spf13/afero"
@@ -19,6 +18,7 @@ import (
 	"k8s.io/apimachinery/pkg/api/meta"
 	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/discovery/cached/memory"
+	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
@@ -32,8 +32,10 @@ type Config struct {
 	// helm client here manually might only be sufficient for testing or
 	// whenever you know what you do.
 	HelmClient Interface
-	K8sClient  k8sclient.Interface
+	K8sClient  kubernetes.Interface
 	Logger     micrologger.Logger
+	RestClient rest.Interface
+	RestConfig *rest.Config
 
 	HTTPClientTimeout time.Duration
 }
@@ -43,8 +45,10 @@ type Client struct {
 	fs         afero.Fs
 	helmClient Interface
 	httpClient *http.Client
-	k8sClient  k8sclient.Interface
+	k8sClient  kubernetes.Interface
 	logger     micrologger.Logger
+	restClient rest.Interface
+	restConfig *rest.Config
 }
 
 // debugLogFunc allows us to pass log messages from helm to micrologger.
@@ -63,11 +67,17 @@ func New(config Config) (*Client, error) {
 	if config.Fs == nil {
 		config.Fs = afero.NewOsFs()
 	}
+	if config.K8sClient == nil {
+		return nil, microerror.Maskf(invalidConfigError, "%T.K8sClient must not be empty", config)
+	}
 	if config.Logger == nil {
 		return nil, microerror.Maskf(invalidConfigError, "%T.Logger must not be empty", config)
 	}
-	if config.K8sClient == nil {
-		return nil, microerror.Maskf(invalidConfigError, "%T.K8sClient must not be empty", config)
+	if config.RestClient == nil {
+		return nil, microerror.Maskf(invalidConfigError, "%T.RestClient must not be empty", config)
+	}
+	if config.RestConfig == nil {
+		return nil, microerror.Maskf(invalidConfigError, "%T.RestConfig must not be empty", config)
 	}
 
 	if config.HTTPClientTimeout == 0 {
@@ -85,6 +95,8 @@ func New(config Config) (*Client, error) {
 		httpClient: httpClient,
 		k8sClient:  config.K8sClient,
 		logger:     config.Logger,
+		restClient: config.RestClient,
+		restConfig: config.RestConfig,
 	}
 
 	return c, nil
@@ -102,7 +114,7 @@ func (c *Client) debugLogFunc(ctx context.Context) debugLogFunc {
 
 // newActionConfig creates a config for the Helm action package.
 func (c *Client) newActionConfig(ctx context.Context, namespace string) (*action.Configuration, error) {
-	restClient, err := newRESTClientGetter(ctx, c.k8sClient, namespace)
+	restClient, err := c.newRESTClientGetter(ctx, namespace)
 	if err != nil {
 		return nil, microerror.Mask(err)
 	}
@@ -111,7 +123,7 @@ func (c *Client) newActionConfig(ctx context.Context, namespace string) (*action
 	kubeClient := kube.New(restClient)
 
 	// Use secrets driver for release storage.
-	s := driver.NewSecrets(c.k8sClient.K8sClient().CoreV1().Secrets(namespace))
+	s := driver.NewSecrets(c.k8sClient.CoreV1().Secrets(namespace))
 	store := storage.Init(s)
 
 	return &action.Configuration{
@@ -122,26 +134,22 @@ func (c *Client) newActionConfig(ctx context.Context, namespace string) (*action
 	}, nil
 }
 
-func newRESTClientGetter(ctx context.Context, k8sClient k8sclient.Interface, namespace string) (*restClientGetter, error) {
-	if k8sClient == nil {
-		return nil, microerror.Maskf(invalidConfigError, "k8sClient must not be empty")
-	}
-
+func (c *Client) newRESTClientGetter(ctx context.Context, namespace string) (*restClientGetter, error) {
 	if namespace == "" {
 		return nil, microerror.Maskf(invalidConfigError, "namespace must not be empty")
 	}
 
 	// Create a discovery client using the in memory cache.
-	discoveryClient := discovery.NewDiscoveryClient(k8sClient.RESTClient())
+	discoveryClient := discovery.NewDiscoveryClient(c.restClient)
 	cachedDiscoveryClient := memory.NewMemCacheClient(discoveryClient)
 
-	restMapper, err := apiutil.NewDynamicRESTMapper(rest.CopyConfig(k8sClient.RESTConfig()))
+	restMapper, err := apiutil.NewDynamicRESTMapper(rest.CopyConfig(c.restConfig))
 	if err != nil {
 		return nil, microerror.Mask(err)
 	}
 
 	// Convert REST config back to a kubeconfig for the raw kubeconfig loader.
-	bytes, err := kubeconfig.NewKubeConfigForRESTConfig(ctx, k8sClient.RESTConfig(), "helmclient", namespace)
+	bytes, err := kubeconfig.NewKubeConfigForRESTConfig(ctx, c.restConfig, "helmclient", namespace)
 	if err != nil {
 		return nil, microerror.Mask(err)
 	}
@@ -154,7 +162,7 @@ func newRESTClientGetter(ctx context.Context, k8sClient k8sclient.Interface, nam
 	return &restClientGetter{
 		discoveryClient:     cachedDiscoveryClient,
 		rawKubeConfigLoader: rawKubeConfigLoader,
-		restConfig:          k8sClient.RESTConfig(),
+		restConfig:          c.restConfig,
 		restMapper:          restMapper,
 	}, nil
 }
