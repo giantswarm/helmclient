@@ -1,4 +1,4 @@
-module github.com/giantswarm/helmclient/v3
+module github.com/giantswarm/helmclient/v4
 
 go 1.14
 
