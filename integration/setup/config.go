@@ -8,8 +8,8 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 
-	"github.com/giantswarm/helmclient/v3/integration/env"
-	"github.com/giantswarm/helmclient/v3/pkg/helmclient"
+	"github.com/giantswarm/helmclient/v4/integration/env"
+	"github.com/giantswarm/helmclient/v4/pkg/helmclient"
 )
 
 type Config struct {
