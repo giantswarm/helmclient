@@ -13,7 +13,7 @@ require (
 	github.com/moby/term v0.0.0-20201110203204-bea5bbe245bf // indirect
 	github.com/nwaples/rardecode v1.1.0 // indirect
 	github.com/prometheus/client_golang v1.8.0
-	github.com/spf13/afero v1.4.1
+	github.com/spf13/afero v1.5.1
 	gotest.tools/v3 v3.0.3 // indirect
 	helm.sh/helm/v3 v3.3.4
 	k8s.io/api v0.18.9
