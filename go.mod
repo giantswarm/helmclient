@@ -7,7 +7,7 @@ require (
 	github.com/giantswarm/backoff v0.2.0
 	github.com/giantswarm/kubeconfig/v4 v4.0.0
 	github.com/giantswarm/microerror v0.3.0
-	github.com/giantswarm/micrologger v0.4.0
+	github.com/giantswarm/micrologger v0.5.0
 	github.com/google/go-cmp v0.5.4
 	github.com/mholt/archiver v2.1.0+incompatible
 	github.com/moby/term v0.0.0-20201110203204-bea5bbe245bf // indirect
