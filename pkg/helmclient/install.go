@@ -67,4 +67,5 @@ func (options InstallOptions) configure(action *action.Install, namespace string
 	action.ReleaseName = options.ReleaseName
 	action.Timeout = options.Timeout
 	action.Wait = options.Wait
+	action.SkipCRDs = options.SkipCRDs
 }
