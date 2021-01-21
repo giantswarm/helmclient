@@ -107,6 +107,7 @@ type InstallOptions struct {
 	ReleaseName string
 	Timeout     time.Duration
 	Wait        bool
+	SkipCRDs    bool
 }
 
 // RollbackOptions is the subset of supported options when rollback back Helm releases.
