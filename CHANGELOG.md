@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.2.1] - 2021-01-26
+
 - Update controller-runtime version
 
 ## [4.2.0] - 2021-01-26
@@ -161,7 +163,8 @@ validation errors.
 
 - First release.
 
-[Unreleased]: https://github.com/giantswarm/helmclient/compare/v4.2.0...HEAD
+[Unreleased]: https://github.com/giantswarm/helmclient/compare/v4.2.1...HEAD
+[4.2.1]: https://github.com/giantswarm/helmclient/compare/v4.2.0...v4.2.1
 [4.2.0]: https://github.com/giantswarm/helmclient/compare/v4.1.0...v4.2.0
 [4.1.0]: https://github.com/giantswarm/helmclient/compare/v4.0.0...v4.1.0
 [4.0.0]: https://github.com/giantswarm/helmclient/compare/v3.0.1...v4.0.0
