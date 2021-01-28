@@ -54,6 +54,10 @@ const (
 	// defaultK8sClientTimeout is the timeout when installing or upgrading
 	// helm releases.
 	defaultK8sClientTimeout = 300
+
+	// maxHistory is set to 10 when updating Helm releases and getting the
+	// history for a Helm release.
+	maxHistory = 10
 )
 
 // Interface describes the methods provided by the Helm client.
@@ -67,7 +71,7 @@ type Interface interface {
 	// GetReleaseHistory gets the current installed version of the Helm Release.
 	// The releaseName is the name of the Helm Release that is set when the Helm
 	// Chart is installed.
-	GetReleaseHistory(ctx context.Context, namespace, releaseName string) (*ReleaseHistory, error)
+	GetReleaseHistory(ctx context.Context, namespace, releaseName string) ([]ReleaseHistory, error)
 	// InstallReleaseFromTarball installs a Helm Chart packaged in the given tarball.
 	InstallReleaseFromTarball(ctx context.Context, chartPath, namespace string, values map[string]interface{}, options InstallOptions) error
 	// ListReleaseContents gets the current status of all Helm Releases.

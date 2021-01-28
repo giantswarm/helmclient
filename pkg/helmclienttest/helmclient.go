@@ -9,7 +9,7 @@ import (
 type Config struct {
 	DefaultError          error
 	DefaultReleaseContent *helmclient.ReleaseContent
-	DefaultReleaseHistory *helmclient.ReleaseHistory
+	DefaultReleaseHistory []helmclient.ReleaseHistory
 	LoadChartError        error
 	LoadChartResponse     helmclient.Chart
 	PullChartTarballError error
@@ -19,7 +19,7 @@ type Config struct {
 type Client struct {
 	defaultError          error
 	defaultReleaseContent *helmclient.ReleaseContent
-	defaultReleaseHistory *helmclient.ReleaseHistory
+	defaultReleaseHistory []helmclient.ReleaseHistory
 	loadChartError        error
 	loadChartResponse     helmclient.Chart
 	pullChartTarballError error
@@ -56,7 +56,7 @@ func (c *Client) GetReleaseContent(ctx context.Context, namespace, releaseName s
 	return c.defaultReleaseContent, nil
 }
 
-func (c *Client) GetReleaseHistory(ctx context.Context, namespace, releaseName string) (*helmclient.ReleaseHistory, error) {
+func (c *Client) GetReleaseHistory(ctx context.Context, namespace, releaseName string) ([]helmclient.ReleaseHistory, error) {
 	if c.defaultError != nil {
 		return nil, c.defaultError
 	}

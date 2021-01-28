@@ -66,7 +66,7 @@ func (options UpdateOptions) configure(action *action.Upgrade, namespace string)
 	action.DisableOpenAPIValidation = true
 	action.Force = options.Force
 	// Explicitly set MaxHistory to 10 which is also the default for Helm 3.
-	action.MaxHistory = 10
+	action.MaxHistory = maxHistory
 	action.Namespace = namespace
 	action.Timeout = options.Timeout
 	action.Wait = options.Wait
