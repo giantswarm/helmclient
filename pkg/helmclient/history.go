@@ -54,7 +54,7 @@ func releasesToReleaseHistory(releases []*release.Release) []ReleaseHistory {
 	var history []ReleaseHistory
 
 	for _, release := range releases {
-		var appVersion, description, version string
+		var appVersion, description, status, version string
 		var lastDeployed time.Time
 
 		if release.Chart != nil && release.Chart.Metadata != nil {
@@ -65,6 +65,7 @@ func releasesToReleaseHistory(releases []*release.Release) []ReleaseHistory {
 		if release.Info != nil {
 			description = release.Info.Description
 			lastDeployed = release.Info.LastDeployed.Time
+			status = release.Info.Status.String()
 		}
 
 		hist := ReleaseHistory{
@@ -72,6 +73,7 @@ func releasesToReleaseHistory(releases []*release.Release) []ReleaseHistory {
 			Description:  description,
 			LastDeployed: lastDeployed,
 			Name:         release.Name,
+			Status:       status,
 			Version:      version,
 		}
 

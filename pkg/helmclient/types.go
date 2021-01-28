@@ -38,6 +38,8 @@ type ReleaseHistory struct {
 	LastDeployed time.Time
 	// Name is the name of the Helm Release.
 	Name string
+	// Status is the Helm status code of the Release.
+	Status string
 	// Version is the version of the Helm Chart that has been deployed.
 	Version string
 }
