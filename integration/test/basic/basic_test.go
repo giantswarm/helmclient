@@ -154,6 +154,7 @@ func TestBasic(t *testing.T) {
 				AppVersion:  "v1.8.0",
 				Description: "Install complete",
 				Name:        releaseName,
+				Status:      helmclient.StatusDeployed,
 				Version:     "0.1.1",
 			},
 		}
