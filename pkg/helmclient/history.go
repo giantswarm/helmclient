@@ -2,7 +2,6 @@ package helmclient
 
 import (
 	"context"
-	"time"
 
 	"github.com/giantswarm/microerror"
 	"github.com/prometheus/client_golang/prometheus"
@@ -54,30 +53,27 @@ func releasesToReleaseHistory(releases []*release.Release) []ReleaseHistory {
 	var history []ReleaseHistory
 
 	for _, release := range releases {
-		var appVersion, description, status, version string
-		var lastDeployed time.Time
+		history = append(history, releaseToReleaseHistory(release))
+	}
 
-		if release.Chart != nil && release.Chart.Metadata != nil {
-			appVersion = release.Chart.Metadata.AppVersion
-			version = release.Chart.Metadata.Version
-		}
+	return history
+}
 
-		if release.Info != nil {
-			description = release.Info.Description
-			lastDeployed = release.Info.LastDeployed.Time
-			status = release.Info.Status.String()
-		}
+func releaseToReleaseHistory(release *release.Release) ReleaseHistory {
+	history := ReleaseHistory{
+		Name:     release.Name,
+		Revision: release.Version,
+	}
 
-		hist := ReleaseHistory{
-			AppVersion:   appVersion,
-			Description:  description,
-			LastDeployed: lastDeployed,
-			Name:         release.Name,
-			Status:       status,
-			Version:      version,
-		}
+	if release.Chart != nil && release.Chart.Metadata != nil {
+		history.AppVersion = release.Chart.Metadata.AppVersion
+		history.Version = release.Chart.Metadata.Version
+	}
 
-		history = append(history, hist)
+	if release.Info != nil {
+		history.Description = release.Info.Description
+		history.LastDeployed = release.Info.LastDeployed.Time
+		history.Status = release.Info.Status.String()
 	}
 
 	return history
