@@ -34,14 +34,10 @@ require (
 )
 
 replace (
-	// Use v0.8.10 of hcsshim to fix nancy alert.
-	github.com/Microsoft/hcsshim v0.8.7 => github.com/Microsoft/hcsshim v0.8.10
 	// Use moby v20.10.0-beta1 to fix build issue on darwin.
 	github.com/docker/docker => github.com/moby/moby v20.10.0-beta1+incompatible
 	// Use mergo 0.3.11 due to bug in 0.3.9 merging Go structs.
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.11
-	// Use v1.0.0-rc7 of runc to fix nancy alert.
-	github.com/opencontainers/runc v0.1.1 => github.com/opencontainers/runc v1.0.0-rc7
 	// Use fork of CAPI with Kubernetes 1.18 support.
 	sigs.k8s.io/cluster-api => github.com/giantswarm/cluster-api v0.3.10-gs
 )
