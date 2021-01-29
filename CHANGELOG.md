@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Change `GetReleaseHistory` to return multiple revisions. This is a breaking
+change but this method is not currently used.
+
 ## [4.2.1] - 2021-01-26
 
 ### Changed
