@@ -25,12 +25,11 @@ require (
 	google.golang.org/appengine v1.6.6 // indirect
 	gotest.tools/v3 v3.0.3 // indirect
 	helm.sh/helm/v3 v3.4.2
-	k8s.io/api v0.19.4
-	k8s.io/apimachinery v0.19.4
-	k8s.io/client-go v0.19.4
-	k8s.io/utils v0.0.0-20200912215256-4140de9c8800 // indirect
+	k8s.io/api v0.20.2
+	k8s.io/apimachinery v0.20.2
+	k8s.io/client-go v0.20.2
 	rsc.io/letsencrypt v0.0.3 // indirect
-	sigs.k8s.io/controller-runtime v0.6.5
+	sigs.k8s.io/controller-runtime v0.8.2
 )
 
 replace (
