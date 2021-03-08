@@ -10,7 +10,7 @@ require (
 	github.com/giantswarm/micrologger v0.5.0
 	github.com/go-logr/logr v0.3.0 // indirect
 	github.com/go-logr/zapr v0.2.0 // indirect
-	github.com/google/go-cmp v0.5.4
+	github.com/google/go-cmp v0.5.5
 	github.com/googleapis/gnostic v0.5.1 // indirect
 	github.com/imdario/mergo v0.3.10 // indirect
 	github.com/mholt/archiver v2.1.0+incompatible
