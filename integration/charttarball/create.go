@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 
 	"github.com/giantswarm/microerror"
-	"github.com/mholt/archiver"
+	"github.com/mholt/archiver/v3"
 )
 
 const (
