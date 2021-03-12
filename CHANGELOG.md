@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Update Helm to v3.5.3
+
 ## [4.3.0] - 2021-01-29
 
 ### Changed
