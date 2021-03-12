@@ -59,7 +59,7 @@ func Create(chartDirName string) (string, error) {
 	}
 
 	{
-		err := archiver.TarGz.Make(tarballPath, []string{chartDirPath})
+		err := archiver.Archive([]string{chartDirPath}, tarballPath)
 		if err != nil {
 			if err != nil {
 				return "", microerror.Mask(err)
