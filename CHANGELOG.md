@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.4.0] - 2021-03-12
+
+### Changed
+
+- Update Helm to v3.5.3
+
+## [4.3.0] - 2021-01-29
+
+### Changed
+
+- Change `GetReleaseHistory` to return multiple revisions. This is a breaking
+change but this method is not currently used.
+
+## [4.2.1] - 2021-01-26
+
+### Changed
+
+- Update controller-runtime version
+
+## [4.2.0] - 2021-01-26
+
+- Pass SkipCRDs to Helm client.
+
 ## [4.1.0] - 2020-12-14
 
 ### Changed
@@ -155,7 +178,11 @@ validation errors.
 
 - First release.
 
-[Unreleased]: https://github.com/giantswarm/helmclient/compare/v4.1.0...HEAD
+[Unreleased]: https://github.com/giantswarm/helmclient/compare/v4.4.0...HEAD
+[4.4.0]: https://github.com/giantswarm/helmclient/compare/v4.3.0...v4.4.0
+[4.3.0]: https://github.com/giantswarm/helmclient/compare/v4.2.1...v4.3.0
+[4.2.1]: https://github.com/giantswarm/helmclient/compare/v4.2.0...v4.2.1
+[4.2.0]: https://github.com/giantswarm/helmclient/compare/v4.1.0...v4.2.0
 [4.1.0]: https://github.com/giantswarm/helmclient/compare/v4.0.0...v4.1.0
 [4.0.0]: https://github.com/giantswarm/helmclient/compare/v3.0.1...v4.0.0
 [3.0.1]: https://github.com/giantswarm/helmclient/compare/v3.0.0...v3.0.1

@@ -2,7 +2,6 @@ package helmclient
 
 import (
 	"context"
-	"time"
 
 	"github.com/giantswarm/microerror"
 	"github.com/prometheus/client_golang/prometheus"
@@ -13,22 +12,22 @@ import (
 // GetReleaseHistory gets the current installed version of the Helm Release.
 // The releaseName is the name of the Helm Release that is set when the Helm
 // Chart is installed.
-func (c *Client) GetReleaseHistory(ctx context.Context, namespace, releaseName string) (*ReleaseHistory, error) {
+func (c *Client) GetReleaseHistory(ctx context.Context, namespace, releaseName string) ([]ReleaseHistory, error) {
 	eventName := "get_release_history"
 
 	t := prometheus.NewTimer(histogram.WithLabelValues(eventName))
 	defer t.ObserveDuration()
 
-	releaseContent, err := c.getReleaseHistory(ctx, namespace, releaseName)
+	releaseHistory, err := c.getReleaseHistory(ctx, namespace, releaseName)
 	if err != nil {
 		errorGauge.WithLabelValues(eventName).Inc()
 		return nil, microerror.Mask(err)
 	}
 
-	return releaseContent, nil
+	return releaseHistory, nil
 }
 
-func (c *Client) getReleaseHistory(ctx context.Context, namespace, releaseName string) (*ReleaseHistory, error) {
+func (c *Client) getReleaseHistory(ctx context.Context, namespace, releaseName string) ([]ReleaseHistory, error) {
 	cfg, err := c.newActionConfig(ctx, namespace)
 	if err != nil {
 		return nil, microerror.Mask(err)
@@ -36,8 +35,8 @@ func (c *Client) getReleaseHistory(ctx context.Context, namespace, releaseName s
 
 	history := action.NewHistory(cfg)
 
-	// We only care about the most recent history record.
-	history.Max = 1
+	// We get the 10 most recent Helm releases.
+	history.Max = maxHistory
 
 	releases, err := history.Run(releaseName)
 	if err != nil {
@@ -47,31 +46,35 @@ func (c *Client) getReleaseHistory(ctx context.Context, namespace, releaseName s
 		return nil, nil
 	}
 
-	return releaseToReleaseHistory(releases), nil
+	return releasesToReleaseHistory(releases), nil
 }
 
-func releaseToReleaseHistory(releases []*release.Release) *ReleaseHistory {
-	release := releases[0]
+func releasesToReleaseHistory(releases []*release.Release) []ReleaseHistory {
+	var history []ReleaseHistory
 
-	var appVersion, description, version string
+	for _, release := range releases {
+		history = append(history, releaseToReleaseHistory(release))
+	}
+
+	return history
+}
+
+func releaseToReleaseHistory(release *release.Release) ReleaseHistory {
+	history := ReleaseHistory{
+		Name:     release.Name,
+		Revision: release.Version,
+	}
 
 	if release.Chart != nil && release.Chart.Metadata != nil {
-		appVersion = release.Chart.Metadata.AppVersion
-		version = release.Chart.Metadata.Version
+		history.AppVersion = release.Chart.Metadata.AppVersion
+		history.Version = release.Chart.Metadata.Version
 	}
-
-	var lastDeployed time.Time
 
 	if release.Info != nil {
-		description = release.Info.Description
-		lastDeployed = release.Info.LastDeployed.Time
+		history.Description = release.Info.Description
+		history.LastDeployed = release.Info.LastDeployed.Time
+		history.Status = release.Info.Status.String()
 	}
 
-	return &ReleaseHistory{
-		AppVersion:   appVersion,
-		Description:  description,
-		LastDeployed: lastDeployed,
-		Name:         release.Name,
-		Version:      version,
-	}
+	return history
 }

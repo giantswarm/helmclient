@@ -140,17 +140,24 @@ func TestBasic(t *testing.T) {
 			t.Fatalf("expected nil error got %v", err)
 		}
 
-		if releaseHistory.LastDeployed.IsZero() {
-			t.Fatalf("expected non zero last deployed got %v", releaseHistory.LastDeployed)
+		if len(releaseHistory) != 1 {
+			t.Fatalf("expected 1 history record got %d", len(releaseHistory))
+		}
+		if releaseHistory[0].LastDeployed.IsZero() {
+			t.Fatalf("expected non zero last deployed got %v", releaseHistory[0].LastDeployed)
 		}
 		// Reset to zero for comparison.
-		releaseHistory.LastDeployed = time.Time{}
+		releaseHistory[0].LastDeployed = time.Time{}
 
-		expectedHistory := &helmclient.ReleaseHistory{
-			AppVersion:  "v1.8.0",
-			Description: "Install complete",
-			Name:        releaseName,
-			Version:     "0.1.1",
+		expectedHistory := []helmclient.ReleaseHistory{
+			{
+				AppVersion:  "v1.8.0",
+				Description: "Install complete",
+				Name:        releaseName,
+				Revision:    1,
+				Status:      helmclient.StatusDeployed,
+				Version:     "0.1.1",
+			},
 		}
 		if !cmp.Equal(releaseHistory, expectedHistory) {
 			t.Fatalf("want matching ReleaseHistory \n %s", cmp.Diff(releaseHistory, expectedHistory))
