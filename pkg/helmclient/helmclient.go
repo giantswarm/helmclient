@@ -153,7 +153,6 @@ func (c *Client) newRESTClientGetter(ctx context.Context, namespace string) (*re
 	discoveryClient := discovery.NewDiscoveryClient(c.restClient)
 	cachedDiscoveryClient := memory.NewMemCacheClient(discoveryClient)
 
-
 	// Convert REST config back to a kubeconfig for the raw kubeconfig loader.
 	bytes, err := kubeconfig.NewKubeConfigForRESTConfig(ctx, c.restConfig, "helmclient", namespace)
 	if err != nil {
