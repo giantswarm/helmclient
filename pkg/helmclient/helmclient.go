@@ -36,6 +36,7 @@ type Config struct {
 	Logger     micrologger.Logger
 	RestClient rest.Interface
 	RestConfig *rest.Config
+	RestMapper meta.RESTMapper
 
 	HTTPClientTimeout time.Duration
 }
@@ -49,6 +50,7 @@ type Client struct {
 	logger     micrologger.Logger
 	restClient rest.Interface
 	restConfig *rest.Config
+	restMapper meta.RESTMapper
 }
 
 // debugLogFunc allows us to pass log messages from helm to micrologger.
@@ -79,6 +81,13 @@ func New(config Config) (*Client, error) {
 	if config.RestConfig == nil {
 		return nil, microerror.Maskf(invalidConfigError, "%T.RestConfig must not be empty", config)
 	}
+	if config.RestMapper == nil {
+		restMapper, err := apiutil.NewDynamicRESTMapper(rest.CopyConfig(config.RestConfig))
+		if err != nil {
+			return nil, microerror.Mask(err)
+		}
+		config.RestMapper = restMapper
+	}
 
 	if config.HTTPClientTimeout == 0 {
 		config.HTTPClientTimeout = defaultHTTPClientTimeout
@@ -97,6 +106,7 @@ func New(config Config) (*Client, error) {
 		logger:     config.Logger,
 		restClient: config.RestClient,
 		restConfig: config.RestConfig,
+		restMapper: config.RestMapper,
 	}
 
 	return c, nil
@@ -143,10 +153,6 @@ func (c *Client) newRESTClientGetter(ctx context.Context, namespace string) (*re
 	discoveryClient := discovery.NewDiscoveryClient(c.restClient)
 	cachedDiscoveryClient := memory.NewMemCacheClient(discoveryClient)
 
-	restMapper, err := apiutil.NewDynamicRESTMapper(rest.CopyConfig(c.restConfig))
-	if err != nil {
-		return nil, microerror.Mask(err)
-	}
 
 	// Convert REST config back to a kubeconfig for the raw kubeconfig loader.
 	bytes, err := kubeconfig.NewKubeConfigForRESTConfig(ctx, c.restConfig, "helmclient", namespace)
@@ -163,7 +169,7 @@ func (c *Client) newRESTClientGetter(ctx context.Context, namespace string) (*re
 		discoveryClient:     cachedDiscoveryClient,
 		rawKubeConfigLoader: rawKubeConfigLoader,
 		restConfig:          c.restConfig,
-		restMapper:          restMapper,
+		restMapper:          c.restMapper,
 	}, nil
 }
 
