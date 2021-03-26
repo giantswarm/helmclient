@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Get RESTMapper as an argument.
+
 ## [4.4.0] - 2021-03-12
 
 ### Changed
