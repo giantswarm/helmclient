@@ -7,7 +7,6 @@ require (
 	github.com/giantswarm/kubeconfig/v4 v4.1.0
 	github.com/giantswarm/microerror v0.3.0
 	github.com/giantswarm/micrologger v0.5.0
-	github.com/go-logr/logr v0.3.0 // indirect
 	github.com/go-logr/zapr v0.2.0 // indirect
 	github.com/google/go-cmp v0.5.5
 	github.com/googleapis/gnostic v0.5.1 // indirect
@@ -19,10 +18,10 @@ require (
 	github.com/spf13/afero v1.6.0
 	go.uber.org/zap v1.15.0 // indirect
 	google.golang.org/appengine v1.6.6 // indirect
-	helm.sh/helm/v3 v3.5.3
-	k8s.io/api v0.20.2
-	k8s.io/apimachinery v0.20.2
-	k8s.io/client-go v0.20.2
+	helm.sh/helm/v3 v3.5.4
+	k8s.io/api v0.20.4
+	k8s.io/apimachinery v0.20.4
+	k8s.io/client-go v0.20.4
 	sigs.k8s.io/controller-runtime v0.6.5
 )
 
