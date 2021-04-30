@@ -11,25 +11,25 @@ import (
 )
 
 const (
-	alreadyExistsErrorPrefix = "rendered manifests contain a resource that already exists"
+	resourceAlreadyExistsErrorPrefix = "rendered manifests contain a resource that already exists"
 )
 
-var alreadyExistsError = &microerror.Error{
-	Kind: "alreadyExistError",
+var resourceAlreadyExistsError = &microerror.Error{
+	Kind: "resourceAlreadyExistsError",
 }
 
-// IsAlreadyExists asserts alreadyExistError.
-func IsAlreadyExists(err error) bool {
+// IsResourceAlreadyExists asserts resourceAlreadyExistError.
+func IsResourceAlreadyExists(err error) bool {
 	if err == nil {
 		return false
 	}
 
 	c := microerror.Cause(err)
 
-	if strings.Contains(c.Error(), alreadyExistsErrorPrefix) {
+	if strings.Contains(c.Error(), resourceAlreadyExistsErrorPrefix) {
 		return true
 	}
-	if c == alreadyExistsError {
+	if c == resourceAlreadyExistsError {
 		return true
 	}
 
