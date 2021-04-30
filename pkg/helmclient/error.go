@@ -11,6 +11,32 @@ import (
 )
 
 const (
+	alreadyExistErrorPrefix = "rendered manifests contain a resource that already exists"
+)
+
+var alreadyExistError = &microerror.Error{
+	Kind: "alreadyExistError",
+}
+
+// IsAlreadyExist asserts alreadyExistError.
+func IsAlreadyExist (err error) bool {
+	if err == nil {
+		return false
+	}
+
+	c := microerror.Cause(err)
+
+	if strings.Contains(c.Error(), alreadyExistErrorPrefix) {
+		return true
+	}
+	if c == alreadyExistError{
+		return true
+	}
+
+	return false
+}
+
+const (
 	cannotReuseReleaseErrorPrefix = "cannot re-use"
 )
 
