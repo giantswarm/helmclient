@@ -11,17 +11,16 @@ require (
 	github.com/google/go-cmp v0.5.5
 	github.com/googleapis/gnostic v0.5.1 // indirect
 	github.com/mholt/archiver/v3 v3.5.0
-	github.com/moby/term v0.0.0-20201110203204-bea5bbe245bf // indirect
 	github.com/onsi/ginkgo v1.14.1 // indirect
 	github.com/onsi/gomega v1.10.2 // indirect
 	github.com/prometheus/client_golang v1.10.0
 	github.com/spf13/afero v1.6.0
 	go.uber.org/zap v1.15.0 // indirect
 	google.golang.org/appengine v1.6.6 // indirect
-	helm.sh/helm/v3 v3.5.4
-	k8s.io/api v0.20.4
-	k8s.io/apimachinery v0.20.4
-	k8s.io/client-go v0.20.4
+	helm.sh/helm/v3 v3.6.0
+	k8s.io/api v0.21.0
+	k8s.io/apimachinery v0.21.0
+	k8s.io/client-go v0.21.0
 	sigs.k8s.io/controller-runtime v0.6.5
 )
 
