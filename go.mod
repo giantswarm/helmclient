@@ -13,7 +13,7 @@ require (
 	github.com/mholt/archiver/v3 v3.5.0
 	github.com/onsi/ginkgo v1.14.1 // indirect
 	github.com/onsi/gomega v1.10.2 // indirect
-	github.com/prometheus/client_golang v1.10.0
+	github.com/prometheus/client_golang v1.11.0
 	github.com/spf13/afero v1.6.0
 	go.uber.org/zap v1.15.0 // indirect
 	google.golang.org/appengine v1.6.6 // indirect
