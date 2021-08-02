@@ -1,6 +1,6 @@
 module github.com/giantswarm/helmclient/v4
 
-go 1.14
+go 1.16
 
 require (
 	github.com/giantswarm/backoff v0.2.0
@@ -31,12 +31,12 @@ replace (
 	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
 	// Use moby v20.10.5 to fix build issue on darwin.
 	github.com/docker/docker => github.com/moby/moby v20.10.5+incompatible
-	// Use v1.3.2 of gogo/protobuf to fix nancy alert.
 	github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
 	github.com/gorilla/websocket v1.4.0 => github.com/gorilla/websocket v1.4.2
 	// Use mergo 0.3.11 due to bug in 0.3.9 merging Go structs.
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.11
 	github.com/opencontainers/runc v0.1.1 => github.com/opencontainers/runc v1.0.0-rc93
+	github.com/ulikunitz/xz => github.com/ulikunitz/xz v0.5.10
 	// Use fork of CAPI with Kubernetes 1.18 support.
 	sigs.k8s.io/cluster-api => github.com/giantswarm/cluster-api v0.3.13-gs
 )
