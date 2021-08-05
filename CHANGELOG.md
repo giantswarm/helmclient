@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Downgrade Helm to v3.5.4 to use K8s 1.20 for compatibility with other libraries.
+
 ## [4.7.0] - 2021-08-03
 
 ### Changed
