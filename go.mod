@@ -18,9 +18,9 @@ require (
 	go.uber.org/zap v1.15.0 // indirect
 	google.golang.org/appengine v1.6.6 // indirect
 	helm.sh/helm/v3 v3.5.4
-	k8s.io/api v0.20.10
-	k8s.io/apimachinery v0.20.10
-	k8s.io/client-go v0.20.10
+	k8s.io/api v0.20.11
+	k8s.io/apimachinery v0.20.11
+	k8s.io/client-go v0.20.11
 	sigs.k8s.io/controller-runtime v0.6.5
 )
 
