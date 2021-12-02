@@ -17,11 +17,12 @@ require (
 	github.com/spf13/afero v1.6.0
 	go.uber.org/zap v1.15.0 // indirect
 	google.golang.org/appengine v1.6.6 // indirect
-	helm.sh/helm/v3 v3.5.4
-	k8s.io/api v0.20.10
-	k8s.io/apimachinery v0.20.10
-	k8s.io/client-go v0.20.10
+	helm.sh/helm/v3 v3.6.3
+	k8s.io/api v0.21.0
+	k8s.io/apimachinery v0.21.0
+	k8s.io/client-go v0.21.0
 	sigs.k8s.io/controller-runtime v0.6.5
+	sigs.k8s.io/structured-merge-diff/v4 v4.1.2 // indirect
 )
 
 replace (
@@ -37,6 +38,4 @@ replace (
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.11
 	github.com/opencontainers/runc v0.1.1 => github.com/opencontainers/runc v1.0.0-rc93
 	github.com/ulikunitz/xz => github.com/ulikunitz/xz v0.5.10
-	// Use fork of CAPI with Kubernetes 1.18 support.
-	sigs.k8s.io/cluster-api => github.com/giantswarm/cluster-api v0.3.13-gs
 )
