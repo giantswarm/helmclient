@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.9.0] - 2021-12-13
+
 ### Changed
 
 - Update Helm to v3.6.3
@@ -206,7 +208,8 @@ validation errors.
 
 - First release.
 
-[Unreleased]: https://github.com/giantswarm/helmclient/compare/v4.8.0...HEAD
+[Unreleased]: https://github.com/giantswarm/helmclient/compare/v4.9.0...HEAD
+[4.9.0]: https://github.com/giantswarm/helmclient/compare/v4.8.0...v4.9.0
 [4.8.0]: https://github.com/giantswarm/helmclient/compare/v4.7.0...v4.8.0
 [4.7.0]: https://github.com/giantswarm/helmclient/compare/v4.6.0...v4.7.0
 [4.6.0]: https://github.com/giantswarm/helmclient/compare/v4.5.0...v4.6.0
