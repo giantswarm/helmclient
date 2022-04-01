@@ -15,6 +15,10 @@ import (
 	"github.com/spf13/afero"
 )
 
+const (
+	OCIScheme = "oci"
+)
+
 // PullChartTarball downloads a tarball from the provided tarball URL,
 // returning the file path.
 func (c *Client) PullChartTarball(ctx context.Context, tarballURL string) (string, error) {
@@ -33,28 +37,46 @@ func (c *Client) PullChartTarball(ctx context.Context, tarballURL string) (strin
 }
 
 func (c *Client) pullChartTarball(ctx context.Context, tarballURL string) (string, error) {
-	req, err := c.newRequest("GET", tarballURL)
-	if err != nil {
-		return "", microerror.Mask(err)
-	}
-
 	u, err := url.Parse(tarballURL)
 	if err != nil {
 		return "", microerror.Mask(err)
 	}
 
-	// Set host header to prevent 404 responses from GitHub Pages.
-	req.Host = u.Host
+	var chartTarballPath string
 
-	chartTarballPath, err := c.doFile(ctx, req)
-	if err != nil {
-		return "", microerror.Mask(err)
+	if u.Scheme == OCIScheme {
+		chartTarballPath, err = c.doFileOCI(ctx)
+		if err != nil {
+			return "", microerror.Mask(err)
+		}
+	} else {
+		req, err := c.newRequest("GET", tarballURL)
+		if err != nil {
+			return "", microerror.Mask(err)
+		}
+
+		// Set host header to prevent 404 responses from GitHub Pages.
+		req.Host = u.Host
+
+		chartTarballPath, err = c.doFileHTTP(ctx, req)
+		if err != nil {
+			return "", microerror.Mask(err)
+		}
 	}
 
 	return chartTarballPath, nil
 }
 
-func (c *Client) doFile(ctx context.Context, req *http.Request) (string, error) {
+func (c *Client) doFileOCI(ctx context.Context) (string, error) {
+	// TODO(kuba): Download tarball from OCI registry with retries, then return
+	// its path.
+	// Utilize ORAS project for the request, reimplementing
+	// https://github.com/helm/helm/blob/ee3f270e1eff0d462312635ad91cecd6f1fce620/pkg/registry/client.go#L256-L414.
+	// I think we can ignore provenance layer for now, adding it to the implementation only if it becomes necessary.
+	return "", nil
+}
+
+func (c *Client) doFileHTTP(ctx context.Context, req *http.Request) (string, error) {
 	var tmpFileName string
 
 	req = req.WithContext(ctx)
