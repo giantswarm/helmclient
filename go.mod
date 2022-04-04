@@ -3,6 +3,7 @@ module github.com/giantswarm/helmclient/v4
 go 1.16
 
 require (
+	github.com/containerd/continuity v0.2.2 // indirect
 	github.com/giantswarm/backoff v1.0.0
 	github.com/giantswarm/kubeconfig/v4 v4.1.0
 	github.com/giantswarm/microerror v0.4.0
@@ -19,7 +20,7 @@ require (
 )
 
 replace (
-	github.com/containerd/containerd v1.3.4 => github.com/containerd/containerd v1.4.4
+	github.com/containerd/containerd => github.com/containerd/containerd v1.4.13
 	github.com/coreos/etcd => github.com/coreos/etcd v3.3.25+incompatible
 	github.com/dgrijalva/jwt-go => github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
 	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
@@ -27,7 +28,7 @@ replace (
 	github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
 	github.com/gorilla/websocket v1.4.0 => github.com/gorilla/websocket v1.4.2
 	// Use mergo 0.3.11 due to bug in 0.3.9 merging Go structs.
-	github.com/imdario/mergo => github.com/imdario/mergo v0.3.11
-	github.com/opencontainers/runc v0.1.1 => github.com/opencontainers/runc v1.0.0-rc93
+	github.com/imdario/mergo => github.com/imdario/mergo v0.3.12
+	github.com/opencontainers/runc v0.1.1 => github.com/opencontainers/runc v1.0.3
 	github.com/ulikunitz/xz => github.com/ulikunitz/xz v0.5.10
 )
