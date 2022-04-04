@@ -11,10 +11,10 @@ require (
 	github.com/mholt/archiver/v3 v3.5.0
 	github.com/prometheus/client_golang v1.11.0
 	github.com/spf13/afero v1.6.0
-	helm.sh/helm/v3 v3.6.3
-	k8s.io/api v0.21.4
-	k8s.io/apimachinery v0.21.4
-	k8s.io/client-go v0.21.4
+	helm.sh/helm/v3 v3.8.1
+	k8s.io/api v0.23.4
+	k8s.io/apimachinery v0.23.4
+	k8s.io/client-go v0.23.4
 	sigs.k8s.io/controller-runtime v0.9.7
 )
 
