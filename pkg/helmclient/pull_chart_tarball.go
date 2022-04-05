@@ -11,8 +11,13 @@ import (
 
 	"github.com/giantswarm/backoff"
 	"github.com/giantswarm/microerror"
+	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/afero"
+	helmregistry "helm.sh/helm/v3/pkg/registry"
+	"oras.land/oras-go/pkg/content"
+	"oras.land/oras-go/pkg/oras"
+	"oras.land/oras-go/pkg/registry"
 )
 
 const (
@@ -45,7 +50,7 @@ func (c *Client) pullChartTarball(ctx context.Context, tarballURL string) (strin
 	var chartTarballPath string
 
 	if u.Scheme == OCIScheme {
-		chartTarballPath, err = c.doFileOCI(ctx)
+		chartTarballPath, err = c.doFileOCI(ctx, tarballURL)
 		if err != nil {
 			return "", microerror.Mask(err)
 		}
@@ -67,13 +72,119 @@ func (c *Client) pullChartTarball(ctx context.Context, tarballURL string) (strin
 	return chartTarballPath, nil
 }
 
-func (c *Client) doFileOCI(ctx context.Context) (string, error) {
-	// TODO(kuba): Download tarball from OCI registry with retries, then return
-	// its path.
-	// Utilize ORAS project for the request, reimplementing
-	// https://github.com/helm/helm/blob/ee3f270e1eff0d462312635ad91cecd6f1fce620/pkg/registry/client.go#L256-L414.
-	// I think we can ignore provenance layer for now, adding it to the implementation only if it becomes necessary.
-	return "", nil
+func (c *Client) doFileOCI(ctx context.Context, url string) (string, error) {
+	var tmpFileName string
+
+	o := func() error {
+		ref, err := registry.ParseReference(url)
+		if err != nil {
+			return microerror.Mask(err)
+		}
+		// TODO(kuba): Download tarball from OCI registry with retries, then return
+		// its path.
+		// Utilize ORAS project for the request, reimplementing
+		// https://github.com/helm/helm/blob/ee3f270e1eff0d462312635ad91cecd6f1fce620/pkg/registry/client.go#L256-L414.
+		// I think we can ignore provenance layer for now, adding it to the implementation only if it becomes necessary.
+		memoryStore := content.NewMemory()
+		allowedMediaTypes := []string{
+			helmregistry.ConfigMediaType,
+			helmregistry.ChartLayerMediaType,
+			helmregistry.LegacyChartLayerMediaType,
+			helmregistry.ProvLayerMediaType,
+		}
+
+		var registryStore content.Registry
+		{
+			// We make an assumption that every registry we pull from is public -
+			// requires no extra auth. If some of them indeed require auth, default
+			// helm registry config, `~/.config/helm/registry/config.json`, will be
+			// used since we are passing empty `Configs` list.
+			resolver, err := content.NewRegistry(content.RegistryOptions{
+				Configs:   []string{},
+				Username:  "",
+				Password:  "",
+				Insecure:  false,
+				PlainHTTP: false,
+			})
+			if err != nil {
+				return microerror.Mask(err)
+			}
+			registryStore = content.Registry{Resolver: resolver}
+		}
+
+		var descriptors, layers []ocispec.Descriptor
+		manifest, err := oras.Copy(ctx, registryStore, ref.String(), memoryStore, "",
+			oras.WithPullEmptyNameAllowed(),
+			oras.WithAllowedMediaTypes(allowedMediaTypes),
+			oras.WithLayerDescriptors(func(l []ocispec.Descriptor) {
+				layers = l
+			}))
+		if err != nil {
+			return microerror.Mask(err)
+		}
+
+		descriptors = append(descriptors, manifest)
+		descriptors = append(descriptors, layers...)
+		// We expect at least a config layer and a chart layer. Count may be higher
+		// if the provenance layer is present.
+		if len(descriptors) < 2 {
+			return microerror.Maskf(pullChartFailedError,
+				"manifest does not contain minimum number of descriptors (2), descriptors found: %d",
+				len(descriptors),
+			)
+		}
+		var configDescriptor, chartDescriptor *ocispec.Descriptor
+		for _, descriptor := range descriptors {
+			d := descriptor
+			switch d.MediaType {
+			case helmregistry.ConfigMediaType:
+				configDescriptor = &d
+			case helmregistry.ChartLayerMediaType:
+				chartDescriptor = &d
+			case helmregistry.LegacyChartLayerMediaType:
+				chartDescriptor = &d
+			}
+		}
+		if configDescriptor == nil {
+			// configDescriptor is required, although not used in further code. It
+			// contains chart metadata, which might prove useful some day. Right
+			// now, we just check if it's been decoded properly.
+			return microerror.Maskf(pullChartFailedError, "could not load config with mediatype %s", helmregistry.ConfigMediaType)
+		}
+		if chartDescriptor == nil {
+			return microerror.Maskf(pullChartFailedError, "manifest does not contain a layer with mediatype %s", helmregistry.ChartLayerMediaType)
+		}
+
+		_, chartData, ok := memoryStore.Get(*chartDescriptor)
+		if !ok {
+			return microerror.Maskf(pullChartFailedError, "unable to retrieve blob with digest %s", chartDescriptor.Digest)
+		}
+
+		tmpfile, err := afero.TempFile(c.fs, "", "chart-tarball")
+		if err != nil {
+			return microerror.Mask(err)
+		}
+		defer tmpfile.Close()
+
+		_, err = io.Copy(tmpfile, chartData)
+		if err != nil {
+			return microerror.Mask(err)
+		}
+
+		tmpFileName = tmpfile.Name()
+
+		return nil
+	}
+
+	b := backoff.NewMaxRetries(3, 5*time.Second)
+	n := backoff.NewNotifier(c.logger, ctx)
+
+	err := backoff.RetryNotify(o, b, n)
+	if err != nil {
+		return "", microerror.Mask(err)
+	}
+
+	return tmpFileName, nil
 }
 
 func (c *Client) doFileHTTP(ctx context.Context, req *http.Request) (string, error) {
