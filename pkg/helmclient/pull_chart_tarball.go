@@ -80,12 +80,9 @@ func (c *Client) doFileOCI(ctx context.Context, url string) (string, error) {
 		if err != nil {
 			return microerror.Mask(err)
 		}
-		// TODO(kuba): Download tarball from OCI registry with retries, then return
-		// its path.
-		// Utilize ORAS project for the request, reimplementing
-		// https://github.com/helm/helm/blob/ee3f270e1eff0d462312635ad91cecd6f1fce620/pkg/registry/client.go#L256-L414.
-		// I think we can ignore provenance layer for now, adding it to the implementation only if it becomes necessary.
 		memoryStore := content.NewMemory()
+		// We accept Config layer (required), Chart layer (needed), and
+		// Provenance layer (ignored).
 		allowedMediaTypes := []string{
 			helmregistry.ConfigMediaType,
 			helmregistry.ChartLayerMediaType,
@@ -146,9 +143,9 @@ func (c *Client) doFileOCI(ctx context.Context, url string) (string, error) {
 			}
 		}
 		if configDescriptor == nil {
-			// configDescriptor is required, although not used in further code. It
-			// contains chart metadata, which might prove useful some day. Right
-			// now, we just check if it's been decoded properly.
+			// configDescriptor is required as proof of successful chart pull,
+			// although not used in further code. It contains chart metadata,
+			// which might prove useful some day.
 			return microerror.Maskf(pullChartFailedError, "could not load config with mediatype %s", helmregistry.ConfigMediaType)
 		}
 		if chartDescriptor == nil {
@@ -166,7 +163,8 @@ func (c *Client) doFileOCI(ctx context.Context, url string) (string, error) {
 		}
 		defer tmpfile.Close()
 
-		_, err = io.Copy(tmpfile, chartData)
+		buf := bytes.NewBuffer(chartData)
+		_, err = io.Copy(tmpfile, buf)
 		if err != nil {
 			return microerror.Mask(err)
 		}
