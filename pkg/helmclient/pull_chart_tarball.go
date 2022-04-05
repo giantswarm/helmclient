@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/giantswarm/backoff"
@@ -76,6 +77,10 @@ func (c *Client) doFileOCI(ctx context.Context, url string) (string, error) {
 	var tmpFileName string
 
 	o := func() error {
+		// We utilize 'oci://' scheme to recognize OCI registries, but
+		// registry.ParseReference has a strict regex. Let's get rid of
+		// protocol prefix.
+		url = strings.TrimPrefix(url, OCIScheme+"://")
 		ref, err := registry.ParseReference(url)
 		if err != nil {
 			return microerror.Mask(err)
