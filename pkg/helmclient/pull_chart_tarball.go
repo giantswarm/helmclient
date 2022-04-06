@@ -21,10 +21,6 @@ import (
 	"oras.land/oras-go/pkg/registry"
 )
 
-const (
-	OCIScheme = "oci"
-)
-
 // PullChartTarball downloads a tarball from the provided tarball URL,
 // returning the file path.
 func (c *Client) PullChartTarball(ctx context.Context, tarballURL string) (string, error) {
@@ -50,7 +46,7 @@ func (c *Client) pullChartTarball(ctx context.Context, tarballURL string) (strin
 
 	var chartTarballPath string
 
-	if u.Scheme == OCIScheme {
+	if u.Scheme == helmregistry.OCIScheme {
 		chartTarballPath, err = c.doFileOCI(ctx, tarballURL)
 		if err != nil {
 			return "", microerror.Mask(err)
@@ -80,7 +76,7 @@ func (c *Client) doFileOCI(ctx context.Context, url string) (string, error) {
 		// We utilize 'oci://' scheme to recognize OCI registries, but
 		// registry.ParseReference has a strict regex. Let's get rid of
 		// protocol prefix.
-		url = strings.TrimPrefix(url, OCIScheme+"://")
+		url = strings.TrimPrefix(url, helmregistry.OCIScheme+"://")
 		ref, err := registry.ParseReference(url)
 		if err != nil {
 			return microerror.Mask(err)
