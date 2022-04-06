@@ -21,5 +21,6 @@ CVE-2020-8559    until=2022-06-01
 CVE-2020-8563    until=2022-06-01
 CVE-2021-25735   until=2022-06-01
 CVE-2021-25741   until=2022-06-01
-CWE-601          until=2022-06-01
-CWE-79           until=2022-06-01
+# Warnings for k8s.io/kubernetes v1.13.0
+3f9f4830-26e4-4acd-915b-448d38934e43 until=2022-06-01
+7a182d40-9217-4391-85e9-6c44219efa7a until=2022-06-01
