@@ -97,17 +97,10 @@ func (c *Client) doFileOCI(ctx context.Context, url string) (string, error) {
 
 		var registryStore content.Registry
 		{
-			// We make an assumption that every registry we pull from is public -
-			// requires no extra auth. If some of them indeed require auth, default
-			// helm registry config, `~/.config/helm/registry/config.json`, will be
-			// used since we are passing empty `Configs` list.
-			resolver, err := content.NewRegistry(content.RegistryOptions{
-				Configs:   []string{},
-				Username:  "",
-				Password:  "",
-				Insecure:  false,
-				PlainHTTP: false,
-			})
+			// We make an assumption that every registry we pull from is
+			// public. Configuration provided to Client can override that, but
+			// is optional.
+			resolver, err := content.NewRegistry(c.registryOptions)
 			if err != nil {
 				return microerror.Mask(err)
 			}
