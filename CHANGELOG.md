@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Add support for OCI charts.
+
+### Changed
+
+- Update Helm to v3.8.1
+
 ## [4.9.0] - 2021-12-13
 
 ### Changed

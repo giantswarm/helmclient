@@ -21,6 +21,7 @@ import (
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
+	"oras.land/oras-go/pkg/content"
 	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
 )
 
@@ -34,23 +35,30 @@ type Config struct {
 	HelmClient Interface
 	K8sClient  kubernetes.Interface
 	Logger     micrologger.Logger
-	RestClient rest.Interface
-	RestConfig *rest.Config
-	RestMapper meta.RESTMapper
+	// RegistryOptions can be used to allow pulling from private chart
+	// registries or accessing them insecurely. If this is nil, empty options
+	// will be created. This will result in using default helm config found on
+	// the machine (~/.config/helm). We assume the registries we pull from are
+	// public.
+	RegistryOptions *content.RegistryOptions
+	RestClient      rest.Interface
+	RestConfig      *rest.Config
+	RestMapper      meta.RESTMapper
 
 	HTTPClientTimeout time.Duration
 }
 
 // Client knows how to talk with Helm.
 type Client struct {
-	fs         afero.Fs
-	helmClient Interface
-	httpClient *http.Client
-	k8sClient  kubernetes.Interface
-	logger     micrologger.Logger
-	restClient rest.Interface
-	restConfig *rest.Config
-	restMapper meta.RESTMapper
+	fs              afero.Fs
+	helmClient      Interface
+	httpClient      *http.Client
+	k8sClient       kubernetes.Interface
+	logger          micrologger.Logger
+	registryOptions content.RegistryOptions
+	restClient      rest.Interface
+	restConfig      *rest.Config
+	restMapper      meta.RESTMapper
 }
 
 // debugLogFunc allows us to pass log messages from helm to micrologger.
@@ -74,6 +82,15 @@ func New(config Config) (*Client, error) {
 	}
 	if config.Logger == nil {
 		return nil, microerror.Maskf(invalidConfigError, "%T.Logger must not be empty", config)
+	}
+	if config.RegistryOptions == nil {
+		config.RegistryOptions = &content.RegistryOptions{
+			Configs:   []string{},
+			Username:  "",
+			Password:  "",
+			Insecure:  false,
+			PlainHTTP: false,
+		}
 	}
 	if config.RestClient == nil {
 		return nil, microerror.Maskf(invalidConfigError, "%T.RestClient must not be empty", config)
@@ -99,14 +116,15 @@ func New(config Config) (*Client, error) {
 	}
 
 	c := &Client{
-		fs:         config.Fs,
-		helmClient: config.HelmClient,
-		httpClient: httpClient,
-		k8sClient:  config.K8sClient,
-		logger:     config.Logger,
-		restClient: config.RestClient,
-		restConfig: config.RestConfig,
-		restMapper: config.RestMapper,
+		fs:              config.Fs,
+		helmClient:      config.HelmClient,
+		httpClient:      httpClient,
+		k8sClient:       config.K8sClient,
+		logger:          config.Logger,
+		registryOptions: *config.RegistryOptions,
+		restClient:      config.RestClient,
+		restConfig:      config.RestConfig,
+		restMapper:      config.RestMapper,
 	}
 
 	return c, nil
