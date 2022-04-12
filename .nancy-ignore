@@ -1,26 +1,3 @@
-# Vulerabilities for k8s.io/kubernetes v1.13.0. It's a dependency of helm v3.8.1.
-CVE-2018-1002102 until=2022-06-01
-CVE-2019-1002100 until=2022-06-01
-CVE-2019-1002101 until=2022-06-01
-CVE-2019-11243   until=2022-06-01
-CVE-2019-11244   until=2022-06-01
-CVE-2019-11246   until=2022-06-01
-CVE-2019-11247   until=2022-06-01
-CVE-2019-11248   until=2022-06-01
-CVE-2019-11249   until=2022-06-01
-CVE-2019-11250   until=2022-06-01
-CVE-2019-11251   until=2022-06-01
-CVE-2019-11253   until=2022-06-01
-CVE-2019-11254   until=2022-06-01
-CVE-2019-9946    until=2022-06-01
-CVE-2020-8552    until=2022-06-01
-CVE-2020-8555    until=2022-06-01
-CVE-2020-8557    until=2022-06-01
-CVE-2020-8558    until=2022-06-01
-CVE-2020-8559    until=2022-06-01
-CVE-2020-8563    until=2022-06-01
-CVE-2021-25735   until=2022-06-01
-CVE-2021-25741   until=2022-06-01
-# Warnings for k8s.io/kubernetes v1.13.0
-3f9f4830-26e4-4acd-915b-448d38934e43 until=2022-06-01
-7a182d40-9217-4391-85e9-6c44219efa7a until=2022-06-01
+# Affects all versions of archiver which is required by vault.
+# Taken from: https://github.com/giantswarm/opsctl/pull/1072/files#diff-bbe4a7fb12c43622bce7c6840c770e9995be614626a219942ca138403629cb69R1
+CVE-2019-10743 until=2021-10-17
