@@ -79,7 +79,7 @@ func (c *Client) doFileOCI(ctx context.Context, url string) (string, error) {
 		url = strings.TrimPrefix(url, helmregistry.OCIScheme+"://")
 		ref, err := registry.ParseReference(url)
 		if err != nil {
-			return microerror.Mask(err)
+			return microerror.Maskf(pullChartFailedError, "error parsing url: %s", err)
 		}
 		memoryStore := content.NewMemory()
 		// We accept Config layer (required), Chart layer (needed), and
@@ -98,7 +98,7 @@ func (c *Client) doFileOCI(ctx context.Context, url string) (string, error) {
 			// is optional.
 			resolver, err := content.NewRegistry(c.registryOptions)
 			if err != nil {
-				return microerror.Mask(err)
+				error.Maskf(pullChartFailedError, "error creating registry resolver: %s", err)
 			}
 			registryStore = content.Registry{Resolver: resolver}
 		}
@@ -111,7 +111,7 @@ func (c *Client) doFileOCI(ctx context.Context, url string) (string, error) {
 				layers = l
 			}))
 		if err != nil {
-			return microerror.Mask(err)
+			return microerror.Maskf(pullChartFailedError, "error copying manifests: %s", err)
 		}
 
 		descriptors = append(descriptors, manifest)
