@@ -98,7 +98,7 @@ func (c *Client) doFileOCI(ctx context.Context, url string) (string, error) {
 			// is optional.
 			resolver, err := content.NewRegistry(c.registryOptions)
 			if err != nil {
-				error.Maskf(pullChartFailedError, "error creating registry resolver: %s", err)
+				return microerror.Maskf(pullChartFailedError, "error creating registry resolver: %s", err)
 			}
 			registryStore = content.Registry{Resolver: resolver}
 		}
