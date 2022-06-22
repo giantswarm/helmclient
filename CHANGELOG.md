@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- Return `pullChartFailedError` for OCI oras.Copy failures.
+
 ## [4.10.0] - 2022-04-07
 
 ### Added
