@@ -3,6 +3,8 @@ module github.com/giantswarm/helmclient/v4
 go 1.16
 
 require (
+	github.com/Microsoft/hcsshim v0.9.1 // indirect
+	github.com/containerd/cgroups v1.0.2 // indirect
 	github.com/containerd/continuity v0.3.0 // indirect
 	github.com/giantswarm/backoff v1.0.0
 	github.com/giantswarm/kubeconfig/v4 v4.1.0
@@ -10,14 +12,14 @@ require (
 	github.com/giantswarm/micrologger v0.6.0
 	github.com/google/go-cmp v0.5.6
 	github.com/mholt/archiver/v3 v3.5.0
-	github.com/opencontainers/image-spec v1.0.2
-	github.com/prometheus/client_golang v1.11.0
+	github.com/opencontainers/image-spec v1.0.3-0.20211202183452-c5a74bcca799
+	github.com/prometheus/client_golang v1.12.1
 	github.com/spf13/afero v1.6.0
-	helm.sh/helm/v3 v3.8.1
-	k8s.io/api v0.23.5
-	k8s.io/apimachinery v0.23.5
-	k8s.io/client-go v0.23.5
-	oras.land/oras-go v1.1.0
+	helm.sh/helm/v3 v3.9.4
+	k8s.io/api v0.24.2
+	k8s.io/apimachinery v0.24.2
+	k8s.io/client-go v0.24.2
+	oras.land/oras-go v1.2.0
 	sigs.k8s.io/controller-runtime v0.11.2
 )
 
