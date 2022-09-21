@@ -128,3 +128,8 @@ type UpdateOptions struct {
 	Timeout time.Duration
 	Wait    bool
 }
+
+// DeleteOptions is the subset of supported options when updating Helm releases.
+type DeleteOptions struct {
+	Timeout time.Duration
+}
