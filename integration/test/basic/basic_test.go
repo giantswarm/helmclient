@@ -281,7 +281,7 @@ func TestBasic(t *testing.T) {
 	{
 		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("deleting release %#q", releaseName))
 
-		err := config.HelmClient.DeleteRelease(ctx, metav1.NamespaceDefault, releaseName)
+		err := config.HelmClient.DeleteRelease(ctx, metav1.NamespaceDefault, releaseName, helmclient.DeleteOptions{})
 		if err != nil {
 			t.Fatalf("expected nil error got %v", err)
 		}
