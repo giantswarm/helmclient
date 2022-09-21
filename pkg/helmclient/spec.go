@@ -63,7 +63,7 @@ const (
 // Interface describes the methods provided by the Helm client.
 type Interface interface {
 	// DeleteRelease uninstalls a chart given its release name.
-	DeleteRelease(ctx context.Context, namespace, releaseName string) error
+	DeleteRelease(ctx context.Context, namespace, releaseName string, options DeleteOptions) error
 	// GetReleaseContent gets the current status of the Helm Release. The
 	// releaseName is the name of the Helm Release that is set when the Chart
 	// is installed.
