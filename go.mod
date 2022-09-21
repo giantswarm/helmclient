@@ -9,8 +9,8 @@ require (
 	github.com/giantswarm/backoff v1.0.0
 	github.com/giantswarm/kubeconfig/v4 v4.1.0
 	github.com/giantswarm/microerror v0.4.0
-	github.com/giantswarm/micrologger v0.6.0
-	github.com/google/go-cmp v0.5.6
+	github.com/giantswarm/micrologger v1.0.0
+	github.com/google/go-cmp v0.5.7
 	github.com/mholt/archiver/v3 v3.5.0
 	github.com/opencontainers/image-spec v1.0.3-0.20211202183452-c5a74bcca799
 	github.com/prometheus/client_golang v1.12.1
