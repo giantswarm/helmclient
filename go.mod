@@ -1,18 +1,18 @@
 module github.com/giantswarm/helmclient/v4
 
-go 1.18
+go 1.19
 
 require (
 	github.com/giantswarm/backoff v1.0.0
 	github.com/giantswarm/kubeconfig/v4 v4.1.0
 	github.com/giantswarm/microerror v0.4.0
 	github.com/giantswarm/micrologger v1.0.0
-	github.com/google/go-cmp v0.5.8
+	github.com/google/go-cmp v0.5.9
 	github.com/mholt/archiver/v3 v3.5.1
 	github.com/opencontainers/image-spec v1.0.3-0.20211202183452-c5a74bcca799
-	github.com/prometheus/client_golang v1.12.2
-	github.com/spf13/afero v1.9.0
-	helm.sh/helm/v3 v3.9.4
+	github.com/prometheus/client_golang v1.13.0
+	github.com/spf13/afero v1.9.2
+	helm.sh/helm/v3 v3.10.0
 	k8s.io/api v0.24.2
 	k8s.io/apimachinery v0.24.2
 	k8s.io/client-go v0.24.2
@@ -160,15 +160,15 @@ require (
 )
 
 replace (
-	github.com/containerd/containerd => github.com/containerd/containerd v1.4.4
-	github.com/coreos/etcd => github.com/coreos/etcd v3.3.25+incompatible
+	github.com/containerd/containerd => github.com/containerd/containerd v1.6.8
+	github.com/coreos/etcd => github.com/coreos/etcd v3.3.27+incompatible+incompatible
 	github.com/dgrijalva/jwt-go => github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
 	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
-	github.com/docker/docker => github.com/moby/moby v20.10.11+incompatible
+	github.com/docker/docker => github.com/moby/moby v20.10.18+incompatible+incompatible
 	github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
 	github.com/gorilla/websocket v1.4.0 => github.com/gorilla/websocket v1.4.2
 	// Use mergo 0.3.11 due to bug in 0.3.9 merging Go structs.
-	github.com/imdario/mergo => github.com/imdario/mergo v0.3.11
+	github.com/imdario/mergo => github.com/imdario/mergo v0.3.13
 	github.com/opencontainers/runc v0.1.1 => github.com/opencontainers/runc v1.0.0-rc93
 	github.com/ulikunitz/xz => github.com/ulikunitz/xz v0.5.10
 )
