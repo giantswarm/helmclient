@@ -1,6 +1,6 @@
 module github.com/giantswarm/helmclient/v4
 
-go 1.19
+go 1.18
 
 require (
 	github.com/giantswarm/backoff v1.0.0
@@ -161,10 +161,10 @@ require (
 
 replace (
 	github.com/containerd/containerd => github.com/containerd/containerd v1.6.8
-	github.com/coreos/etcd => github.com/coreos/etcd v3.3.27+incompatible+incompatible
+	github.com/coreos/etcd => github.com/coreos/etcd v3.3.27+incompatible
 	github.com/dgrijalva/jwt-go => github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
 	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
-	github.com/docker/docker => github.com/moby/moby v20.10.18+incompatible+incompatible
+	github.com/docker/docker => github.com/moby/moby v20.10.18+incompatible
 	github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
 	github.com/gorilla/websocket v1.4.0 => github.com/gorilla/websocket v1.4.2
 	// Use mergo 0.3.11 due to bug in 0.3.9 merging Go structs.
