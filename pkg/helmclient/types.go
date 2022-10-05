@@ -4,6 +4,9 @@ import "time"
 
 // Chart returns information about a Helm Chart.
 type Chart struct {
+	// Annotations is map of key:value pairs set by Helm Chart
+	// maintainers
+	Annotations map[string]string
 	// Version is the version of the Helm Chart.
 	Version string
 }

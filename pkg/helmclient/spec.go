@@ -124,9 +124,10 @@ type RollbackOptions struct {
 
 // UpdateOptions is the subset of supported options when updating Helm releases.
 type UpdateOptions struct {
-	Force   bool
-	Timeout time.Duration
-	Wait    bool
+	DisableHooks bool
+	Force        bool
+	Timeout      time.Duration
+	Wait         bool
 }
 
 // DeleteOptions is the subset of supported options when updating Helm releases.
