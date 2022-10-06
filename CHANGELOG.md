@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.11.1] - 2022-10-06
+
 ## Added
 
 - Return Chart annotations on loading.
@@ -235,7 +237,8 @@ validation errors.
 
 - First release.
 
-[Unreleased]: https://github.com/giantswarm/helmclient/compare/v4.11.0...HEAD
+[Unreleased]: https://github.com/giantswarm/helmclient/compare/v4.11.1...HEAD
+[4.11.1]: https://github.com/giantswarm/helmclient/compare/v4.11.0...v4.11.1
 [4.11.0]: https://github.com/giantswarm/helmclient/compare/v4.10.1...v4.11.0
 [4.10.1]: https://github.com/giantswarm/helmclient/compare/v4.10.0...v4.10.1
 [4.10.0]: https://github.com/giantswarm/helmclient/compare/v4.9.0...v4.10.0
