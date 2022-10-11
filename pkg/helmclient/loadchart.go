@@ -40,7 +40,8 @@ func newChart(helmChart *chart.Chart) (Chart, error) {
 	}
 
 	chart := Chart{
-		Version: helmChart.Metadata.Version,
+		Annotations: helmChart.Metadata.Annotations,
+		Version:     helmChart.Metadata.Version,
 	}
 
 	return chart, nil

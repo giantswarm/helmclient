@@ -63,7 +63,7 @@ const (
 // Interface describes the methods provided by the Helm client.
 type Interface interface {
 	// DeleteRelease uninstalls a chart given its release name.
-	DeleteRelease(ctx context.Context, namespace, releaseName string) error
+	DeleteRelease(ctx context.Context, namespace, releaseName string, options DeleteOptions) error
 	// GetReleaseContent gets the current status of the Helm Release. The
 	// releaseName is the name of the Helm Release that is set when the Chart
 	// is installed.
@@ -124,7 +124,13 @@ type RollbackOptions struct {
 
 // UpdateOptions is the subset of supported options when updating Helm releases.
 type UpdateOptions struct {
-	Force   bool
+	DisableHooks bool
+	Force        bool
+	Timeout      time.Duration
+	Wait         bool
+}
+
+// DeleteOptions is the subset of supported options when updating Helm releases.
+type DeleteOptions struct {
 	Timeout time.Duration
-	Wait    bool
 }
