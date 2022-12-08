@@ -26,6 +26,9 @@ sonatype-2021-0276 until=2022-12-31
 # pkg:golang/github.com/miekg/dns@v1.0.14
 sonatype-2021-1401 until=2022-12-31
 
+# pkg:golang/golang.org/x/text@v0.3.7
+CVE-2022-32149 until=2022-12-31
+
 # pkg:golang/github.com/nats-io/nats-server/v2@v2.1.2
 CVE-2020-26892 until=2022-12-31
 CVE-2022-24450 until=2022-12-31
@@ -34,6 +37,8 @@ CVE-2020-28466 until=2022-12-31
 CVE-2021-3127 until=2022-12-31
 CVE-2022-29946 until=2022-12-31
 CVE-2021-32026 until=2022-12-31
+CVE-2022-42709 until=2022-12-31
+CVE-2022-42708 until=2022-12-31
 
 # pkg:golang/github.com/opencontainers/runc@v1.0.2
 CVE-2022-29162 until=2022-12-31
