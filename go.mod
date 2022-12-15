@@ -165,5 +165,5 @@ replace (
 	// Use mergo 0.3.11 due to bug in 0.3.9 merging Go structs.
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.13
 	github.com/opencontainers/runc v0.1.1 => github.com/opencontainers/runc v1.0.0-rc93
-	github.com/ulikunitz/xz => github.com/ulikunitz/xz v0.5.10
+	github.com/ulikunitz/xz => github.com/ulikunitz/xz v0.5.11
 )
