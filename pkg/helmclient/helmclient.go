@@ -4,9 +4,10 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"reflect"
 	"time"
 
-	"github.com/giantswarm/kubeconfig/v4"
+	kubeconfigV4 "github.com/giantswarm/kubeconfig/v4"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 	"github.com/spf13/afero"
@@ -77,7 +78,7 @@ func New(config Config) (*Client, error) {
 	if config.Fs == nil {
 		config.Fs = afero.NewOsFs()
 	}
-	if config.K8sClient == nil {
+	if reflect.ValueOf(config.K8sClient).IsNil() {
 		return nil, microerror.Maskf(invalidConfigError, "%T.K8sClient must not be empty", config)
 	}
 	if config.Logger == nil {
@@ -172,7 +173,7 @@ func (c *Client) newRESTClientGetter(ctx context.Context, namespace string) (*re
 	cachedDiscoveryClient := memory.NewMemCacheClient(discoveryClient)
 
 	// Convert REST config back to a kubeconfig for the raw kubeconfig loader.
-	bytes, err := kubeconfig.NewKubeConfigForRESTConfig(ctx, c.restConfig, "helmclient", namespace)
+	bytes, err := kubeconfigV4.NewKubeConfigForRESTConfig(ctx, c.restConfig, "helmclient", namespace)
 	if err != nil {
 		return nil, microerror.Mask(err)
 	}
