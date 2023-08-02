@@ -9,14 +9,14 @@ require (
 	github.com/giantswarm/micrologger v1.0.0
 	github.com/google/go-cmp v0.5.9
 	github.com/mholt/archiver/v3 v3.5.1
-	github.com/opencontainers/image-spec v1.1.0-rc2.0.20221116213201-188d3a4e1942
+	github.com/opencontainers/image-spec v1.1.0-rc4
 	github.com/prometheus/client_golang v1.14.0
 	github.com/spf13/afero v1.9.3
 	helm.sh/helm/v3 v3.11.1
 	k8s.io/api v0.26.0
 	k8s.io/apimachinery v0.26.0
 	k8s.io/client-go v0.26.0
-	oras.land/oras-go/v2 v2.2.1
+	oras.land/oras-go v1.2.2
 	sigs.k8s.io/controller-runtime v0.11.2
 )
 
@@ -124,7 +124,7 @@ require (
 	golang.org/x/crypto v0.5.0 // indirect
 	golang.org/x/net v0.5.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20220223155221-ee480838109b // indirect
-	golang.org/x/sync v0.1.0 // indirect
+	golang.org/x/sync v0.3.0 // indirect
 	golang.org/x/sys v0.4.0 // indirect
 	golang.org/x/term v0.4.0 // indirect
 	golang.org/x/text v0.6.0 // indirect
@@ -159,8 +159,6 @@ replace (
 	github.com/docker/docker => github.com/moby/moby v24.0.5+incompatible
 	github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
 	github.com/gorilla/websocket v1.4.0 => github.com/gorilla/websocket v1.4.2
-	// Use mergo 0.3.11 due to bug in 0.3.9 merging Go structs.
-	github.com/imdario/mergo => github.com/imdario/mergo v1.0.0
 	github.com/opencontainers/runc v0.1.1 => github.com/opencontainers/runc v1.0.0-rc93
 	github.com/ulikunitz/xz => github.com/ulikunitz/xz v0.5.11
 )
