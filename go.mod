@@ -152,7 +152,7 @@ require (
 )
 
 replace (
-	github.com/containerd/containerd => github.com/containerd/containerd v1.6.15
+	github.com/containerd/containerd => github.com/containerd/containerd v1.6.18
 	github.com/coreos/etcd => github.com/coreos/etcd v3.3.27+incompatible
 	github.com/dgrijalva/jwt-go => github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
 	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
