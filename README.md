@@ -1,4 +1,5 @@
-[![GoDoc](https://godoc.org/github.com/giantswarm/helmclient?status.svg)](http://godoc.org/github.com/giantswarm/helmclient) [![CircleCI](https://circleci.com/gh/giantswarm/helmclient.svg?&style=shield)](https://circleci.com/gh/giantswarm/helmclient)
+[![Go Reference](https://pkg.go.dev/badge/github.com/giantswarm/helmclient.svg)](https://pkg.go.dev/github.com/giantswarm/helmclient)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/giantswarm/helmclient/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/giantswarm/helmclient/tree/master)
 
 # helmclient
 
