@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/giantswarm/kubeconfig/v4"
+	kubeconfig "github.com/giantswarm/kubeconfig/v4"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 	"github.com/spf13/afero"
