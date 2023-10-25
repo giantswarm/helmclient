@@ -155,7 +155,7 @@ require (
 
 replace (
 	// CVE-2022-2582
-	github.com/aws/aws-sdk-go => github.com/aws/aws-sdk-go v1.45.28
+	github.com/aws/aws-sdk-go => github.com/aws/aws-sdk-go v1.46.4
 	github.com/containerd/containerd => github.com/containerd/containerd v1.6.18
 	github.com/coreos/etcd => github.com/coreos/etcd v3.3.27+incompatible
 	github.com/dgrijalva/jwt-go => github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
