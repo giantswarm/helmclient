@@ -160,15 +160,12 @@ require (
 )
 
 replace (
-	// CVE-2022-2582
 	github.com/aws/aws-sdk-go => github.com/aws/aws-sdk-go v1.47.7
 	github.com/containerd/containerd => github.com/containerd/containerd v1.7.8
-	github.com/coreos/etcd => github.com/coreos/etcd v3.3.27+incompatible
 	github.com/dgrijalva/jwt-go => github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
 	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
 	github.com/docker/docker => github.com/moby/moby v20.10.26+incompatible
 	github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
-	github.com/gorilla/websocket v1.4.0 => github.com/gorilla/websocket v1.4.2
 	// Use mergo 0.3.11 due to bug in 0.3.9 merging Go structs.
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.13
 	github.com/ulikunitz/xz => github.com/ulikunitz/xz v0.5.11
