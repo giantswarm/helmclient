@@ -5,8 +5,8 @@ go 1.19
 require (
 	github.com/giantswarm/backoff v1.0.0
 	github.com/giantswarm/kubeconfig/v4 v4.1.0
-	github.com/giantswarm/microerror v0.4.0
-	github.com/giantswarm/micrologger v1.0.0
+	github.com/giantswarm/microerror v0.4.1
+	github.com/giantswarm/micrologger v1.1.1
 	github.com/google/go-cmp v0.6.0
 	github.com/mholt/archiver/v3 v3.5.1
 	github.com/opencontainers/image-spec v1.1.0-rc5
@@ -55,8 +55,8 @@ require (
 	github.com/go-errors/errors v1.4.2 // indirect
 	github.com/go-gorp/gorp/v3 v3.1.0 // indirect
 	github.com/go-kit/log v0.2.1 // indirect
-	github.com/go-logfmt/logfmt v0.5.1 // indirect
-	github.com/go-logr/logr v1.2.4 // indirect
+	github.com/go-logfmt/logfmt v0.6.0 // indirect
+	github.com/go-logr/logr v1.3.0 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-openapi/jsonpointer v0.19.6 // indirect
 	github.com/go-openapi/jsonreference v0.20.2 // indirect
