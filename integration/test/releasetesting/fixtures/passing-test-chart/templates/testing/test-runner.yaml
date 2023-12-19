@@ -11,7 +11,7 @@ spec:
   # Bash automated testing system
   # https://github.com/bats-core/bats-core
   - name: test-framework
-    image: quay.io/giantswarm/bats:0.4.0
+    image: quay.io/giantswarm/bats:v1.10.0
     command:
     - "bash"
     - "-c"
