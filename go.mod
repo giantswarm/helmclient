@@ -163,7 +163,7 @@ require (
 )
 
 replace (
-	github.com/aws/aws-sdk-go => github.com/aws/aws-sdk-go v1.50.3
+	github.com/aws/aws-sdk-go => github.com/aws/aws-sdk-go v1.50.4
 	github.com/containerd/containerd => github.com/containerd/containerd v1.7.12
 	github.com/dgrijalva/jwt-go => github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
 	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
