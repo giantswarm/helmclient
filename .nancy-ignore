@@ -1,23 +1,2 @@
-# pkg:golang/github.com/nats-io/jwt@v0.3.2
-# pkg:golang/github.com/nats-io/nats-server/v2@v2.1.2
-CVE-2020-26892
-CVE-2021-3127
-CVE-2022-24450
-CVE-2020-26521
-CVE-2020-28466
-CVE-2022-29946
-CVE-2022-42709
-CVE-2022-42708
-CVE-2021-32026
-
-# pkg:golang/github.com/hashicorp/consul/api@v1.3.0
-# pkg:golang/github.com/hashicorp/consul/sdk@v0.3.0
-CVE-2022-29153
-
-# pkg:golang/k8s.io/apiserver@v0.28.3
-CVE-2020-8561
-
-# pkg:golang/github.com/opencontainers/runc@v1.1.2
-CVE-2023-28642
-CVE-2023-27561
-CVE-2023-25809
+# pkg:golang/k8s.io/apiserver@v0.29.0
+CVE-2020-8561 until=2024-03-31
