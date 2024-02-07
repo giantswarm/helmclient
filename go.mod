@@ -169,13 +169,13 @@ require (
 replace (
 	github.com/aws/aws-sdk-go => github.com/aws/aws-sdk-go v1.50.12
 	github.com/containerd/containerd => github.com/containerd/containerd v1.7.13
-	github.com/dgrijalva/jwt-go => github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
+	github.com/dgrijalva/jwt-go => github.com/golang-jwt/jwt/v4 v4.1.0
 	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
-	github.com/docker/docker => github.com/moby/moby v20.10.27+incompatible
-	github.com/gogo/protobuf v1.3.1 => github.com/gogo/protobuf v1.3.2
+	github.com/docker/docker => github.com/moby/moby v24.0.9+incompatible
+	github.com/gogo/protobuf => github.com/gogo/protobuf v1.3.2
 	// Use mergo 0.3.11 due to bug in 0.3.9 merging Go structs.
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.13
 	github.com/ulikunitz/xz => github.com/ulikunitz/xz v0.5.11
 	// Pinning to v1.2.2 due to API changes in v1.2.3 and 1.2.4
-	oras.land/oras-go => oras.land/oras-go v1.2.2
+	oras.land/oras-go => oras.land/oras-go v1.2.4
 )
