@@ -14,7 +14,7 @@ require (
 	github.com/opencontainers/image-spec v1.1.0
 	github.com/prometheus/client_golang v1.18.0
 	github.com/spf13/afero v1.11.0
-	helm.sh/helm/v3 v3.14.1
+	helm.sh/helm/v3 v3.14.2
 	k8s.io/api v0.29.0
 	k8s.io/apimachinery v0.29.0
 	k8s.io/client-go v0.29.0
