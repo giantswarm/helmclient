@@ -165,7 +165,7 @@ require (
 )
 
 replace (
-	github.com/aws/aws-sdk-go => github.com/aws/aws-sdk-go v1.51.11
+	github.com/aws/aws-sdk-go => github.com/aws/aws-sdk-go v1.51.13
 	github.com/containerd/containerd => github.com/containerd/containerd v1.7.14
 	github.com/dgrijalva/jwt-go => github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
@@ -177,3 +177,5 @@ replace (
 	// Pinning to v1.2.2 due to API changes in v1.2.3 and 1.2.4
 	oras.land/oras-go => oras.land/oras-go v1.2.5
 )
+
+replace google.golang.org/protobuf v1.32.0 => google.golang.org/protobuf v1.33.0
