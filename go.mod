@@ -169,7 +169,7 @@ replace (
 	github.com/containerd/containerd => github.com/containerd/containerd v1.7.15
 	github.com/dgrijalva/jwt-go => github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
-	github.com/docker/docker => github.com/moby/moby v26.0.0+incompatible
+	github.com/docker/docker => github.com/moby/moby v26.0.1+incompatible
 	github.com/gogo/protobuf => github.com/gogo/protobuf v1.3.2
 	// Use mergo 0.3.11 due to bug in 0.3.9 merging Go structs.
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.13
