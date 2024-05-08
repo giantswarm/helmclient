@@ -99,13 +99,13 @@ func New(config Config) (*Client, error) {
 		return nil, microerror.Maskf(invalidConfigError, "%T.RestConfig must not be empty", config)
 	}
 
-	httpClient, err := rest.HTTPClientFor(rest.CopyConfig(config.RestConfig))
+	rmHttpClient, err := rest.HTTPClientFor(rest.CopyConfig(config.RestConfig))
 	if err != nil {
 		return nil, microerror.Mask(err)
 	}
 
 	if config.RestMapper == nil {
-		restMapper, err := apiutil.NewDynamicRESTMapper(rest.CopyConfig(config.RestConfig), httpClient)
+		restMapper, err := apiutil.NewDynamicRESTMapper(rest.CopyConfig(config.RestConfig), rmHttpClient)
 		if err != nil {
 			return nil, microerror.Mask(err)
 		}
@@ -117,7 +117,9 @@ func New(config Config) (*Client, error) {
 	}
 
 	// Set client timeout to prevent leakages.
-	httpClient.Timeout = time.Second * time.Duration(config.HTTPClientTimeout)
+	httpClient := &http.Client{
+		Timeout: time.Second * time.Duration(config.HTTPClientTimeout),
+	}
 
 	c := &Client{
 		fs:              config.Fs,
