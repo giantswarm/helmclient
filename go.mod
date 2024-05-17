@@ -12,7 +12,7 @@ require (
 	github.com/google/go-cmp v0.6.0
 	github.com/mholt/archiver/v3 v3.5.1
 	github.com/opencontainers/image-spec v1.1.0
-	github.com/prometheus/client_golang v1.19.0
+	github.com/prometheus/client_golang v1.19.1
 	github.com/spf13/afero v1.11.0
 	helm.sh/helm/v3 v3.14.4
 	k8s.io/api v0.29.0
@@ -165,11 +165,11 @@ require (
 )
 
 replace (
-	github.com/aws/aws-sdk-go => github.com/aws/aws-sdk-go v1.52.4
+	github.com/aws/aws-sdk-go => github.com/aws/aws-sdk-go v1.53.0
 	github.com/containerd/containerd => github.com/containerd/containerd v1.7.16
 	github.com/dgrijalva/jwt-go => github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
-	github.com/docker/docker => github.com/moby/moby v26.1.1+incompatible
+	github.com/docker/docker => github.com/moby/moby v26.1.2+incompatible
 	github.com/gogo/protobuf => github.com/gogo/protobuf v1.3.2
 	// Use mergo 0.3.11 due to bug in 0.3.9 merging Go structs.
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.13
