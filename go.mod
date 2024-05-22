@@ -31,7 +31,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.2.1 // indirect
 	github.com/Masterminds/sprig/v3 v3.2.3 // indirect
 	github.com/Masterminds/squirrel v1.5.4 // indirect
-	github.com/Microsoft/hcsshim v0.11.4 // indirect
+	github.com/Microsoft/hcsshim v0.11.5 // indirect
 	github.com/andybalholm/brotli v1.0.1 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
@@ -134,7 +134,7 @@ require (
 	go.opentelemetry.io/otel/trace v1.19.0 // indirect
 	go.starlark.net v0.0.0-20230525235612-a134d8f9ddca // indirect
 	golang.org/x/crypto v0.22.0 // indirect
-	golang.org/x/net v0.21.0 // indirect
+	golang.org/x/net v0.23.0 // indirect
 	golang.org/x/oauth2 v0.17.0 // indirect
 	golang.org/x/sync v0.6.0 // indirect
 	golang.org/x/sys v0.19.0 // indirect
@@ -166,7 +166,7 @@ require (
 
 replace (
 	github.com/aws/aws-sdk-go => github.com/aws/aws-sdk-go v1.53.7
-	github.com/containerd/containerd => github.com/containerd/containerd v1.7.16
+	github.com/containerd/containerd => github.com/containerd/containerd v1.7.17
 	github.com/dgrijalva/jwt-go => github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
 	github.com/docker/docker => github.com/moby/moby v26.1.3+incompatible
