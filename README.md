@@ -1,5 +1,5 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/giantswarm/helmclient.svg)](https://pkg.go.dev/github.com/giantswarm/helmclient)
-[![CircleCI](https://dl.circleci.com/status-badge/img/gh/giantswarm/helmclient/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/giantswarm/helmclient/tree/master)
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/giantswarm/helmclient/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/giantswarm/helmclient/tree/main)
 
 # helmclient
 
@@ -8,7 +8,7 @@ releases. Currently supports Helm 3.
 
 ## Branches
 
-- `master`
+- `main`
     - Latest version using Helm 3.
 - `helm2`
     - Legacy support for Helm 2.
@@ -46,4 +46,4 @@ helmclient is under the Apache 2.0 license. See the [LICENSE](LICENSE) file
 for details.
 
 [Helm]: https://github.com/helm/helm
-[spec.go]: https://github.com/giantswarm/helmclient/blob/master/spec.go
+[spec.go]: https://github.com/giantswarm/helmclient/blob/main/spec.go
