@@ -2,10 +2,10 @@ module github.com/giantswarm/helmclient/v4
 
 go 1.22.0
 
-toolchain go1.22.3
+toolchain go1.22.4
 
 require (
-	github.com/giantswarm/backoff v1.0.0
+	github.com/giantswarm/backoff v1.0.1
 	github.com/giantswarm/kubeconfig/v4 v4.1.1
 	github.com/giantswarm/microerror v0.4.1
 	github.com/giantswarm/micrologger v1.1.1
@@ -35,10 +35,11 @@ require (
 	github.com/andybalholm/brotli v1.0.1 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/cenkalti/backoff/v4 v4.2.1 // indirect
+	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/chai2010/gettext-go v1.0.2 // indirect
 	github.com/containerd/containerd v1.7.12 // indirect
+	github.com/containerd/errdefs v0.1.0 // indirect
 	github.com/containerd/log v0.1.0 // indirect
 	github.com/cyphar/filepath-securejoin v0.2.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
@@ -165,11 +166,11 @@ require (
 )
 
 replace (
-	github.com/aws/aws-sdk-go => github.com/aws/aws-sdk-go v1.53.14
-	github.com/containerd/containerd => github.com/containerd/containerd v1.7.17
+	github.com/aws/aws-sdk-go => github.com/aws/aws-sdk-go v1.53.17
+	github.com/containerd/containerd => github.com/containerd/containerd v1.7.18
 	github.com/dgrijalva/jwt-go => github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
-	github.com/docker/docker => github.com/moby/moby v26.1.3+incompatible
+	github.com/docker/docker => github.com/moby/moby v26.1.4+incompatible
 	github.com/gogo/protobuf => github.com/gogo/protobuf v1.3.2
 	// Use mergo 0.3.11 due to bug in 0.3.9 merging Go structs.
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.13
