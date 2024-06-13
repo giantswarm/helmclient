@@ -14,7 +14,7 @@ require (
 	github.com/opencontainers/image-spec v1.1.0
 	github.com/prometheus/client_golang v1.19.1
 	github.com/spf13/afero v1.11.0
-	helm.sh/helm/v3 v3.15.1
+	helm.sh/helm/v3 v3.15.2
 	k8s.io/api v0.30.0
 	k8s.io/apimachinery v0.30.0
 	k8s.io/client-go v0.30.0
@@ -46,7 +46,7 @@ require (
 	github.com/distribution/reference v0.5.0 // indirect
 	github.com/docker/cli v25.0.1+incompatible // indirect
 	github.com/docker/distribution v2.8.3+incompatible // indirect
-	github.com/docker/docker v25.0.1+incompatible // indirect
+	github.com/docker/docker v25.0.5+incompatible // indirect
 	github.com/docker/docker-credential-helpers v0.7.0 // indirect
 	github.com/docker/go-connections v0.5.0 // indirect
 	github.com/docker/go-metrics v0.0.1 // indirect
