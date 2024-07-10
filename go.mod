@@ -31,7 +31,6 @@ require (
 	github.com/Masterminds/semver/v3 v3.2.1 // indirect
 	github.com/Masterminds/sprig/v3 v3.2.3 // indirect
 	github.com/Masterminds/squirrel v1.5.4 // indirect
-	github.com/Microsoft/hcsshim v0.11.5 // indirect
 	github.com/andybalholm/brotli v1.0.1 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20200428143746-21a406dcc535 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
@@ -41,9 +40,10 @@ require (
 	github.com/containerd/containerd v1.7.12 // indirect
 	github.com/containerd/errdefs v0.1.0 // indirect
 	github.com/containerd/log v0.1.0 // indirect
+	github.com/containerd/platforms v0.2.1 // indirect
 	github.com/cyphar/filepath-securejoin v0.2.4 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/distribution/reference v0.5.0 // indirect
+	github.com/distribution/reference v0.6.0 // indirect
 	github.com/docker/cli v25.0.1+incompatible // indirect
 	github.com/docker/distribution v2.8.3+incompatible // indirect
 	github.com/docker/docker v25.0.5+incompatible // indirect
@@ -87,7 +87,7 @@ require (
 	github.com/jmoiron/sqlx v1.3.5 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/klauspost/compress v1.16.0 // indirect
+	github.com/klauspost/compress v1.16.7 // indirect
 	github.com/klauspost/pgzip v1.2.5 // indirect
 	github.com/lann/builder v0.0.0-20180802200727-47ae307949d0 // indirect
 	github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0 // indirect
@@ -167,7 +167,7 @@ require (
 
 replace (
 	github.com/aws/aws-sdk-go => github.com/aws/aws-sdk-go v1.54.17
-	github.com/containerd/containerd => github.com/containerd/containerd v1.7.18
+	github.com/containerd/containerd => github.com/containerd/containerd v1.7.19
 	github.com/dgrijalva/jwt-go => github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
 	github.com/docker/docker => github.com/moby/moby v27.0.2+incompatible
