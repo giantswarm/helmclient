@@ -3,7 +3,6 @@ package helmclient
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"io"
 	"net/http"
 	"net/url"
@@ -204,15 +203,15 @@ func (c *Client) doFileHTTP(ctx context.Context, req *http.Request) (string, err
 
 			// Github Pages 404 produces full HTML page which obscures the logs.
 			if resp.StatusCode == http.StatusNotFound {
-				return backoff.Permanent(microerror.Maskf(pullChartNotFoundError, fmt.Sprintf("got StatusCode %d for url %#q", resp.StatusCode, req.URL.String())))
+				return backoff.Permanent(microerror.Maskf(pullChartNotFoundError, "got StatusCode %d for url %#q", resp.StatusCode, req.URL.String()))
 			}
 
 			// Github Pages 503 produces full HTML page which obscures the logs.
 			if resp.StatusCode == http.StatusServiceUnavailable {
-				return backoff.Permanent(microerror.Maskf(pullChartFailedError, fmt.Sprintf("got StatusCode %d for url %#q", resp.StatusCode, req.URL.String())))
+				return backoff.Permanent(microerror.Maskf(pullChartFailedError, "got StatusCode %d for url %#q", resp.StatusCode, req.URL.String()))
 			}
 
-			return microerror.Maskf(executionFailedError, fmt.Sprintf("got StatusCode %d for url %#q with body %s", resp.StatusCode, req.URL.String(), buf.String()))
+			return microerror.Maskf(executionFailedError, "got StatusCode %d for url %#q with body %s", resp.StatusCode, req.URL.String(), buf.String())
 		}
 
 		tmpfile, err := afero.TempFile(c.fs, "", "chart-tarball")
