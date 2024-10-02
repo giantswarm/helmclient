@@ -2,7 +2,7 @@ module github.com/giantswarm/helmclient/v4
 
 go 1.22.4
 
-toolchain go1.23.1
+toolchain go1.23.2
 
 require (
 	github.com/giantswarm/backoff v1.0.1
