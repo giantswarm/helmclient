@@ -40,7 +40,7 @@ require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/chai2010/gettext-go v1.0.2 // indirect
 	github.com/containerd/containerd v1.7.20 // indirect
-	github.com/containerd/errdefs v0.1.0 // indirect
+	github.com/containerd/errdefs v0.3.0 // indirect
 	github.com/containerd/log v0.1.0 // indirect
 	github.com/containerd/platforms v0.2.1 // indirect
 	github.com/cyphar/filepath-securejoin v0.3.1 // indirect
@@ -171,7 +171,7 @@ require (
 
 replace (
 	github.com/aws/aws-sdk-go => github.com/aws/aws-sdk-go v1.55.5
-	github.com/containerd/containerd => github.com/containerd/containerd v1.7.22
+	github.com/containerd/containerd => github.com/containerd/containerd v1.7.23
 	github.com/dgrijalva/jwt-go => github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
 	github.com/docker/docker => github.com/moby/moby v27.3.1+incompatible
