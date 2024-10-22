@@ -293,6 +293,7 @@ func TestBasic(t *testing.T) {
 			Labels: map[string]string{
 				"key":     "value",
 				"name":    "test-chart",
+				"newkey":  "newvalue",
 				"owner":   "helm",
 				"status":  "deployed",
 				"version": "3",
