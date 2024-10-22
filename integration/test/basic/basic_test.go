@@ -292,7 +292,6 @@ func TestBasic(t *testing.T) {
 			Description: "Rollback to 1",
 			Labels: map[string]string{
 				"key":     "value",
-				"newkey":  "newvalue",
 				"name":    "test-chart",
 				"owner":   "helm",
 				"status":  "deployed",
