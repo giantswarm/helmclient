@@ -160,6 +160,7 @@ func TestBasic(t *testing.T) {
 		}
 		// Reset to zero for comparison.
 		releaseHistory[0].LastDeployed = time.Time{}
+		delete(releaseHistory[0].Labels, "modifiedAt")
 
 		expectedHistory := []helmclient.ReleaseHistory{
 			{
@@ -229,6 +230,7 @@ func TestBasic(t *testing.T) {
 		if err != nil {
 			t.Fatalf("expected nil error got %v", err)
 		}
+		delete(releaseContent.Labels, "modifiedAt")
 
 		expectedContent := &helmclient.ReleaseContent{
 			AppVersion:  "v1.8.0",
@@ -279,6 +281,7 @@ func TestBasic(t *testing.T) {
 		if err != nil {
 			t.Fatalf("expected nil error got %v", err)
 		}
+		delete(releaseContent.Labels, "modifiedAt")
 
 		expectedContent := &helmclient.ReleaseContent{
 			AppVersion:  "v1.8.0",
