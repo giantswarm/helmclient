@@ -107,6 +107,7 @@ type RESTClientGetter interface {
 // InstallOptions is the subset of supported options when installing Helm
 // releases.
 type InstallOptions struct {
+	Labels      map[string]string
 	Namespace   string
 	ReleaseName string
 	Timeout     time.Duration
@@ -126,6 +127,7 @@ type RollbackOptions struct {
 type UpdateOptions struct {
 	DisableHooks bool
 	Force        bool
+	Labels       map[string]string
 	Timeout      time.Duration
 	Wait         bool
 }

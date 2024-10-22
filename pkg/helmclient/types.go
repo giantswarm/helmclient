@@ -17,6 +17,8 @@ type ReleaseContent struct {
 	AppVersion string
 	// Description is a human-friendly "log entry" about this Helm release.
 	Description string
+	// Labels keep release metadata
+	Labels map[string]string
 	// LastDeployed is the time the Helm Chart was last deployed.
 	LastDeployed time.Time
 	// Name is the name of the Helm Release.
@@ -37,6 +39,9 @@ type ReleaseHistory struct {
 	AppVersion string
 	// Description is a human-friendly "log entry" about this Helm release.
 	Description string
+	// Labels keep release metadata
+	Labels map[string]string
+	// LastDeployed is the time the Helm Chart was last deployed.
 	// LastDeployed is the time the Helm Chart was last deployed.
 	LastDeployed time.Time
 	// Name is the name of the Helm Release.

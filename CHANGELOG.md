@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Changed
+
+- Allow adding labels to a release.
+
 ## [4.12.0] - 2024-05-17
 
 ## Changed

@@ -67,6 +67,7 @@ func (options UpdateOptions) configure(action *action.Upgrade, namespace string)
 	// Sometimes hooks have to be disabled
 	action.DisableHooks = options.DisableHooks
 	action.Force = options.Force
+	action.Labels = options.Labels
 	// Explicitly set MaxHistory to 10 which is also the default for Helm 3.
 	action.MaxHistory = maxHistory
 	action.Namespace = namespace
