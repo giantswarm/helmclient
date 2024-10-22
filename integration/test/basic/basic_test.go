@@ -112,12 +112,17 @@ func TestBasic(t *testing.T) {
 		if err != nil {
 			t.Fatalf("expected nil error got %v", err)
 		}
+		delete(releaseContent.Labels, "modifiedAt")
 
 		expectedContent := &helmclient.ReleaseContent{
 			AppVersion:  "v1.8.0",
 			Description: "Install complete",
 			Labels: map[string]string{
-				"key": "value",
+				"key":     "value",
+				"name":    "test-chart",
+				"owner":   "helm",
+				"status":  "deployed",
+				"version": "1",
 			},
 			Name:     releaseName,
 			Revision: 1,
@@ -161,7 +166,11 @@ func TestBasic(t *testing.T) {
 				AppVersion:  "v1.8.0",
 				Description: "Install complete",
 				Labels: map[string]string{
-					"key": "value",
+					"key":     "value",
+					"name":    "test-chart",
+					"owner":   "helm",
+					"status":  "deployed",
+					"version": "1",
 				},
 				Name:     releaseName,
 				Revision: 1,
