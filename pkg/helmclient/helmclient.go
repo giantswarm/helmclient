@@ -214,6 +214,7 @@ func (r *restClientGetter) ToRESTMapper() (meta.RESTMapper, error) {
 
 func releaseToReleaseContent(res *release.Release) *ReleaseContent {
 	release := &ReleaseContent{
+		Labels:   res.Labels,
 		Name:     res.Name,
 		Revision: res.Version,
 		Status:   res.Info.Status.String(),

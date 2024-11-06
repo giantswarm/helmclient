@@ -77,6 +77,9 @@ func TestBasic(t *testing.T) {
 		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("installing %#q", releaseName))
 
 		installOptions := helmclient.InstallOptions{
+			Labels: map[string]string{
+				"key": "value",
+			},
 			ReleaseName: releaseName,
 			Wait:        true,
 		}
@@ -109,15 +112,23 @@ func TestBasic(t *testing.T) {
 		if err != nil {
 			t.Fatalf("expected nil error got %v", err)
 		}
+		delete(releaseContent.Labels, "modifiedAt")
 
 		expectedContent := &helmclient.ReleaseContent{
 			AppVersion:  "v1.8.0",
 			Description: "Install complete",
-			Name:        releaseName,
-			Revision:    1,
-			Status:      helmclient.StatusDeployed,
-			Values:      values,
-			Version:     "0.1.1",
+			Labels: map[string]string{
+				"key":     "value",
+				"name":    "test-chart",
+				"owner":   "helm",
+				"status":  "deployed",
+				"version": "1",
+			},
+			Name:     releaseName,
+			Revision: 1,
+			Status:   helmclient.StatusDeployed,
+			Values:   values,
+			Version:  "0.1.1",
 		}
 
 		if releaseContent.LastDeployed.IsZero() {
@@ -149,15 +160,23 @@ func TestBasic(t *testing.T) {
 		}
 		// Reset to zero for comparison.
 		releaseHistory[0].LastDeployed = time.Time{}
+		delete(releaseHistory[0].Labels, "modifiedAt")
 
 		expectedHistory := []helmclient.ReleaseHistory{
 			{
 				AppVersion:  "v1.8.0",
 				Description: "Install complete",
-				Name:        releaseName,
-				Revision:    1,
-				Status:      helmclient.StatusDeployed,
-				Version:     "0.1.1",
+				Labels: map[string]string{
+					"key":     "value",
+					"name":    "test-chart",
+					"owner":   "helm",
+					"status":  "deployed",
+					"version": "1",
+				},
+				Name:     releaseName,
+				Revision: 1,
+				Status:   helmclient.StatusDeployed,
+				Version:  "0.1.1",
 			},
 		}
 		if !cmp.Equal(releaseHistory, expectedHistory) {
@@ -191,6 +210,9 @@ func TestBasic(t *testing.T) {
 		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("updating %#q", releaseName))
 
 		updateOptions := helmclient.UpdateOptions{
+			Labels: map[string]string{
+				"newkey": "newvalue",
+			},
 			Wait: true,
 		}
 		err = config.HelmClient.UpdateReleaseFromTarball(ctx, updatedChartPath, metav1.NamespaceDefault, releaseName, updatedValues, updateOptions)
@@ -208,15 +230,24 @@ func TestBasic(t *testing.T) {
 		if err != nil {
 			t.Fatalf("expected nil error got %v", err)
 		}
+		delete(releaseContent.Labels, "modifiedAt")
 
 		expectedContent := &helmclient.ReleaseContent{
 			AppVersion:  "v1.8.0",
 			Description: "Upgrade complete",
-			Name:        releaseName,
-			Revision:    2,
-			Status:      helmclient.StatusDeployed,
-			Values:      updatedValues,
-			Version:     "0.1.2",
+			Labels: map[string]string{
+				"key":     "value",
+				"newkey":  "newvalue",
+				"name":    "test-chart",
+				"owner":   "helm",
+				"status":  "deployed",
+				"version": "2",
+			},
+			Name:     releaseName,
+			Revision: 2,
+			Status:   helmclient.StatusDeployed,
+			Values:   updatedValues,
+			Version:  "0.1.2",
 		}
 
 		if releaseContent.LastDeployed.IsZero() {
@@ -254,15 +285,23 @@ func TestBasic(t *testing.T) {
 		if err != nil {
 			t.Fatalf("expected nil error got %v", err)
 		}
+		delete(releaseContent.Labels, "modifiedAt")
 
 		expectedContent := &helmclient.ReleaseContent{
 			AppVersion:  "v1.8.0",
 			Description: "Rollback to 1",
-			Name:        releaseName,
-			Revision:    3,
-			Status:      helmclient.StatusDeployed,
-			Values:      values,
-			Version:     "0.1.1",
+			Labels: map[string]string{
+				"key":     "value",
+				"name":    "test-chart",
+				"owner":   "helm",
+				"status":  "deployed",
+				"version": "3",
+			},
+			Name:     releaseName,
+			Revision: 3,
+			Status:   helmclient.StatusDeployed,
+			Values:   values,
+			Version:  "0.1.1",
 		}
 
 		if releaseContent.LastDeployed.IsZero() {

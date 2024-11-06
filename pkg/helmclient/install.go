@@ -63,6 +63,7 @@ func (options InstallOptions) configure(action *action.Install, namespace string
 	// Disable OpenAPI validation as some charts we need to deploy will contain
 	// validation errors.
 	action.DisableOpenAPIValidation = true
+	action.Labels = options.Labels
 	action.Namespace = namespace
 	action.ReleaseName = options.ReleaseName
 	action.Timeout = options.Timeout

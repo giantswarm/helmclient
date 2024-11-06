@@ -61,6 +61,7 @@ func releasesToReleaseHistory(releases []*release.Release) []ReleaseHistory {
 
 func releaseToReleaseHistory(release *release.Release) ReleaseHistory {
 	history := ReleaseHistory{
+		Labels:   release.Labels,
 		Name:     release.Name,
 		Revision: release.Version,
 	}
