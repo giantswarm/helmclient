@@ -15,9 +15,9 @@ require (
 	github.com/prometheus/client_golang v1.20.5
 	github.com/spf13/afero v1.11.0
 	helm.sh/helm/v3 v3.16.3
-	k8s.io/api v0.31.3
-	k8s.io/apimachinery v0.31.3
-	k8s.io/client-go v0.31.3
+	k8s.io/api v0.31.4
+	k8s.io/apimachinery v0.31.4
+	k8s.io/client-go v0.31.4
 	oras.land/oras-go v1.2.6
 	sigs.k8s.io/controller-runtime v0.19.3
 )
