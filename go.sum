@@ -129,8 +129,8 @@ github.com/fxamacker/cbor/v2 v2.7.0/go.mod h1:pxXPTn3joSm21Gbwsv0w9OSA2y1HFR9qXE
 github.com/garyburd/redigo v0.0.0-20150301180006-535138d7bcd7/go.mod h1:NR3MbYisc3/PwhQ00EMzDiPmrwpPxAn5GI05/YaO1SY=
 github.com/giantswarm/backoff v1.0.1 h1:paqQhjUsibkf+wWFCHsk7VXAkcM1L3ssAe7V7i8twpM=
 github.com/giantswarm/backoff v1.0.1/go.mod h1:RGj8b06J3irMNFRoSiMnngS50K+QbpSvu77sW03bxqQ=
-github.com/giantswarm/kubeconfig/v4 v4.1.1 h1:7T1qALHhDSoAoNB5AfJc8sr2PCejXm5sTfzo76NsdT0=
-github.com/giantswarm/kubeconfig/v4 v4.1.1/go.mod h1:sQZJhztOzlZ1NzOlvQrHT1zzZ5vXDTLKsTBA5F/MTAE=
+github.com/giantswarm/kubeconfig/v4 v4.1.2 h1:G05I30YRnuHM+orXH5EyM+bZYX0heeQMZqaqG/tPvCw=
+github.com/giantswarm/kubeconfig/v4 v4.1.2/go.mod h1:RIldLAcc8Xn3FLBCKOHqSGJC7BpXqn0ZndHYl9+M23I=
 github.com/giantswarm/microerror v0.4.1 h1:WMiD7HQASoUA9lZzPlPK+erCEOJ0uT4cyo18VfCXHD0=
 github.com/giantswarm/microerror v0.4.1/go.mod h1:URFj0gFCmZihjya6saQCXxslBrgctXb4NsXYHB5JdrI=
 github.com/giantswarm/micrologger v1.1.2 h1:dNmnGZgAT0rnZkpc2ivj1shJ3Stnnjsy7jIi84//Jqc=
