@@ -1,6 +1,6 @@
 module github.com/giantswarm/helmclient/v4
 
-go 1.21
+go 1.18
 
 require (
 	github.com/giantswarm/backoff v1.0.1
