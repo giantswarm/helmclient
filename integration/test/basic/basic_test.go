@@ -60,7 +60,7 @@ func TestBasic(t *testing.T) {
 		}
 
 		expectedChart := helmclient.Chart{
-			Version: "0.1.1",
+			Version: "1.0.0",
 		}
 		if !cmp.Equal(chart, expectedChart) {
 			t.Fatalf("want matching Chart \n %s", cmp.Diff(chart, expectedChart))
@@ -117,7 +117,7 @@ func TestBasic(t *testing.T) {
 			Revision:    1,
 			Status:      helmclient.StatusDeployed,
 			Values:      values,
-			Version:     "0.1.1",
+			Version:     "1.0.0",
 		}
 
 		if releaseContent.LastDeployed.IsZero() {
@@ -216,7 +216,7 @@ func TestBasic(t *testing.T) {
 			Revision:    2,
 			Status:      helmclient.StatusDeployed,
 			Values:      updatedValues,
-			Version:     "0.1.2",
+			Version:     "1.0.0",
 		}
 
 		if releaseContent.LastDeployed.IsZero() {
@@ -262,7 +262,7 @@ func TestBasic(t *testing.T) {
 			Revision:    3,
 			Status:      helmclient.StatusDeployed,
 			Values:      values,
-			Version:     "0.1.1",
+			Version:     "1.0.0",
 		}
 
 		if releaseContent.LastDeployed.IsZero() {
