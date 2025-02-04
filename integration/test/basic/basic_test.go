@@ -39,7 +39,7 @@ func TestBasic(t *testing.T) {
 	var chartPath string
 
 	{
-		tarballURL := "https://giantswarm.github.io/default-catalog/test-app-0.1.1.tgz"
+		tarballURL := "https://giantswarm.github.io/default-catalog/test-app-1.0.0.tgz"
 		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("pulling tarball %#q", tarballURL))
 
 		chartPath, err = config.HelmClient.PullChartTarball(ctx, tarballURL)
@@ -170,7 +170,7 @@ func TestBasic(t *testing.T) {
 	var updatedChartPath string
 
 	{
-		tarballURL := "https://giantswarm.github.io/default-catalog/test-app-0.1.2.tgz"
+		tarballURL := "https://giantswarm.github.io/default-catalog/test-app-1.0.0.tgz"
 		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("pulling tarball %#q", tarballURL))
 
 		updatedChartPath, err = config.HelmClient.PullChartTarball(ctx, tarballURL)
