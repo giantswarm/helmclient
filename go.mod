@@ -164,7 +164,8 @@ require (
 
 replace (
 	github.com/aws/aws-sdk-go => github.com/aws/aws-sdk-go v1.55.6
-	github.com/containerd/containerd => github.com/containerd/containerd v1.7.25
+	github.com/containerd/containerd => github.com/containerd/containerd v1.6.18
+	github.com/containerd/containerd/remotes/docker => github.com/containerd/containerd/remotes/docker v1.6.18
 	github.com/dgrijalva/jwt-go => github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
 	github.com/docker/docker => github.com/moby/moby v27.5.1+incompatible
