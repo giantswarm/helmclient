@@ -10,9 +10,9 @@ require (
 	github.com/google/go-cmp v0.6.0
 	github.com/mholt/archiver/v3 v3.5.1
 	github.com/opencontainers/image-spec v1.1.0
-	github.com/prometheus/client_golang v1.20.5
-	github.com/spf13/afero v1.12.0
-	helm.sh/helm/v3 v3.12.3
+	github.com/prometheus/client_golang v1.17.0
+	github.com/spf13/afero v1.9.5
+	helm.sh/helm/v3 v3.8.2
 	k8s.io/api v0.32.1
 	k8s.io/apimachinery v0.32.1
 	k8s.io/client-go v0.32.1
@@ -29,7 +29,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.3.0 // indirect
 	github.com/Masterminds/sprig/v3 v3.3.0 // indirect
 	github.com/Masterminds/squirrel v1.5.4 // indirect
-	github.com/andybalholm/brotli v1.0.1 // indirect
+	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
@@ -62,7 +62,7 @@ require (
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
-	github.com/golang/snappy v0.0.2 // indirect
+	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/btree v1.1.3 // indirect
 	github.com/google/gnostic v0.5.7-v3refs // indirect
 	github.com/google/gnostic-models v0.6.8 // indirect
@@ -72,8 +72,6 @@ require (
 	github.com/gorilla/mux v1.8.1 // indirect
 	github.com/gosuri/uitable v0.0.4 // indirect
 	github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79 // indirect
-	github.com/hashicorp/errwrap v1.1.0 // indirect
-	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/imdario/mergo v0.3.13 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
@@ -90,6 +88,7 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/mattn/go-runewidth v0.0.9 // indirect
+	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/go-wordwrap v1.0.1 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
@@ -104,11 +103,11 @@ require (
 	github.com/nwaples/rardecode v1.1.0 // indirect
 	github.com/opencontainers/go-digest v1.0.0 // indirect
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
-	github.com/pierrec/lz4/v4 v4.1.2 // indirect
+	github.com/pierrec/lz4/v4 v4.1.15 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/prometheus/client_model v0.6.1 // indirect
-	github.com/prometheus/common v0.55.0 // indirect
-	github.com/prometheus/procfs v0.15.1 // indirect
+	github.com/prometheus/client_model v0.5.0 // indirect
+	github.com/prometheus/common v0.44.0 // indirect
+	github.com/prometheus/procfs v0.11.1 // indirect
 	github.com/rubenv/sql-migrate v1.7.1 // indirect
 	github.com/russross/blackfriday v1.6.0 // indirect
 	github.com/shopspring/decimal v1.4.0 // indirect
@@ -157,7 +156,7 @@ replace (
 	github.com/aws/aws-sdk-go => github.com/aws/aws-sdk-go v1.55.6
 	github.com/containerd/containerd => github.com/containerd/containerd v1.6.18
 	github.com/containerd/containerd/remotes/docker => github.com/containerd/containerd/remotes/docker v1.6.18
-	github.com/dgrijalva/jwt-go => github.com/golang-jwt/jwt/v5 v5.2.1
+	github.com/dgrijalva/jwt-go => github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
 	github.com/docker/docker => github.com/moby/moby v20.10.24+incompatible
 	github.com/gogo/protobuf => github.com/gogo/protobuf v1.3.2
@@ -174,7 +173,7 @@ replace (
 	go.opentelemetry.io/otel/metric => go.opentelemetry.io/otel/metric v1.16.0
 	go.opentelemetry.io/otel/sdk => go.opentelemetry.io/otel/sdk v1.16.0
 	go.opentelemetry.io/otel/trace => go.opentelemetry.io/otel/trace v1.16.0
-	google.golang.org/protobuf v1.32.0 => google.golang.org/protobuf v1.33.0
+	google.golang.org/protobuf v1.32.0 => google.golang.org/protobuf v1.28.1
 	k8s.io/api => k8s.io/api v0.25.16
 	k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.25.16
 	k8s.io/apimachinery => k8s.io/apimachinery v0.25.16
