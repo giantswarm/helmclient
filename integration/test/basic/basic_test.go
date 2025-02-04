@@ -60,7 +60,13 @@ func TestBasic(t *testing.T) {
 		}
 
 		expectedChart := helmclient.Chart{
-			Version: "0.1.1",
+			Version: "1.0.0",
+			Annotations: map[string]string{
+				"application.giantswarm.io/metadata":       "https://giantswarm.github.io/default-catalog/test-app-1.0.0.tgz-meta/main.yaml",
+				"application.giantswarm.io/readme":         "https://giantswarm.github.io/default-catalog/test-app-1.0.0.tgz-meta/README.md",
+				"application.giantswarm.io/team":          "honeybadger",
+				"application.giantswarm.io/values-schema": "https://giantswarm.github.io/default-catalog/test-app-1.0.0.tgz-meta/values.schema.json",
+			},
 		}
 		if !cmp.Equal(chart, expectedChart) {
 			t.Fatalf("want matching Chart \n %s", cmp.Diff(chart, expectedChart))
