@@ -117,7 +117,7 @@ func TestBasic(t *testing.T) {
 		}
 
 		expectedContent := &helmclient.ReleaseContent{
-			AppVersion:  "v1.8.0",
+			AppVersion:  "v2.13.0",
 			Description: "Install complete",
 			Name:        releaseName,
 			Revision:    1,
@@ -158,12 +158,12 @@ func TestBasic(t *testing.T) {
 
 		expectedHistory := []helmclient.ReleaseHistory{
 			{
-				AppVersion:  "v1.8.0",
+				AppVersion:  "v2.13.0",
 				Description: "Install complete",
 				Name:        releaseName,
 				Revision:    1,
 				Status:      helmclient.StatusDeployed,
-				Version:     "0.1.1",
+				Version:     "1.0.0",
 			},
 		}
 		if !cmp.Equal(releaseHistory, expectedHistory) {
@@ -216,7 +216,7 @@ func TestBasic(t *testing.T) {
 		}
 
 		expectedContent := &helmclient.ReleaseContent{
-			AppVersion:  "v1.8.0",
+			AppVersion:  "v2.13.0",
 			Description: "Upgrade complete",
 			Name:        releaseName,
 			Revision:    2,
@@ -262,7 +262,7 @@ func TestBasic(t *testing.T) {
 		}
 
 		expectedContent := &helmclient.ReleaseContent{
-			AppVersion:  "v1.8.0",
+			AppVersion:  "v2.13.0",
 			Description: "Rollback to 1",
 			Name:        releaseName,
 			Revision:    3,
