@@ -12,7 +12,7 @@ require (
 	github.com/opencontainers/image-spec v1.1.0
 	github.com/prometheus/client_golang v1.17.0
 	github.com/spf13/afero v1.9.5
-	helm.sh/helm/v3 v3.8.0
+	helm.sh/helm/v3 v3.9.0
 	k8s.io/api v0.32.1
 	k8s.io/apimachinery v0.32.1
 	k8s.io/client-go v0.32.1
@@ -179,7 +179,7 @@ replace (
 	go.opentelemetry.io/otel/sdk => go.opentelemetry.io/otel/sdk v1.16.0
 	go.opentelemetry.io/otel/trace => go.opentelemetry.io/otel/trace v1.16.0
 	google.golang.org/protobuf v1.32.0 => google.golang.org/protobuf v1.28.1
-	helm.sh/helm/v3 => helm.sh/helm/v3 v3.8.0
+	helm.sh/helm/v3 => helm.sh/helm/v3 v3.9.0
 	k8s.io/api => k8s.io/api v0.24.2
 	k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.24.2
 	k8s.io/apimachinery => k8s.io/apimachinery v0.24.2
