@@ -99,13 +99,8 @@ func New(config Config) (*Client, error) {
 		return nil, microerror.Maskf(invalidConfigError, "%T.RestConfig must not be empty", config)
 	}
 
-	rmHttpClient, err := rest.HTTPClientFor(rest.CopyConfig(config.RestConfig))
-	if err != nil {
-		return nil, microerror.Mask(err)
-	}
-
 	if config.RestMapper == nil {
-		restMapper, err := apiutil.NewDynamicRESTMapper(rest.CopyConfig(config.RestConfig), rmHttpClient)
+		restMapper, err := apiutil.NewDynamicRESTMapper(rest.CopyConfig(config.RestConfig))
 		if err != nil {
 			return nil, microerror.Mask(err)
 		}
