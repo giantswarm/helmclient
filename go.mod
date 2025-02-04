@@ -46,7 +46,7 @@ require (
 	github.com/docker/go-metrics v0.0.1 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/dsnet/compress v0.0.2-0.20210315054119-f66993602bf5 // indirect
-	github.com/emicklei/go-restful/v3 v3.11.0 // indirect
+	github.com/emicklei/go-restful v2.9.5+incompatible // indirect
 	github.com/evanphx/json-patch v5.9.0+incompatible // indirect
 	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f // indirect
 	github.com/fatih/color v1.13.0 // indirect
@@ -65,7 +65,6 @@ require (
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/btree v1.1.3 // indirect
 	github.com/google/gnostic v0.5.7-v3refs // indirect
-	github.com/google/gnostic-models v0.6.8 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect
 	github.com/google/uuid v1.6.0 // indirect
@@ -105,6 +104,7 @@ require (
 	github.com/peterbourgon/diskv v2.0.1+incompatible // indirect
 	github.com/pierrec/lz4/v4 v4.1.15 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/prometheus/client_model v0.5.0 // indirect
 	github.com/prometheus/common v0.44.0 // indirect
 	github.com/prometheus/procfs v0.11.1 // indirect
@@ -115,6 +115,7 @@ require (
 	github.com/spf13/cast v1.7.0 // indirect
 	github.com/spf13/cobra v1.8.1 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/stretchr/testify v1.9.0 // indirect
 	github.com/ulikunitz/xz v0.5.9 // indirect
 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
@@ -159,12 +160,15 @@ replace (
 	github.com/dgrijalva/jwt-go => github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
 	github.com/docker/docker => github.com/moby/moby v20.10.24+incompatible
+	github.com/go-openapi/swag => github.com/go-openapi/swag v0.19.14
 	github.com/gogo/protobuf => github.com/gogo/protobuf v1.3.2
 	// Use mergo 0.3.11 due to bug in 0.3.9 merging Go structs.
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.13
+	github.com/klauspost/compress => github.com/klauspost/compress v1.13.6
 	github.com/ulikunitz/xz => github.com/ulikunitz/xz v0.5.12
-	// Pinning to v1.2.2 due to API changes in v1.2.3 and 1.2.4
-	oras.land/oras-go => oras.land/oras-go v1.2.6
+	k8s.io/kube-openapi => k8s.io/kube-openapi v0.0.0-20220328201542-3ee0da9b0b42
+	// Pinning to v1.1.1 for Go 1.18 compatibility
+	oras.land/oras-go => oras.land/oras-go v1.1.1
 )
 
 replace (
@@ -184,7 +188,7 @@ replace (
 	k8s.io/component-base => k8s.io/component-base v0.24.2
 	k8s.io/kubectl => k8s.io/kubectl v0.24.2
 	sigs.k8s.io/json => sigs.k8s.io/json v0.0.0-20220713155537-f223a00ba0e2
-	sigs.k8s.io/kustomize/api => sigs.k8s.io/kustomize/api v0.12.1
-	sigs.k8s.io/kustomize/kyaml => sigs.k8s.io/kustomize/kyaml v0.13.9
+	sigs.k8s.io/kustomize/api => sigs.k8s.io/kustomize/api v0.11.4
+	sigs.k8s.io/kustomize/kyaml => sigs.k8s.io/kustomize/kyaml v0.13.6
 	sigs.k8s.io/structured-merge-diff/v4 => sigs.k8s.io/structured-merge-diff/v4 v4.2.3
 )
