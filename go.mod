@@ -190,7 +190,9 @@ replace (
 	sigs.k8s.io/kustomize/api => sigs.k8s.io/kustomize/api v0.12.1
 	sigs.k8s.io/kustomize/kyaml => sigs.k8s.io/kustomize/kyaml v0.13.9
 	sigs.k8s.io/structured-merge-diff/v4 => sigs.k8s.io/structured-merge-diff/v4 v4.2.3
-	go.opentelemetry.io/otel => go.opentelemetry.io/otel v1.7.0
-	go.opentelemetry.io/otel/metric => go.opentelemetry.io/otel/metric v0.30.0
-	go.opentelemetry.io/otel/trace => go.opentelemetry.io/otel/trace v1.7.0
+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp => go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.42.0
+	go.opentelemetry.io/otel => go.opentelemetry.io/otel v1.16.0
+	go.opentelemetry.io/otel/metric => go.opentelemetry.io/otel/metric v1.16.0
+	go.opentelemetry.io/otel/sdk => go.opentelemetry.io/otel/sdk v1.16.0
+	go.opentelemetry.io/otel/trace => go.opentelemetry.io/otel/trace v1.16.0
 )
