@@ -39,7 +39,7 @@ func TestBasic(t *testing.T) {
 	var chartPath string
 
 	{
-		tarballURL := "https://giantswarm.github.io/default-catalog/test-app-0.1.1.tgz"
+		tarballURL := "https://giantswarm.github.io/default-catalog/test-app-1.0.0.tgz"
 		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("pulling tarball %#q", tarballURL))
 
 		chartPath, err = config.HelmClient.PullChartTarball(ctx, tarballURL)
@@ -60,7 +60,13 @@ func TestBasic(t *testing.T) {
 		}
 
 		expectedChart := helmclient.Chart{
-			Version: "0.1.1",
+			Version: "1.0.0",
+			Annotations: map[string]string{
+				"application.giantswarm.io/metadata":      "https://giantswarm.github.io/default-catalog/test-app-1.0.0.tgz-meta/main.yaml",
+				"application.giantswarm.io/readme":        "https://giantswarm.github.io/default-catalog/test-app-1.0.0.tgz-meta/README.md",
+				"application.giantswarm.io/team":          "honeybadger",
+				"application.giantswarm.io/values-schema": "https://giantswarm.github.io/default-catalog/test-app-1.0.0.tgz-meta/values.schema.json",
+			},
 		}
 		if !cmp.Equal(chart, expectedChart) {
 			t.Fatalf("want matching Chart \n %s", cmp.Diff(chart, expectedChart))
@@ -111,13 +117,13 @@ func TestBasic(t *testing.T) {
 		}
 
 		expectedContent := &helmclient.ReleaseContent{
-			AppVersion:  "v1.8.0",
+			AppVersion:  "v2.13.0",
 			Description: "Install complete",
 			Name:        releaseName,
 			Revision:    1,
 			Status:      helmclient.StatusDeployed,
 			Values:      values,
-			Version:     "0.1.1",
+			Version:     "1.0.0",
 		}
 
 		if releaseContent.LastDeployed.IsZero() {
@@ -152,12 +158,12 @@ func TestBasic(t *testing.T) {
 
 		expectedHistory := []helmclient.ReleaseHistory{
 			{
-				AppVersion:  "v1.8.0",
+				AppVersion:  "v2.13.0",
 				Description: "Install complete",
 				Name:        releaseName,
 				Revision:    1,
 				Status:      helmclient.StatusDeployed,
-				Version:     "0.1.1",
+				Version:     "1.0.0",
 			},
 		}
 		if !cmp.Equal(releaseHistory, expectedHistory) {
@@ -170,7 +176,7 @@ func TestBasic(t *testing.T) {
 	var updatedChartPath string
 
 	{
-		tarballURL := "https://giantswarm.github.io/default-catalog/test-app-0.1.2.tgz"
+		tarballURL := "https://giantswarm.github.io/default-catalog/test-app-1.0.0.tgz"
 		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("pulling tarball %#q", tarballURL))
 
 		updatedChartPath, err = config.HelmClient.PullChartTarball(ctx, tarballURL)
@@ -210,13 +216,13 @@ func TestBasic(t *testing.T) {
 		}
 
 		expectedContent := &helmclient.ReleaseContent{
-			AppVersion:  "v1.8.0",
+			AppVersion:  "v2.13.0",
 			Description: "Upgrade complete",
 			Name:        releaseName,
 			Revision:    2,
 			Status:      helmclient.StatusDeployed,
 			Values:      updatedValues,
-			Version:     "0.1.2",
+			Version:     "1.0.0",
 		}
 
 		if releaseContent.LastDeployed.IsZero() {
@@ -256,13 +262,13 @@ func TestBasic(t *testing.T) {
 		}
 
 		expectedContent := &helmclient.ReleaseContent{
-			AppVersion:  "v1.8.0",
+			AppVersion:  "v2.13.0",
 			Description: "Rollback to 1",
 			Name:        releaseName,
 			Revision:    3,
 			Status:      helmclient.StatusDeployed,
 			Values:      values,
-			Version:     "0.1.1",
+			Version:     "1.0.0",
 		}
 
 		if releaseContent.LastDeployed.IsZero() {

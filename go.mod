@@ -2,8 +2,6 @@ module github.com/giantswarm/helmclient/v4
 
 go 1.23.0
 
-toolchain go1.23.5
-
 require (
 	github.com/giantswarm/backoff v1.0.1
 	github.com/giantswarm/kubeconfig/v4 v4.1.2
