@@ -138,12 +138,12 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gotest.tools/v3 v3.5.1 // indirect
 	k8s.io/apiextensions-apiserver v0.27.3 // indirect
-	k8s.io/apiserver v0.27.3 // indirect
-	k8s.io/cli-runtime v0.27.3 // indirect
-	k8s.io/component-base v0.27.3 // indirect
+	k8s.io/apiserver v0.24.2 // indirect
+	k8s.io/cli-runtime v0.24.2 // indirect
+	k8s.io/component-base v0.25.0 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20241105132330-32ad38e42d3f // indirect
-	k8s.io/kubectl v0.27.3 // indirect
+	k8s.io/kubectl v0.24.2 // indirect
 	k8s.io/utils v0.0.0-20241104100929-3ea5e8cea738 // indirect
 	sigs.k8s.io/json v0.0.0-20241010143419-9aa6b5e7a4b3 // indirect
 	sigs.k8s.io/kustomize/api v0.13.2 // indirect
@@ -168,20 +168,21 @@ replace (
 )
 
 replace (
+	github.com/chai2010/gettext-go => github.com/chai2010/gettext-go v0.1.0
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp => go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.42.0
 	go.opentelemetry.io/otel => go.opentelemetry.io/otel v1.16.0
 	go.opentelemetry.io/otel/metric => go.opentelemetry.io/otel/metric v1.16.0
 	go.opentelemetry.io/otel/sdk => go.opentelemetry.io/otel/sdk v1.16.0
 	go.opentelemetry.io/otel/trace => go.opentelemetry.io/otel/trace v1.16.0
 	google.golang.org/protobuf v1.32.0 => google.golang.org/protobuf v1.28.1
-	k8s.io/api => k8s.io/api v0.25.16
-	k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.25.16
-	k8s.io/apimachinery => k8s.io/apimachinery v0.25.16
-	k8s.io/apiserver => k8s.io/apiserver v0.25.16
-	k8s.io/cli-runtime => k8s.io/cli-runtime v0.25.16
-	k8s.io/client-go => k8s.io/client-go v0.25.16
-	k8s.io/component-base => k8s.io/component-base v0.25.16
-	k8s.io/kubectl => k8s.io/kubectl v0.25.16
+	k8s.io/api => k8s.io/api v0.24.2
+	k8s.io/apiextensions-apiserver => k8s.io/apiextensions-apiserver v0.24.2
+	k8s.io/apimachinery => k8s.io/apimachinery v0.24.2
+	k8s.io/apiserver => k8s.io/apiserver v0.24.2
+	k8s.io/cli-runtime => k8s.io/cli-runtime v0.24.2
+	k8s.io/client-go => k8s.io/client-go v0.24.2
+	k8s.io/component-base => k8s.io/component-base v0.24.2
+	k8s.io/kubectl => k8s.io/kubectl v0.24.2
 	sigs.k8s.io/json => sigs.k8s.io/json v0.0.0-20220713155537-f223a00ba0e2
 	sigs.k8s.io/kustomize/api => sigs.k8s.io/kustomize/api v0.12.1
 	sigs.k8s.io/kustomize/kyaml => sigs.k8s.io/kustomize/kyaml v0.13.9
