@@ -16,7 +16,7 @@ require (
 	k8s.io/api v0.32.2
 	k8s.io/apimachinery v0.32.2
 	k8s.io/client-go v0.32.2
-	oras.land/oras-go v1.2.6
+	oras.land/oras-go/v2 v2.5.0
 	sigs.k8s.io/controller-runtime v0.20.2
 )
 
@@ -175,7 +175,7 @@ replace (
 	github.com/imdario/mergo => github.com/imdario/mergo v0.3.13
 	github.com/ulikunitz/xz => github.com/ulikunitz/xz v0.5.12
 	// Pinning to v1.2.2 due to API changes in v1.2.3 and 1.2.4
-	oras.land/oras-go => oras.land/oras-go v1.2.6
+	oras.land/oras-go/v2 => oras.land/oras-go v2.5.0
 )
 
 replace google.golang.org/protobuf v1.32.0 => google.golang.org/protobuf v1.33.0
