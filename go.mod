@@ -11,7 +11,7 @@ require (
 	github.com/mholt/archiver/v3 v3.5.1
 	github.com/opencontainers/image-spec v1.1.1
 	github.com/prometheus/client_golang v1.21.1
-	github.com/spf13/afero v1.12.0
+	github.com/spf13/afero v1.14.0
 	helm.sh/helm/v3 v3.17.2
 	k8s.io/api v0.32.3
 	k8s.io/apimachinery v0.32.3
