@@ -154,7 +154,7 @@ func (c *Client) doFileOCI(ctx context.Context, url string) (string, error) {
 		if err != nil {
 			return microerror.Mask(err)
 		}
-		defer tmpfile.Close()
+		defer func() { _ = tmpfile.Close() }()
 
 		buf := bytes.NewBuffer(chartData)
 		_, err = io.Copy(tmpfile, buf)
@@ -192,7 +192,7 @@ func (c *Client) doFileHTTP(ctx context.Context, req *http.Request) (string, err
 		} else if err != nil {
 			return microerror.Mask(err)
 		}
-		defer resp.Body.Close()
+		defer func() { _ = resp.Body.Close() }()
 
 		if resp.StatusCode != http.StatusOK {
 			buf := new(bytes.Buffer)
@@ -218,7 +218,7 @@ func (c *Client) doFileHTTP(ctx context.Context, req *http.Request) (string, err
 		if err != nil {
 			return microerror.Mask(err)
 		}
-		defer tmpfile.Close()
+		defer func() { _ = tmpfile.Close() }()
 
 		_, err = io.Copy(tmpfile, resp.Body)
 		if err != nil {
