@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Dependency update, fixing CVE-2025-53547
+
+## [4.12.3] - 2025-07-09
+
 - Dependency updates
 
 ## [4.12.2] - 2025-05-30
@@ -257,7 +261,8 @@ validation errors.
 
 - First release.
 
-[Unreleased]: https://github.com/giantswarm/helmclient/compare/v4.12.2...HEAD
+[Unreleased]: https://github.com/giantswarm/helmclient/compare/v4.12.3...HEAD
+[4.12.3]: https://github.com/giantswarm/helmclient/compare/v4.12.2...v4.12.3
 [4.12.2]: https://github.com/giantswarm/helmclient/compare/v4.12.1...v4.12.2
 [4.12.1]: https://github.com/giantswarm/helmclient/compare/v4.12.0...v4.12.1
 [4.12.0]: https://github.com/giantswarm/helmclient/compare/v4.11.3...v4.12.0
