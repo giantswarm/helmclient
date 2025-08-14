@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Upgrade `helm.sh/helm/v3` to v3.18.5
+
 ## [4.12.4] - 2025-08-14
 
 - Dependency update, fixing CVE-2025-53547
