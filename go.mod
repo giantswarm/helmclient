@@ -173,7 +173,7 @@ replace (
 	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
 	github.com/docker/docker => github.com/moby/moby v28.3.3+incompatible
 	github.com/gogo/protobuf => github.com/gogo/protobuf v1.3.2
-	github.com/ulikunitz/xz => github.com/ulikunitz/xz v0.5.12
+	github.com/ulikunitz/xz => github.com/ulikunitz/xz v0.5.13
 	// Pinning to v1.2.2 due to API changes in v1.2.3 and 1.2.4
 	oras.land/oras-go => oras.land/oras-go v1.2.6
 )
