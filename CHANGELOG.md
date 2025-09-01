@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.12.5] - 2025-09-01
 
+### Changed
+
+- Update module github.com/ulikunitz/xz to v0.5.15 (security)
+
 ## [4.12.4] - 2025-08-14
 
 ### Changed
