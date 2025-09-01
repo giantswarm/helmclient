@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.12.5] - 2025-09-01
+
+### Changed
+
+- Update module github.com/ulikunitz/xz to v0.5.15 (security)
+
 ## [4.12.4] - 2025-08-14
 
 ### Changed
@@ -266,7 +272,8 @@ validation errors.
 
 - First release.
 
-[Unreleased]: https://github.com/giantswarm/helmclient/compare/v4.12.4...HEAD
+[Unreleased]: https://github.com/giantswarm/helmclient/compare/v4.12.5...HEAD
+[4.12.5]: https://github.com/giantswarm/helmclient/compare/v4.12.4...v4.12.5
 [4.12.4]: https://github.com/giantswarm/helmclient/compare/v4.12.3...v4.12.4
 [4.12.3]: https://github.com/giantswarm/helmclient/compare/v4.12.2...v4.12.3
 [4.12.2]: https://github.com/giantswarm/helmclient/compare/v4.12.1...v4.12.2
