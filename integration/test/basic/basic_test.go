@@ -85,6 +85,7 @@ func TestBasic(t *testing.T) {
 		installOptions := helmclient.InstallOptions{
 			ReleaseName: releaseName,
 			Wait:        true,
+			Timeout:     10 * time.Minute,
 		}
 		err = config.HelmClient.InstallReleaseFromTarball(ctx, chartPath, metav1.NamespaceDefault, values, installOptions)
 		if err != nil {
