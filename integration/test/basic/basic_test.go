@@ -60,7 +60,7 @@ func TestBasic(t *testing.T) {
 		}
 
 		expectedChart := helmclient.Chart{
-			Version: "1.0.0",
+			Version: "1.0.1",
 			Annotations: map[string]string{
 				"application.giantswarm.io/metadata":      "https://giantswarm.github.io/default-catalog/test-app-1.0.1.tgz-meta/main.yaml",
 				"application.giantswarm.io/readme":        "https://giantswarm.github.io/default-catalog/test-app-1.0.1.tgz-meta/README.md",
@@ -123,7 +123,7 @@ func TestBasic(t *testing.T) {
 			Revision:    1,
 			Status:      helmclient.StatusDeployed,
 			Values:      values,
-			Version:     "1.0.0",
+			Version:     "1.0.1",
 		}
 
 		if releaseContent.LastDeployed.IsZero() {
@@ -163,7 +163,7 @@ func TestBasic(t *testing.T) {
 				Name:        releaseName,
 				Revision:    1,
 				Status:      helmclient.StatusDeployed,
-				Version:     "1.0.0",
+				Version:     "1.0.1",
 			},
 		}
 		if !cmp.Equal(releaseHistory, expectedHistory) {
@@ -222,7 +222,7 @@ func TestBasic(t *testing.T) {
 			Revision:    2,
 			Status:      helmclient.StatusDeployed,
 			Values:      updatedValues,
-			Version:     "1.0.0",
+			Version:     "1.0.1",
 		}
 
 		if releaseContent.LastDeployed.IsZero() {
@@ -268,7 +268,8 @@ func TestBasic(t *testing.T) {
 			Revision:    3,
 			Status:      helmclient.StatusDeployed,
 			Values:      values,
-			Version:     "1.0.0",
+			Version: "1.0.1" +
+				"",
 		}
 
 		if releaseContent.LastDeployed.IsZero() {
