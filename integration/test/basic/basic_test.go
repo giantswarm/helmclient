@@ -39,7 +39,7 @@ func TestBasic(t *testing.T) {
 	var chartPath string
 
 	{
-		tarballURL := "https://giantswarm.github.io/default-catalog/test-app-1.0.0.tgz"
+		tarballURL := "https://giantswarm.github.io/default-catalog/test-app-1.0.1.tgz"
 		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("pulling tarball %#q", tarballURL))
 
 		chartPath, err = config.HelmClient.PullChartTarball(ctx, tarballURL)
@@ -62,10 +62,10 @@ func TestBasic(t *testing.T) {
 		expectedChart := helmclient.Chart{
 			Version: "1.0.0",
 			Annotations: map[string]string{
-				"application.giantswarm.io/metadata":      "https://giantswarm.github.io/default-catalog/test-app-1.0.0.tgz-meta/main.yaml",
-				"application.giantswarm.io/readme":        "https://giantswarm.github.io/default-catalog/test-app-1.0.0.tgz-meta/README.md",
+				"application.giantswarm.io/metadata":      "https://giantswarm.github.io/default-catalog/test-app-1.0.1.tgz-meta/main.yaml",
+				"application.giantswarm.io/readme":        "https://giantswarm.github.io/default-catalog/test-app-1.0.1.tgz-meta/README.md",
 				"application.giantswarm.io/team":          "honeybadger",
-				"application.giantswarm.io/values-schema": "https://giantswarm.github.io/default-catalog/test-app-1.0.0.tgz-meta/values.schema.json",
+				"application.giantswarm.io/values-schema": "https://giantswarm.github.io/default-catalog/test-app-1.0.1.tgz-meta/values.schema.json",
 			},
 		}
 		if !cmp.Equal(chart, expectedChart) {
@@ -176,7 +176,7 @@ func TestBasic(t *testing.T) {
 	var updatedChartPath string
 
 	{
-		tarballURL := "https://giantswarm.github.io/default-catalog/test-app-1.0.0.tgz"
+		tarballURL := "https://giantswarm.github.io/default-catalog/test-app-1.0.1.tgz"
 		config.Logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("pulling tarball %#q", tarballURL))
 
 		updatedChartPath, err = config.HelmClient.PullChartTarball(ctx, tarballURL)
