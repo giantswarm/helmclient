@@ -14,6 +14,6 @@ service:
 
 test:
   image:
-    registry: quay.io
-    repository: giantswarm/alpine-testing
-    tag: 0.1.1
+    registry: gsoci.azurecr.io
+    repository: giantswarm/alpine-bats
+    tag: black
