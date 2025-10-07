@@ -15,5 +15,5 @@ service:
 test:
   image:
     registry: gsoci.azurecr.io
-    repository: giantswarm/alpine-bats
-    tag: black
+    repository: giantswarm/alpine
+    tag: 1.0.0-bats
