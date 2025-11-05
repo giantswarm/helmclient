@@ -171,7 +171,7 @@ replace (
 	github.com/aws/aws-sdk-go => github.com/aws/aws-sdk-go v1.55.8
 	github.com/dgrijalva/jwt-go => github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/docker/distribution => github.com/docker/distribution v0.0.0-20191216044856-a8371794149d
-	github.com/docker/docker => github.com/moby/moby v28.5.1+incompatible
+	github.com/docker/docker => github.com/moby/moby v28.5.2+incompatible
 	github.com/gogo/protobuf => github.com/gogo/protobuf v1.3.2
 	github.com/ulikunitz/xz => github.com/ulikunitz/xz v0.5.15
 	// Pinning to v1.2.2 due to API changes in v1.2.3 and 1.2.4
