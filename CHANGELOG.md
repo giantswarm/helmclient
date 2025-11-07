@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.12.6] - 2025-11-07
 
+### Changed
+
+- Update module github.com/containerd/containerd from 1.7.28 to 1.7.29 (security)
+
 ## [4.12.5] - 2025-09-01
 
 ### Changed
