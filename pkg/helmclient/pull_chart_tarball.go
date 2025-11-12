@@ -14,7 +14,7 @@ import (
 	ocispec "github.com/opencontainers/image-spec/specs-go/v1"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/afero"
-	helmregistry "helm.sh/helm/v3/pkg/registry"
+	helmregistry "helm.sh/helm/v4/pkg/registry"
 	"oras.land/oras-go/pkg/content"
 	"oras.land/oras-go/pkg/oras"
 	"oras.land/oras-go/pkg/registry"

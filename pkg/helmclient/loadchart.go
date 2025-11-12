@@ -5,8 +5,8 @@ import (
 
 	"github.com/giantswarm/microerror"
 	"github.com/prometheus/client_golang/prometheus"
-	"helm.sh/helm/v3/pkg/chart"
-	"helm.sh/helm/v3/pkg/chart/loader"
+	"helm.sh/helm/v4/pkg/chart"
+	"helm.sh/helm/v4/pkg/chart/loader"
 )
 
 // LoadChart loads a Helm Chart and returns relevant parts of its structure.

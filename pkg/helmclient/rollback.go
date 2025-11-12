@@ -6,7 +6,7 @@ import (
 
 	"github.com/giantswarm/microerror"
 	"github.com/prometheus/client_golang/prometheus"
-	"helm.sh/helm/v3/pkg/action"
+	"helm.sh/helm/v4/pkg/action"
 )
 
 // Rollback executes a rollback to a previous revision of a Helm release.
