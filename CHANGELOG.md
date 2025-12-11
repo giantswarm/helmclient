@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.12.7] - 2025-12-11
 
+### Changed
+
+- Update update module helm.sh/helm/v3 to v3.19.3
+
 ## [4.12.6] - 2025-11-07
 
 ### Changed
