@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.12.8] - 2026-02-10
 
+### Changed
+
+- Update module github.com/giantswarm/kubeconfig/v4 to v4.1.4
+
 ## [4.12.7] - 2025-12-11
 
 ### Changed
