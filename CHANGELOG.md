@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [4.12.8] - 2026-02-10
+
+### Changed
+
+- Update module github.com/giantswarm/kubeconfig/v4 to v4.1.4
+
 ## [4.12.7] - 2025-12-11
 
 ### Changed
@@ -284,7 +290,8 @@ validation errors.
 
 - First release.
 
-[Unreleased]: https://github.com/giantswarm/helmclient/compare/v4.12.7...HEAD
+[Unreleased]: https://github.com/giantswarm/helmclient/compare/v4.12.8...HEAD
+[4.12.8]: https://github.com/giantswarm/helmclient/compare/v4.12.7...v4.12.8
 [4.12.7]: https://github.com/giantswarm/helmclient/compare/v4.12.6...v4.12.7
 [4.12.6]: https://github.com/giantswarm/helmclient/compare/v4.12.5...v4.12.6
 [4.12.5]: https://github.com/giantswarm/helmclient/compare/v4.12.4...v4.12.5
