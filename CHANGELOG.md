@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [4.12.9] - 2026-03-19
 
+### Changed
+
+- Update module helm.sh/helm/v3 to v3.20.1
+- Update module k8s.io/api to v0.35.2
+- Update module k8s.io/apimachinery to v0.35.2
+- Update module k8s.io/client-go to v0.35.2
+- Update module sigs.k8s.io/controller-runtime to v0.23.3
+
 ## [4.12.8] - 2026-02-10
 
 ### Changed
