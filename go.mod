@@ -126,9 +126,9 @@ require (
 	github.com/xlab/treeprint v1.2.0 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.61.0 // indirect
-	go.opentelemetry.io/otel v1.39.0 // indirect
-	go.opentelemetry.io/otel/metric v1.39.0 // indirect
-	go.opentelemetry.io/otel/trace v1.39.0 // indirect
+	go.opentelemetry.io/otel v1.44.0 // indirect
+	go.opentelemetry.io/otel/metric v1.44.0 // indirect
+	go.opentelemetry.io/otel/trace v1.44.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	go.yaml.in/yaml/v3 v3.0.4 // indirect
 	golang.org/x/crypto v0.46.0 // indirect
@@ -175,3 +175,17 @@ replace (
 )
 
 replace google.golang.org/protobuf v1.32.0 => google.golang.org/protobuf v1.33.0
+
+replace golang.org/x/sys v0.41.0 => golang.org/x/sys v0.45.0
+
+replace github.com/distribution/distribution/v3 v3.0.0 => github.com/distribution/distribution/v3 v3.1.1
+
+replace github.com/go-jose/go-jose/v3 v3.0.4 => github.com/go-jose/go-jose/v3 v3.0.5
+
+replace github.com/go-jose/go-jose/v4 v4.1.3 => github.com/go-jose/go-jose/v4 v4.1.4
+
+replace github.com/moby/spdystream v0.5.0 => github.com/moby/spdystream v0.5.1
+
+replace github.com/yuin/goldmark v1.2.1 => github.com/yuin/goldmark v1.8.2
+
+replace go.opentelemetry.io/otel v1.39.0 => go.opentelemetry.io/otel v1.44.0
