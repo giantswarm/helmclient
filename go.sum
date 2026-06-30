@@ -50,10 +50,10 @@ github.com/bshuster-repo/logrus-logstash-hook v1.1.0/go.mod h1:Q2aXOe7rNuPgbBtPC
 github.com/bugsnag/bugsnag-go v0.0.0-20141110184014-b1d153021fcd/go.mod h1:2oa8nejYd4cQ/b0hMIopN0lCRxU0bueqREvZLWFrtK8=
 github.com/bugsnag/osext v0.0.0-20130617224835-0dd3f918b21b/go.mod h1:obH5gd0BsqsP2LwDJ9aOkm/6J86V6lyAXCoQWGw3K50=
 github.com/bugsnag/panicwrap v0.0.0-20151223152923-e2c28503fcd0/go.mod h1:D/8v3kj0zr8ZAKg1AQ6crr+5VwKN5eIywRkfhyM/+dE=
-github.com/cenkalti/backoff/v4 v4.3.0 h1:MyRJ/UdXutAwSAT+s3wNd7MfTIcy71VQueUuFK343L8=
-github.com/cenkalti/backoff/v4 v4.3.0/go.mod h1:Y3VNntkOUPxTVeUxJ/G5vcM//AlwfmyYozVcomhLiZE=
 github.com/cenkalti/backoff/v5 v5.0.3 h1:ZN+IMa753KfX5hd8vVaMixjnqRZ3y8CuJKRKj1xcsSM=
 github.com/cenkalti/backoff/v5 v5.0.3/go.mod h1:rkhZdG3JZukswDf7f0cwqPNk4K0sa+F97BxZthm/crw=
+github.com/cenkalti/backoff/v6 v6.0.1 h1:sjqUu1q4wY0FfFEkBmM3bVIHfr1QGq4nATg9M5VWj1U=
+github.com/cenkalti/backoff/v6 v6.0.1/go.mod h1:5WCmPelT2zwAaNETjGJVKHDnZvjQdPsGeHHwm5lIPPI=
 github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=
 github.com/cespare/xxhash/v2 v2.3.0/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
 github.com/chai2010/gettext-go v1.0.2 h1:1Lwwip6Q2QGsAdl/ZKPCwTe9fe0CjlUbqj5bFNSjIRk=
@@ -129,8 +129,8 @@ github.com/frankban/quicktest v1.14.6/go.mod h1:4ptaffx2x8+WTWXmUCuVU6aPUX1/Mz7z
 github.com/fxamacker/cbor/v2 v2.9.0 h1:NpKPmjDBgUfBms6tr6JZkTHtfFGcMKsw3eGcmD/sapM=
 github.com/fxamacker/cbor/v2 v2.9.0/go.mod h1:vM4b+DJCtHn+zz7h3FFp/hDAI9WNWCsZj23V5ytsSxQ=
 github.com/garyburd/redigo v0.0.0-20150301180006-535138d7bcd7/go.mod h1:NR3MbYisc3/PwhQ00EMzDiPmrwpPxAn5GI05/YaO1SY=
-github.com/giantswarm/backoff v1.0.1 h1:paqQhjUsibkf+wWFCHsk7VXAkcM1L3ssAe7V7i8twpM=
-github.com/giantswarm/backoff v1.0.1/go.mod h1:RGj8b06J3irMNFRoSiMnngS50K+QbpSvu77sW03bxqQ=
+github.com/giantswarm/backoff/v2 v2.0.0 h1:iACMXgZz6+P+UvmXRmRaqvrMbXnbYYwfs6o3CvTjSBA=
+github.com/giantswarm/backoff/v2 v2.0.0/go.mod h1:xG59650VQshB1uyLTcWMXp7qew6gx+wuGpAcHUOhlHA=
 github.com/giantswarm/kubeconfig/v4 v4.1.4 h1:6auRORmJBJM42yTEIxsaX0/2bTHPV23DesCtitiLks8=
 github.com/giantswarm/kubeconfig/v4 v4.1.4/go.mod h1:ixxdLy0Pfb9TwXpw7ScZZ+rznO3AmmdPmOhmZFZXYGQ=
 github.com/giantswarm/microerror v0.4.1 h1:WMiD7HQASoUA9lZzPlPK+erCEOJ0uT4cyo18VfCXHD0=
