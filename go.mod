@@ -176,3 +176,9 @@ replace (
 )
 
 replace google.golang.org/protobuf v1.32.0 => google.golang.org/protobuf v1.33.0
+
+replace github.com/moby/sys/user v0.3.0 => github.com/moby/sys/user v0.4.1
+
+replace github.com/yuin/goldmark v1.2.1 => github.com/yuin/goldmark v1.8.5
+
+replace oras.land/oras-go/v2 v2.6.1 => oras.land/oras-go/v2 v2.6.2
