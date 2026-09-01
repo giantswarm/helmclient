@@ -10,3 +10,4 @@ CVE-2026-56865 until=2026-09-27 # golang.org/x/mod@v0.37.0
 CVE-2026-63308 until=2026-09-27 # helm.sh/helm/v3@v3.21.4
 CVE-2026-48978 until=2026-09-27 # oras.land/oras-go@v1.2.7
 CVE-2026-56854 until=2026-09-30 # golang.org/x/crypto@v0.54.0
+CVE-2026-37236 until=2026-10-01 # github.com/grpc-ecosystem/grpc-gateway/v2@v2.28.0
