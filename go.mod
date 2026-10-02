@@ -184,3 +184,5 @@ replace github.com/yuin/goldmark v1.2.1 => github.com/yuin/goldmark v1.8.5
 replace oras.land/oras-go/v2 v2.6.1 => oras.land/oras-go/v2 v2.6.2
 
 replace google.golang.org/grpc v1.82.1 => google.golang.org/grpc v1.83.2
+
+replace github.com/containerd/containerd v1.7.33 => github.com/containerd/containerd v1.7.36
