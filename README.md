@@ -46,4 +46,4 @@ helmclient is under the Apache 2.0 license. See the [LICENSE](LICENSE) file
 for details.
 
 [Helm]: https://github.com/helm/helm
-[spec.go]: https://github.com/giantswarm/helmclient/blob/main/spec.go
+[spec.go]: https://github.com/giantswarm/helmclient/blob/main/pkg/helmclient/spec.go
