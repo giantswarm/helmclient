@@ -7,6 +7,8 @@ import (
 const (
 	PrometheusNamespace = "helmclient"
 	PrometheusSubsystem = "library"
+
+	eventLabel = "event"
 )
 
 var (
@@ -17,7 +19,7 @@ var (
 			Name:      "error_total",
 			Help:      "Number of helmclient errors.",
 		},
-		[]string{"event"},
+		[]string{eventLabel},
 	)
 	eventCounter = prometheus.NewCounterVec(
 		prometheus.CounterOpts{
@@ -26,7 +28,7 @@ var (
 			Name:      "event_total",
 			Help:      "Number of helmclient events.",
 		},
-		[]string{"event", "release"},
+		[]string{eventLabel, "release"},
 	)
 	histogram = prometheus.NewHistogramVec(
 		prometheus.HistogramOpts{
@@ -35,7 +37,7 @@ var (
 			Name:      "event",
 			Help:      "Histogram for events within the helmclient library.",
 		},
-		[]string{"event"},
+		[]string{eventLabel},
 	)
 )
 
